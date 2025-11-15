@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  DM_Serif_Display,
+  Homemade_Apple,
+  Eczar,
+  Lora,
+} from "next/font/google";
 import "./globals.css";
+import MUIThemeProvider from "./theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -9,6 +17,30 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const LoraFont = Lora({
+  variable: "--font-lora",
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+});
+
+const DMSerifDisplay = DM_Serif_Display({
+  variable: "--font-dm-serif-display",
+  weight: ["400"],
+  subsets: ["latin"],
+});
+
+const homemadeApple = Homemade_Apple({
+  variable: "--font-homemade-apple",
+  weight: ["400"],
+  subsets: ["latin"],
+});
+
+const eczar = Eczar({
+  variable: "--font-eczar",
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
 });
 
@@ -25,9 +57,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={` ${geistSans.variable} ${geistMono.variable} ${DMSerifDisplay.variable} ${homemadeApple.variable} ${eczar.variable} ${LoraFont.variable}  antialiased`}
       >
-        {children}
+        <MUIThemeProvider>{children}</MUIThemeProvider>
       </body>
     </html>
   );
