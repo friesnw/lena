@@ -12,11 +12,14 @@ import {
 } from "@mui/material";
 
 import { useState } from "react";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const pageTitle = "Enter Password";
+  usePageTitle(pageTitle);
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent page refresh
     setError(""); // Clear previous errors
@@ -51,7 +54,9 @@ export default function Login() {
       <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
         <Card>
           <CardContent>
-            <Typography variant="h4">Enter Password</Typography>
+            <Typography variant="h4" component="h1" gutterBottom>
+              {pageTitle}
+            </Typography>
             <form onSubmit={handleSubmit}>
               <TextField
                 type="password"

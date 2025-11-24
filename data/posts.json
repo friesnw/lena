@@ -1,0 +1,1077 @@
+[
+  {
+    "id": "5b40a2f2-447a-4365-8e69-713c22b85d9f",
+    "type": "photo",
+    "title": "Jogging stroller ready, one year in advance",
+    "month": 0,
+    "content": "/uploads/569449f7-7d79-4a09-8a70-24dc90d375e1.jpg",
+    "createdAt": "2025-11-18T03:59:22.589Z",
+    "updatedAt": "2025-11-21T17:35:16.110Z",
+    "published": true,
+    "order": 2,
+    "tags": [
+      "Carousel 2"
+    ]
+  },
+  {
+    "id": "7e66b087-c312-4e9c-a1c6-7730c9c16ca0",
+    "type": "photo",
+    "title": "Olympic National Park",
+    "month": 0,
+    "content": "/uploads/9beb4f49-2519-4856-aa49-783c55a664b2.jpg",
+    "createdAt": "2025-11-18T04:12:34.175Z",
+    "updatedAt": "2025-11-19T22:05:39.124Z",
+    "published": true,
+    "order": 3,
+    "tags": [
+      "Carousel 1"
+    ]
+  },
+  {
+    "id": "fc680ab5-c02d-44ad-81d5-c0d9dd072507",
+    "type": "photo",
+    "title": "Your first photo",
+    "month": 0,
+    "content": "/uploads/f5ef3353-f23f-46cc-bcce-fa5ee32fba9a.jpg",
+    "caption": "We thought you looked cute",
+    "createdAt": "2025-11-18T04:25:30.680Z",
+    "updatedAt": "2025-11-21T17:32:28.768Z",
+    "published": true,
+    "order": 3,
+    "metadata": {
+      "dateTaken": "2025-06-06T20:25:48.000Z",
+      "dateModified": "2025-06-06T20:25:48.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          50.87
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 3"
+    ]
+  },
+  {
+    "id": "83431cd3-4037-49d2-a1b9-1d5f4532f3d7",
+    "type": "photo",
+    "title": "Your first ultrasound",
+    "month": 0,
+    "content": "/uploads/41f4c489-9274-44c7-86d6-31c1ca6a4885.jpg",
+    "createdAt": "2025-11-18T04:30:49.736Z",
+    "updatedAt": "2025-11-21T17:32:20.998Z",
+    "published": true,
+    "order": 2,
+    "metadata": {
+      "dateTaken": "2025-06-06T20:27:31.000Z",
+      "dateModified": "2025-06-06T20:27:31.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          50.66
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 3"
+    ]
+  },
+  {
+    "id": "818d3a59-d7e2-4332-a36e-3b7477b2c60b",
+    "type": "photo",
+    "title": "Proud mama",
+    "month": 0,
+    "content": "/uploads/a71e9aaa-2b54-4f0d-808b-7256e3258f6a.jpg",
+    "createdAt": "2025-11-18T04:32:22.955Z",
+    "updatedAt": "2025-11-21T17:32:36.806Z",
+    "published": true,
+    "order": 4,
+    "metadata": {
+      "dateTaken": "2025-06-06T20:28:14.000Z",
+      "dateModified": "2025-06-06T20:28:14.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          50.88
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 3"
+    ]
+  },
+  {
+    "id": "71f598e2-c8d9-48fb-aad7-74f141152a66",
+    "type": "photo",
+    "title": "Moorea, French Polynesia",
+    "month": 10,
+    "content": "/uploads/2f03e816-b3dc-4c2f-bb1d-2ea1d86ca2ca.jpg",
+    "createdAt": "2025-11-18T04:36:36.901Z",
+    "updatedAt": "2025-11-18T04:36:36.901Z",
+    "published": true,
+    "order": 0,
+    "metadata": {
+      "dateTaken": "2025-06-21T15:25:51.000Z",
+      "dateModified": "2025-06-21T15:25:51.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": null,
+        "longitude": null
+      }
+    }
+  },
+  {
+    "id": "eb963914-2375-444b-8ebe-1d1649fe75b7",
+    "type": "photo",
+    "title": "Plotting your personal color palette",
+    "month": 2,
+    "content": "/uploads/a430e8f1-26a6-4e59-8591-bd6d449759f6.jpg",
+    "createdAt": "2025-11-18T04:42:08.081Z",
+    "updatedAt": "2025-11-24T03:28:34.583Z",
+    "published": true,
+    "order": 20,
+    "metadata": {
+      "dateTaken": "2025-11-17T15:20:50.000Z",
+      "dateModified": "2025-11-17T15:20:50.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.08
+        ],
+        "longitude": null
+      }
+    },
+    "tags": []
+  },
+  {
+    "id": "d9337694-a28d-45c4-b74a-b3f8c37138fa",
+    "type": "text",
+    "title": "Summer travel",
+    "month": 0,
+    "content": "In summer before you were born, we did lots of travel while you were cooking in your mama’s belly. \n\nYou went on trips with uncles, aunts, grandparents, and your cousin. You even made it all the way to New Zealand at one point. Some of the highlights below: ",
+    "createdAt": "2025-11-19T04:37:47.912Z",
+    "updatedAt": "2025-11-24T02:50:31.281Z",
+    "published": true,
+    "order": 1,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "65262dc2-6da0-4c42-a680-6e33e9f2b2e2",
+    "type": "text",
+    "title": "Nesting",
+    "month": 0,
+    "content": "While home, we eagerly prepared for your arrival. Your mom lead the charge on this one. Apparently when women are pregnant, their brains get focused on preparing the home for the baby. They call it \"nesting.\"  But your mom swears she would have been like that anyway. ",
+    "createdAt": "2025-11-19T04:40:21.635Z",
+    "updatedAt": "2025-11-21T17:39:18.440Z",
+    "published": true,
+    "order": 11,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "d83e0094-1a80-4d14-8b06-7f9fd0dd53d3",
+    "type": "text",
+    "title": "Gametime",
+    "month": 0,
+    "content": "Because you were small, the doctors scheduled an induction on the evening of October 14, a couple weeks before you were due. We were very excited, and so was your uncle Cal, because there was a chance you could be born on October 16th, his birthday. \n \nBut when the evening of the 14th rolled around, we didn't get a call. We waited and waited, and then called the hospital to check in. It turned out it was an extra busy night, with lots of other babies being born. They told us to get some sleep, and they'd call us when they were ready. \n\nAnd then, around 1 am, we got the call. It was time! ",
+    "createdAt": "2025-11-19T04:42:18.835Z",
+    "updatedAt": "2025-11-21T17:48:21.612Z",
+    "published": true,
+    "order": 31,
+    "tags": []
+  },
+  {
+    "id": "361900ba-b6dd-49f6-83aa-a988c64aebe3",
+    "type": "photo",
+    "title": "Moorea, French Polynesia",
+    "month": 0,
+    "content": "/uploads/f243751c-e3dd-4bb6-accb-cc071d3d8838.jpg",
+    "createdAt": "2025-11-19T21:56:15.410Z",
+    "updatedAt": "2025-11-21T17:31:06.068Z",
+    "published": true,
+    "order": 0,
+    "metadata": {
+      "dateTaken": "2025-06-21T15:25:51.000Z",
+      "dateModified": "2025-06-21T15:25:51.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": null,
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 1"
+    ]
+  },
+  {
+    "id": "2f2dfce4-a62f-4d3c-8259-8cff08c72aea",
+    "type": "video",
+    "title": "Aitutaki, The Cook Islands",
+    "month": 0,
+    "content": "/uploads/8296de5a-d7f3-40c4-99e0-2bb93043f82b.MOV",
+    "createdAt": "2025-11-19T22:01:56.183Z",
+    "updatedAt": "2025-11-24T03:08:04.733Z",
+    "published": true,
+    "order": 2,
+    "metadata": {
+      "dateTaken": "2025-11-18T04:38:51.000Z",
+      "dateModified": "2025-11-24T03:08:04.689Z",
+      "dateCreated": "2025-11-24T03:08:04.689Z"
+    },
+    "tags": [
+      "Carousel 1"
+    ]
+  },
+  {
+    "id": "7f90b744-4b20-4f25-8c0b-d1fc0f949c98",
+    "type": "photo",
+    "title": "Assembling your crib",
+    "month": 0,
+    "content": "/uploads/ef6bf46f-7a6f-4ad4-b687-906074cfa2b6.jpg",
+    "createdAt": "2025-11-20T20:52:32.145Z",
+    "updatedAt": "2025-11-21T17:35:26.852Z",
+    "published": true,
+    "order": 1,
+    "metadata": {
+      "dateTaken": "2025-08-24T16:56:07.000Z",
+      "dateModified": "2025-08-24T16:56:07.000Z",
+      "camera": "Apple iPhone 14 Pro",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.08
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 2"
+    ]
+  },
+  {
+    "id": "c80d18df-7d31-4450-af6f-27d95a999518",
+    "type": "photo",
+    "title": "You and mom surveying the work",
+    "month": 0,
+    "content": "/uploads/1e809eb3-8a41-4247-bcc6-afcdfbffe955.jpg",
+    "createdAt": "2025-11-20T20:53:29.285Z",
+    "updatedAt": "2025-11-20T20:53:29.285Z",
+    "published": true,
+    "order": 8,
+    "metadata": {
+      "dateTaken": "2025-09-28T19:46:06.000Z",
+      "dateModified": "2025-09-28T19:46:06.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.17
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 2"
+    ]
+  },
+  {
+    "id": "7fd5a289-9f8b-4227-a694-73ab81c6a44a",
+    "type": "photo",
+    "title": "Writing your name, to make sure we like it",
+    "month": 0,
+    "content": "/uploads/9ca22165-6174-4129-91af-8a0cbf1d6b3d.jpg",
+    "createdAt": "2025-11-20T20:54:35.075Z",
+    "updatedAt": "2025-11-20T20:54:35.075Z",
+    "published": true,
+    "order": 8,
+    "metadata": {
+      "dateTaken": "2025-10-14T16:34:39.000Z",
+      "dateModified": "2025-10-14T16:34:39.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          14.71
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 2"
+    ]
+  },
+  {
+    "id": "71057fc7-c13d-42a2-a2d7-f1fbd2283ed6",
+    "type": "photo",
+    "title": "Showing off the menu (food wasn't great)",
+    "month": 0,
+    "content": "/uploads/6f9cf34d-0a5b-47df-a58c-11a12b2d6a6d.jpg",
+    "createdAt": "2025-11-20T20:56:47.324Z",
+    "updatedAt": "2025-11-21T18:02:11.172Z",
+    "published": true,
+    "order": 3,
+    "metadata": {
+      "dateTaken": "2025-10-15T09:10:12.000Z",
+      "dateModified": "2025-10-15T09:10:12.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          56.11
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 4"
+    ]
+  },
+  {
+    "id": "f8f80e65-e108-4e3a-bec3-2ca4695bd461",
+    "type": "photo",
+    "title": "Gorgeous as ever in the hospital",
+    "month": 0,
+    "content": "/uploads/065fc218-6b82-49d7-919e-44b3a65a2ee0.JPG",
+    "createdAt": "2025-11-20T20:58:07.899Z",
+    "updatedAt": "2025-11-20T20:58:07.899Z",
+    "published": true,
+    "order": 0,
+    "metadata": {
+      "dateCreated": "2025-11-20T20:58:07.852Z",
+      "dateModified": "2025-11-20T20:58:07.852Z"
+    },
+    "tags": [
+      "Carousel 4"
+    ]
+  },
+  {
+    "id": "d37ef67d-e314-4c1e-95ab-63dc2d1c6ffa",
+    "type": "photo",
+    "title": "Feeling the first contractions",
+    "month": 0,
+    "content": "/uploads/7a2cce70-346d-4dfc-9bca-99cf803507c2.jpg",
+    "createdAt": "2025-11-20T20:59:03.336Z",
+    "updatedAt": "2025-11-21T18:01:03.902Z",
+    "published": true,
+    "order": 2,
+    "metadata": {
+      "dateTaken": "2025-10-15T17:09:59.000Z",
+      "dateModified": "2025-10-15T17:09:59.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          56.42
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 4"
+    ]
+  },
+  {
+    "id": "e7d2437f-cc65-4bf8-9a67-f08dd3338728",
+    "type": "photo",
+    "title": "Meeting your mom",
+    "month": 0,
+    "content": "/uploads/8bb866e6-a499-4b27-ac34-a1257c9dbafc.jpg",
+    "createdAt": "2025-11-20T21:02:34.741Z",
+    "updatedAt": "2025-11-23T21:08:26.118Z",
+    "published": true,
+    "order": 47,
+    "metadata": {
+      "dateTaken": "2025-10-16T05:20:35.000Z",
+      "dateModified": "2025-10-16T05:20:35.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          56.06
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 5"
+    ]
+  },
+  {
+    "id": "471cd525-92ff-4cbf-a066-b832ac67146d",
+    "type": "photo",
+    "title": "First family photo",
+    "month": 0,
+    "content": "/uploads/eefc881a-f417-441c-a766-7ee92879c4ef.jpg",
+    "createdAt": "2025-11-20T21:07:13.730Z",
+    "updatedAt": "2025-11-23T21:08:53.197Z",
+    "published": true,
+    "order": 48,
+    "metadata": {
+      "dateTaken": "2025-10-16T05:20:56.000Z",
+      "dateModified": "2025-10-16T05:20:56.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          56.05
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 5"
+    ]
+  },
+  {
+    "id": "c4534f66-46c2-449b-ba29-f454bd0e5dfb",
+    "type": "photo",
+    "title": "The first time I held you",
+    "month": 0,
+    "content": "/uploads/b7bcb767-b9fb-4dc2-be01-0fe5eca4b2a4.jpg",
+    "createdAt": "2025-11-20T21:07:36.052Z",
+    "updatedAt": "2025-11-23T21:09:26.695Z",
+    "published": true,
+    "order": 49,
+    "metadata": {
+      "dateTaken": "2025-10-16T07:00:29.000Z",
+      "dateModified": "2025-10-16T07:00:29.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          56.06
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 5"
+    ]
+  },
+  {
+    "id": "129b9e42-4e08-4936-b474-5db9d7af9ae1",
+    "type": "video",
+    "title": "Headed to the hospital",
+    "month": 0,
+    "content": "/uploads/54782681-cf28-46c2-b6b7-bf8633e5d4e6.MP4",
+    "createdAt": "2025-11-20T21:13:13.543Z",
+    "updatedAt": "2025-11-20T21:13:13.543Z",
+    "published": true,
+    "order": 34,
+    "metadata": {
+      "dateCreated": "2025-11-20T21:13:13.524Z",
+      "dateModified": "2025-11-20T21:13:13.524Z"
+    }
+  },
+  {
+    "id": "e22f6d65-77c8-4262-9651-87fc2da70b41",
+    "type": "video",
+    "title": "Labor in the tub",
+    "month": 0,
+    "content": "/uploads/33303782-931a-4ca6-a85e-a8ef2bdd1782.MOV",
+    "createdAt": "2025-11-20T21:15:14.490Z",
+    "updatedAt": "2025-11-24T02:51:32.112Z",
+    "published": true,
+    "order": 43,
+    "metadata": {
+      "dateCreated": "2025-11-20T21:15:14.464Z",
+      "dateModified": "2025-11-20T21:15:14.464Z"
+    },
+    "tags": []
+  },
+  {
+    "id": "b9123e19-80a0-4a85-aa56-d6f0ada7cb0d",
+    "type": "video",
+    "title": "Parading you through the hall",
+    "month": 0,
+    "content": "/uploads/1af63402-166b-4bc8-bfc0-28406b8c6860.mov",
+    "createdAt": "2025-11-20T21:16:44.458Z",
+    "updatedAt": "2025-11-21T20:16:03.453Z",
+    "published": true,
+    "order": 51,
+    "metadata": {
+      "dateCreated": "2025-11-20T21:16:44.429Z",
+      "dateModified": "2025-11-20T21:16:44.429Z"
+    },
+    "tags": []
+  },
+  {
+    "id": "e7cbc306-ed8d-49c7-bc18-400f00aec6d0",
+    "type": "photo",
+    "title": "My current view",
+    "month": 12,
+    "content": "/uploads/c0e7b278-80da-4a08-ae28-7bebf55ed523.jpg",
+    "createdAt": "2025-11-21T05:24:30.299Z",
+    "updatedAt": "2025-11-21T05:24:30.299Z",
+    "published": false,
+    "order": 0,
+    "metadata": {
+      "dateTaken": "2025-11-06T04:58:50.000Z",
+      "dateModified": "2025-11-06T04:58:50.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.12
+        ],
+        "longitude": null
+      }
+    }
+  },
+  {
+    "id": "94f075fb-7d63-4243-99be-f4ac9aa6854d",
+    "type": "text",
+    "title": "Checking up on you",
+    "month": 0,
+    "content": "In the meantime, we enjoyed all of the checkups on you. You measured about 20th percentile in weight, but your waist was extra small, around the 8th percentile. That led the doctors to label you \"growth restricted,\" which meant you needed a bit more monitoring than normal. I argued that you can't punish a girl for being extra fit, but they wouldn't budge.\n\nOverall it just meant more doctors appointments, more tests, and more cool pics of you. You were a sleepy little baby which made them nervous a couple times that you weren't doing well. So they'd get out this buzzer thing and buzz you through your mom's belly, which usually woke you up pretty good. \n\nPoor baby just wanted to lounge and you were getting buzzed by strange forces from beyond the womb!",
+    "createdAt": "2025-11-21T17:23:22.524Z",
+    "updatedAt": "2025-11-23T23:08:45.957Z",
+    "published": true,
+    "order": 22,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "1982a630-482c-4352-9d97-604597c29ecd",
+    "type": "text",
+    "title": "At the hospital",
+    "month": 0,
+    "content": "Once we got to the hospital, we got checked in and got your momma all hooked up to the equipment. We had two monitors on her belly, one for her contractions, and another for your heart beat, just to make sure none of the activities were stressing you out too much. \n\nOver the next ~15 hours, the contractions were mild and things were pretty mellow. There was a lot of Netflix and reading. Your mom had decided to try and give birth without medication, and at that point we were feeling like labor might be a cakewalk. \n\nBut then she felt something go down her leg, and we called the nurses in. Her water had broken, and it turns out the fun was just beginning. ",
+    "createdAt": "2025-11-21T17:47:23.610Z",
+    "updatedAt": "2025-11-21T17:59:46.301Z",
+    "published": true,
+    "order": 35,
+    "tags": []
+  },
+  {
+    "id": "353799ee-e818-4915-829d-d0ce155a4327",
+    "type": "text",
+    "title": "Labor begins",
+    "month": 0,
+    "content": "Once your mom's water broke, things started moving fast. I first noticed when she stopped paying attention to our Tour de France Netflix show, which was odd because the main character was leading the race in dramatic fashion. \"Liz look, the chain just fell off his bike!\" \"Nick I don't care, I'm in active labor\" \n\nThat was my first hint. \n\nTo ease the pain and provide some calm, I surrounded the hospital bathtub with fake candles we'd brought from home, and started playing some of Liz's favorite songs. It was mega zen. ",
+    "createdAt": "2025-11-21T17:59:15.150Z",
+    "updatedAt": "2025-11-22T05:39:09.281Z",
+    "published": true,
+    "order": 41,
+    "tags": []
+  },
+  {
+    "id": "383e3c5e-d24f-4894-9087-15d9f75b1f52",
+    "type": "text",
+    "title": "Giving birth",
+    "month": 0,
+    "content": "Things were going pretty well for a while, but after an hour your mom leaned out of the tub and threw up. Labor was ramping up a notch. \n\nOver the next couple of hours, she sweated and squirmed in the hospital bed. She finally decided enough was enough, and wanted an epidural to help ease the pain. The nurses started giving her fluids to prepare, and gave a heads up to the anesthesiologist. In the meantime, we tried to keep the mood as chill as possible.\n\nWhen the nurse came to check in, she heard something that made her pause. “Wait a minute Elizabeth, are you grunting? You aren't feeling the need to push right now, are you?” \n\nThey checked your mom and realized that over the past hour, things had progressed much faster than expected.  You were closer to making your grand entrance than anyone realized. \n\nAll of a sudden, things moved very quickly. They called our delivery doctor, Dr. Felly, who left home to drive in. They wheeled in a big table to the foot of your mom's bed, and started coaching her on how to properly push you out. Right then the anesthesiologist walked in, bringing over the epidural. He'd missed the memo - there wasn’t enough time for medication anymore. Minutes later, Dr. Felly ran in saying \"I just hit every green light to get here!\" \n\nYour mom wanted to change the vibes of the music - something louder to distract her, so I put our wedding dance floor playlist on shuffle. And then we held her legs back and started counting down for her to push, 10 seconds at a time. \n\nAnd that’s the story of how, amidst all of the mayhem, you came into this world to the song \"Hold on, I’m Comin,\" a real tone setter. ",
+    "createdAt": "2025-11-21T18:10:20.073Z",
+    "updatedAt": "2025-11-23T21:38:11.870Z",
+    "published": true,
+    "order": 44,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "1316cc6d-e884-46ed-8c8c-09fb1deb997a",
+    "type": "audio",
+    "title": "Hold On, I'm Comin'",
+    "month": 0,
+    "content": "/uploads/eaf146ac-7ab1-46b0-a55c-dc55303f7e4b.m4a",
+    "createdAt": "2025-11-21T20:06:33.404Z",
+    "updatedAt": "2025-11-22T04:53:46.112Z",
+    "published": true,
+    "order": 45,
+    "metadata": {
+      "dateCreated": "2025-11-21T20:06:33.344Z",
+      "dateModified": "2025-11-21T20:06:33.344Z",
+      "albumCoverUrl": "/uploads/6a2f0860-ecff-454e-b3e7-6f2b62e2370a.jpg"
+    },
+    "tags": [],
+    "caption": "Sam & Dave"
+  },
+  {
+    "id": "1cd99e4b-b9c2-470d-9688-6efa4df558ad",
+    "type": "audio",
+    "title": "Cerca De Ti",
+    "month": 0,
+    "content": "/uploads/56183bc5-3852-4a98-814b-8941bc512afc.m4a",
+    "caption": "Hermanos Gutiérrez",
+    "createdAt": "2025-11-22T04:03:15.062Z",
+    "updatedAt": "2025-11-22T05:00:44.194Z",
+    "published": true,
+    "order": 42,
+    "metadata": {
+      "dateCreated": "2025-11-22T04:03:14.980Z",
+      "dateModified": "2025-11-22T04:03:14.980Z",
+      "albumCoverUrl": "/uploads/7a6d78c6-637b-4cc7-a8a2-3f474dc65f55.jpg"
+    },
+    "tags": []
+  },
+  {
+    "id": "a6c70ea0-b2b6-4875-93f3-120a0aaa1e4f",
+    "type": "text",
+    "title": "Cried",
+    "month": 0,
+    "content": "You came out with a single loud chirp to let us know you were here, and then nustled into on your mom's chest at peace. I don't cry much, but I cried a lot right then. ",
+    "createdAt": "2025-11-22T05:16:32.299Z",
+    "updatedAt": "2025-11-23T21:48:09.318Z",
+    "published": true,
+    "order": 46,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "7c0de394-205d-49d9-8943-b976c6bf181f",
+    "type": "photo",
+    "title": "In the heater",
+    "month": 0,
+    "content": "/uploads/3daf2af3-dd2f-49f1-9cac-80390d86d9ba.jpg",
+    "createdAt": "2025-11-22T05:42:45.352Z",
+    "updatedAt": "2025-11-23T21:08:35.270Z",
+    "published": true,
+    "order": 49,
+    "metadata": {
+      "dateTaken": "2025-10-16T05:59:58.000Z",
+      "dateModified": "2025-10-16T05:59:58.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          56.05
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 5"
+    ]
+  },
+  {
+    "id": "54bc12b8-7146-418b-a779-6c2c2d8d9c76",
+    "type": "photo",
+    "title": "The morning after",
+    "month": 0,
+    "content": "/uploads/1c14639e-96af-4fa1-9e72-4b1ac9e0a6f5.jpg",
+    "createdAt": "2025-11-22T05:44:27.247Z",
+    "updatedAt": "2025-11-23T21:09:38.545Z",
+    "published": true,
+    "order": 52,
+    "metadata": {
+      "dateTaken": "2025-10-16T17:40:57.000Z",
+      "dateModified": "2025-10-16T17:40:57.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          55.92
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 6"
+    ]
+  },
+  {
+    "id": "dc8bf321-95d3-4fd7-9d0f-007cbd03fab0",
+    "type": "photo",
+    "title": "Holding hands with Dad",
+    "month": 0,
+    "content": "/uploads/19d4f2ea-0743-4703-a64b-24bab5dbc8d2.jpg",
+    "createdAt": "2025-11-22T05:44:57.000Z",
+    "updatedAt": "2025-11-23T21:41:44.510Z",
+    "published": true,
+    "order": 68,
+    "metadata": {
+      "dateTaken": "2025-10-17T14:54:01.000Z",
+      "dateModified": "2025-10-17T14:54:01.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          55.96
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 6"
+    ]
+  },
+  {
+    "id": "957b8f89-b1a9-4869-9c53-33ff84a11bdb",
+    "type": "video",
+    "title": "Meeting Mac",
+    "month": 0,
+    "content": "/uploads/1a55a687-7b7e-4563-add9-d11a759b1e41.mov",
+    "createdAt": "2025-11-23T21:23:50.294Z",
+    "updatedAt": "2025-11-23T21:41:20.541Z",
+    "published": true,
+    "order": 60,
+    "metadata": {
+      "dateCreated": "2025-11-23T21:23:50.214Z",
+      "dateModified": "2025-11-23T21:23:50.214Z"
+    },
+    "tags": [
+      "Carousel 6"
+    ]
+  },
+  {
+    "id": "8d3cbf0c-e6e9-4c49-ad57-cec90d1ac0bc",
+    "type": "photo",
+    "title": "Resting up",
+    "month": 0,
+    "content": "/uploads/8dcc7d6c-2bf3-4000-8c88-532ff6c79e02.jpg",
+    "createdAt": "2025-11-23T21:25:09.292Z",
+    "updatedAt": "2025-11-23T21:43:47.498Z",
+    "published": true,
+    "order": 67,
+    "metadata": {
+      "dateTaken": "2025-10-16T15:39:43.000Z",
+      "dateModified": "2025-10-16T15:39:43.000Z",
+      "camera": "Apple iPhone 15"
+    },
+    "tags": [
+      "Carousel 6"
+    ]
+  },
+  {
+    "id": "c266c45d-35b3-47d8-b857-623c3c22e1d4",
+    "type": "photo",
+    "title": "Meeting grandma and grandma (working titles, subject to change)",
+    "month": 0,
+    "content": "/uploads/da7354ed-c5ee-4ceb-a040-149d1e452b15.jpg",
+    "createdAt": "2025-11-23T21:25:55.325Z",
+    "updatedAt": "2025-11-23T21:43:16.866Z",
+    "published": true,
+    "order": 61,
+    "metadata": {
+      "dateTaken": "2025-10-16T15:51:22.000Z",
+      "dateModified": "2025-10-16T15:51:22.000Z",
+      "camera": "Apple iPhone 15"
+    },
+    "tags": [
+      "Carousel 6"
+    ]
+  },
+  {
+    "id": "c93ebf2b-8aaa-4cd3-8b3b-ab555cbac795",
+    "type": "photo",
+    "title": "Your family",
+    "month": 0,
+    "content": "/uploads/c22881dd-d685-4e16-807f-1dfda7a6a945.JPG",
+    "createdAt": "2025-11-23T21:26:36.437Z",
+    "updatedAt": "2025-11-23T21:26:36.437Z",
+    "published": true,
+    "order": 64,
+    "metadata": {
+      "dateTaken": "2025-10-16T15:52:35.000Z",
+      "dateModified": "2025-10-16T15:52:35.000Z",
+      "camera": "Apple iPhone 15 Pro Max",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          55.96
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 6"
+    ]
+  },
+  {
+    "id": "0f73bf19-3736-46c9-918d-dee3dca9eb47",
+    "type": "photo",
+    "title": "Sleeping at our bedside",
+    "month": 0,
+    "content": "/uploads/481d241d-258b-4136-86ad-b761e0ea43a5.jpg",
+    "createdAt": "2025-11-23T21:28:43.726Z",
+    "updatedAt": "2025-11-23T21:44:30.008Z",
+    "published": true,
+    "order": 65,
+    "metadata": {
+      "dateTaken": "2025-10-16T17:15:39.000Z",
+      "dateModified": "2025-10-16T17:15:39.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          56.06
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 6"
+    ]
+  },
+  {
+    "id": "11bc60a1-ba35-47e7-96c4-3e6b53baeedb",
+    "type": "photo",
+    "title": "Meeting Uncle Cal & Aunt Kate. Hair looking fire.",
+    "month": 0,
+    "content": "/uploads/451af339-8e0a-407d-a854-144486fe7f40.PNG",
+    "createdAt": "2025-11-23T21:30:09.091Z",
+    "updatedAt": "2025-11-23T23:19:42.039Z",
+    "published": true,
+    "order": 67,
+    "metadata": {
+      "dateTaken": "2025-10-17T01:10:18.000Z",
+      "dateModified": "2025-11-23T21:30:09.050Z"
+    },
+    "tags": [
+      "Carousel 6"
+    ]
+  },
+  {
+    "id": "21148895-f4e2-4047-a6ed-bfe707a0df61",
+    "type": "photo",
+    "title": "Hearing test. Took 2 tries to pass because your ear was clogged with fluid.",
+    "month": 0,
+    "content": "/uploads/4af44f9f-8229-4e2f-9c49-3a192752c7e6.jpg",
+    "createdAt": "2025-11-23T21:31:25.768Z",
+    "updatedAt": "2025-11-23T21:31:25.768Z",
+    "published": true,
+    "order": 67,
+    "metadata": {
+      "dateTaken": "2025-10-16T18:12:49.000Z",
+      "dateModified": "2025-10-16T18:12:49.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          56.06
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 6"
+    ]
+  },
+  {
+    "id": "25ce8c41-1e69-4873-b295-3d66de177fbb",
+    "type": "photo",
+    "title": "My POV of you",
+    "month": 1,
+    "content": "/uploads/673cdbda-72c1-4fd0-90b2-2280cc7e0cef.jpg",
+    "createdAt": "2025-11-23T21:33:05.756Z",
+    "updatedAt": "2025-11-23T21:33:05.756Z",
+    "published": true,
+    "order": 0,
+    "metadata": {
+      "dateTaken": "2025-10-19T05:46:12.000Z",
+      "dateModified": "2025-10-19T05:46:12.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.39
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 2"
+    ]
+  },
+  {
+    "id": "3d6c3a36-551a-4749-8ac3-6c23efdd8827",
+    "type": "photo",
+    "title": "Your POV of me",
+    "month": 1,
+    "content": "/uploads/edb733fa-ce68-436e-b66b-0f078b7d0ab0.jpg",
+    "createdAt": "2025-11-23T21:33:30.231Z",
+    "updatedAt": "2025-11-23T21:33:30.231Z",
+    "published": true,
+    "order": 2,
+    "metadata": {
+      "dateTaken": "2025-10-19T05:45:51.000Z",
+      "dateModified": "2025-10-19T05:45:51.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.39
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 2"
+    ]
+  },
+  {
+    "id": "b7e70482-3de5-406c-8e73-a0acafcd2083",
+    "type": "photo",
+    "title": "Meeting Papa Scott",
+    "month": 0,
+    "content": "/uploads/98d20e8d-16f7-48d0-bafd-81e51428435d.JPG",
+    "createdAt": "2025-11-23T23:11:53.142Z",
+    "updatedAt": "2025-11-23T23:11:53.142Z",
+    "published": true,
+    "order": 65,
+    "metadata": {
+      "dateTaken": "2025-10-16T15:26:23.000Z",
+      "dateModified": "2025-10-16T15:26:23.000Z",
+      "camera": "Apple iPhone 15 Pro Max",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          55.94
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 6"
+    ]
+  },
+  {
+    "id": "af4cf658-7b63-4bf9-b649-65c975590a14",
+    "type": "photo",
+    "title": "Aunt Madeline thought you were cute",
+    "month": 0,
+    "content": "/uploads/19cda058-dff9-41ae-85ac-d0328d6cf9f7.JPG",
+    "createdAt": "2025-11-23T23:15:47.969Z",
+    "updatedAt": "2025-11-23T23:15:47.969Z",
+    "published": true,
+    "order": 66,
+    "metadata": {
+      "dateTaken": "2025-10-16T15:27:47.000Z",
+      "dateModified": "2025-10-16T15:27:47.000Z",
+      "camera": "Apple iPhone 15 Pro Max",
+      "location": {
+        "latitude": [
+          39,
+          43,
+          55.96
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 6"
+    ]
+  },
+  {
+    "id": "aaf79c98-c25b-46b2-b4d7-6ae7f3667cef",
+    "type": "photo",
+    "title": "Napping with Grandma Mac",
+    "month": 1,
+    "content": "/uploads/dccb5f74-e082-475e-aacf-d655414878b3.jpg",
+    "createdAt": "2025-11-24T03:09:58.738Z",
+    "updatedAt": "2025-11-24T03:28:05.546Z",
+    "published": true,
+    "order": 6,
+    "metadata": {
+      "dateTaken": "2025-10-18T22:51:36.000Z",
+      "dateModified": "2025-10-18T22:51:36.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.39
+        ],
+        "longitude": null
+      }
+    },
+    "tags": []
+  },
+  {
+    "id": "c2c9dd5a-ebde-4f67-a675-a7a592b045cf",
+    "type": "photo",
+    "title": "First day home",
+    "month": 1,
+    "content": "/uploads/ac754728-4718-494e-8392-228e2edce0f2.JPG",
+    "createdAt": "2025-11-24T03:19:43.755Z",
+    "updatedAt": "2025-11-24T03:19:43.755Z",
+    "published": true,
+    "order": 0,
+    "metadata": {
+      "dateTaken": "2025-10-17T19:07:56.000Z",
+      "dateModified": "2025-10-17T19:07:56.000Z",
+      "camera": "Apple iPhone 15 Pro Max",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.48
+        ],
+        "longitude": null
+      }
+    }
+  },
+  {
+    "id": "ba57e09e-d37b-4d42-83c6-252a9008a2cd",
+    "type": "photo",
+    "title": "Thanksgiving turkey",
+    "month": 2,
+    "content": "/uploads/3fe204be-df12-4090-a104-2a2c9595dfc1.jpg",
+    "createdAt": "2025-11-24T03:23:17.519Z",
+    "updatedAt": "2025-11-24T03:23:17.519Z",
+    "published": true,
+    "order": 0,
+    "metadata": {
+      "dateTaken": "2025-11-15T23:04:49.000Z",
+      "dateModified": "2025-11-15T23:04:49.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.32
+        ],
+        "longitude": null
+      }
+    }
+  },
+  {
+    "id": "fbf5a43a-d7aa-4ce3-95b1-676553065429",
+    "type": "text",
+    "title": "Home sweet home",
+    "month": 1,
+    "content": "Home sweet home!\n\nAfter spending your entire newborn life (2 days) in a hospital, you were probably starting to think the world was a lot colder and more fluorescent than it really was. \n\nWe were happy to be home, and to show you all the beautiful things we have to offer like wood floors, warm lighting, Papa Scott’s famous biscuits and gravy, and our feral Monstera plant Kenny. \n\n",
+    "createdAt": "2025-11-24T03:39:43.347Z",
+    "updatedAt": "2025-11-24T03:39:43.347Z",
+    "published": true,
+    "order": 2,
+    "tags": [
+      "Hide Title"
+    ]
+  }
+]

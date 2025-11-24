@@ -1,0 +1,115 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getPostById, updatePost, deletePost } from "@/lib/posts";
+import type { Post } from "@/lib/types";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const post = await getPostById(id);
+
+    if (!post) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(post, { status: 200 });
+  } catch (err) {
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+}
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const body = await request.json();
+    const {
+      type,
+      title,
+      month,
+      content,
+      caption,
+      published,
+      order,
+      tags,
+      metadata,
+    } = body as {
+      type?: Post["type"];
+      title?: string;
+      month?: number;
+      content?: string;
+      caption?: string;
+      published?: boolean;
+      order?: number;
+      tags?: string[];
+      metadata?: Post["metadata"];
+    };
+
+    // Validate month if provided
+    if (month !== undefined && (!Number.isFinite(month) || month < 0)) {
+      return NextResponse.json(
+        { error: "Month must be a non-negative number (0-12)" },
+        { status: 400 }
+      );
+    }
+
+    // Validate type if provided
+    if (type && !["text", "audio", "video", "photo", "stat"].includes(type)) {
+      return NextResponse.json({ error: "Invalid type" }, { status: 400 });
+    }
+
+    // Validate title if provided
+    if (title !== undefined && !title.trim()) {
+      return NextResponse.json(
+        { error: "Title cannot be empty" },
+        { status: 400 }
+      );
+    }
+
+    const updates: Partial<Post> = {};
+    if (type !== undefined) updates.type = type;
+    if (title !== undefined) updates.title = title.trim();
+    if (month !== undefined) updates.month = month;
+    if (content !== undefined) updates.content = content;
+    if (caption !== undefined) updates.caption = caption?.trim() || undefined;
+    if (published !== undefined) updates.published = published;
+    if (order !== undefined) updates.order = Number.isFinite(order) ? order : 0;
+    if (tags !== undefined) updates.tags = tags;
+    if (metadata !== undefined) updates.metadata = metadata;
+
+    const updatedPost = await updatePost(id, updates);
+
+    if (!updatedPost) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(updatedPost, { status: 200 });
+  } catch (err) {
+    return NextResponse.json(
+      { error: "Invalid request body" },
+      { status: 400 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const deleted = await deletePost(id);
+
+    if (!deleted) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (err) {
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+}
