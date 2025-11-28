@@ -10,6 +10,7 @@ import {
   Stack,
   Divider,
 } from "@mui/material";
+import Link from "next/link";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
 const months = [
@@ -49,13 +50,13 @@ export default function AdminIndex() {
             Main Pages
           </Typography>
           <Stack direction="row" spacing={2} sx={{ mb: 4 }}>
-            <Button href="/" variant="contained">
+            <Button component={Link} href="/" variant="contained">
               Home
             </Button>
-            <Button href="/upload" variant="contained">
+            <Button component={Link} href="/upload" variant="contained">
               Upload Post
             </Button>
-            <Button href="/login" variant="outlined">
+            <Button component={Link} href="/login" variant="outlined">
               Login
             </Button>
           </Stack>
@@ -68,6 +69,7 @@ export default function AdminIndex() {
           </Typography>
           <Box sx={{ mb: 3 }}>
             <Button
+              component={Link}
               href="/admin/all"
               variant="contained"
               size="large"
@@ -95,6 +97,7 @@ export default function AdminIndex() {
             {months.map((month) => (
               <Button
                 key={month.num}
+                component={Link}
                 href={`/admin/${month.num}`}
                 variant="outlined"
                 fullWidth
@@ -126,6 +129,7 @@ export default function AdminIndex() {
             {months.map((month) => (
               <Button
                 key={month.num}
+                component={Link}
                 href={`/month/${month.num}`}
                 variant="outlined"
                 fullWidth

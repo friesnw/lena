@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   AppBar,
   Box,
@@ -33,6 +33,21 @@ export default function Navigation({ variant = "default" }: NavigationProps) {
   const isHomepage = pathname === "/";
   const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
   const isMonthPage = pathname.startsWith("/month/");
+
+  // Ensure Material Symbols font loads
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const linkId = "material-symbols-font";
+      if (!document.getElementById(linkId)) {
+        const link = document.createElement("link");
+        link.id = linkId;
+        link.rel = "stylesheet";
+        link.href =
+          "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap";
+        document.head.appendChild(link);
+      }
+    }
+  }, []);
 
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
@@ -79,70 +94,85 @@ export default function Navigation({ variant = "default" }: NavigationProps) {
       </Box>
 
       <List sx={{ flexGrow: 1, pt: 2 }}>
-        {monthNavigation.map((month) => (
-          <ListItem key={month.month} disablePadding>
-            <ListItemButton
-              component={Link}
-              href={`/month/${month.month}`}
-              onClick={handleLinkClick}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 2,
-                p: 2,
-                "&:hover": {
-                  bgcolor: (theme) => theme.palette.action.hover,
-                },
-              }}
-            >
-              <ListItemIcon
+        {monthNavigation.map((month) => {
+          const isActive = pathname === `/month/${month.month}`;
+          return (
+            <ListItem key={month.month} disablePadding>
+              <ListItemButton
+                component={Link}
+                href={`/month/${month.month}`}
+                onClick={handleLinkClick}
                 sx={{
-                  minWidth: 48,
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: 2,
-                  bgcolor: month.iconBgColor,
-                  width: 48,
-                  height: 48,
+                  gap: 2,
+                  p: 2,
+                  "&:hover": {
+                    bgcolor: (theme) => theme.palette.action.hover,
+                  },
                 }}
               >
-                {typeof month.icon === "string" ? (
-                  <Box
-                    component="span"
-                    className="material-symbols-outlined"
-                    sx={{
-                      fontSize: "1.5rem !important",
-                      fontFamily: '"Material Symbols Outlined" !important',
-                      fontWeight: 300,
-                      fontVariationSettings:
-                        '"FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24',
-                      display: "inline-block",
-                      lineHeight: 1,
-                      color: "#465362",
-                    }}
-                  >
-                    {month.icon}
-                  </Box>
-                ) : (
-                  <month.icon sx={{ fontSize: "1.5rem", color: "#465362" }} />
-                )}
-              </ListItemIcon>
-              <ListItemText
-                primary={month.title}
-                secondary={month.description}
-                primaryTypographyProps={{
-                  fontWeight: 600,
-                  color: "#465362",
-                }}
-                secondaryTypographyProps={{
-                  color: "#627080",
-                  fontSize: "0.875rem",
-                }}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
+                <ListItemIcon
+                  sx={{
+                    minWidth: 48,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 2,
+                    bgcolor: month.iconBgColor,
+                    width: 48,
+                    height: 48,
+                  }}
+                >
+                  {typeof month.icon === "string" ? (
+                    <Box
+                      component="span"
+                      className="material-symbols-outlined"
+                      sx={{
+                        fontSize: "1.5rem !important",
+                        fontFamily: '"Material Symbols Outlined" !important',
+                        fontWeight: isActive ? 400 : 300,
+                        fontVariationSettings: isActive
+                          ? '"FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24'
+                          : '"FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24',
+                        display: "inline-block",
+                        lineHeight: 1,
+                        color: isActive ? "#2a3441" : "#465362",
+                      }}
+                    >
+                      {month.icon}
+                    </Box>
+                  ) : (
+                    <month.icon
+                      sx={{
+                        fontSize: "1.5rem",
+                        color: isActive ? "#2a3441" : "#465362",
+                      }}
+                    />
+                  )}
+                </ListItemIcon>
+                <ListItemText
+                  primary={month.title}
+                  secondary={month.description}
+                  slotProps={{
+                    primary: {
+                      sx: {
+                        fontWeight: 600,
+                        color: "#465362",
+                      },
+                    },
+                    secondary: {
+                      sx: {
+                        color: "#627080",
+                        fontSize: "0.875rem",
+                      },
+                    },
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
 
       <Box
@@ -164,10 +194,12 @@ export default function Navigation({ variant = "default" }: NavigationProps) {
         >
           <ListItemText
             primary="About This Scrapbook"
-            primaryTypographyProps={{
-              fontWeight: 500,
-              sx: {
-                color: (theme) => theme.palette.text.primary,
+            slotProps={{
+              primary: {
+                sx: {
+                  fontWeight: 500,
+                  color: (theme) => theme.palette.text.primary,
+                },
               },
             }}
           />
@@ -228,135 +260,98 @@ export default function Navigation({ variant = "default" }: NavigationProps) {
             position: "fixed",
             top: 64, // AppBar height
             left: 0,
-            width: 320,
+            width: 280,
             height: "calc(100vh - 64px)",
-            bgcolor: (theme) => theme.palette.background.default,
+            bgcolor: (theme) => theme.palette.background.surface,
             display: "flex",
             flexDirection: "column",
             borderRight: 1,
-            borderColor: "divider",
+            borderColor: "#ededed",
             zIndex: 1000,
             overflowY: "auto",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              p: 2,
-              borderBottom: 1,
-              borderColor: "divider",
-            }}
-          >
-            <Typography
-              variant="h6"
-              component="h2"
-              sx={{
-                fontFamily: "var(--font-lora), serif",
-                fontWeight: 700,
-                color: (theme) => theme.palette.text.primary,
-              }}
-            >
-              Navigation
-            </Typography>
-          </Box>
-
           <List sx={{ flexGrow: 1, pt: 2 }}>
-            {monthNavigation.map((month) => (
-              <ListItem key={month.month} disablePadding>
-                <ListItemButton
-                  component={Link}
-                  href={`/month/${month.month}`}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 2,
-                    p: 2,
-                    "&:hover": {
-                      bgcolor: (theme) => theme.palette.action.hover,
-                    },
-                  }}
-                >
-                  <ListItemIcon
+            {monthNavigation.map((month) => {
+              const isActive = pathname === `/month/${month.month}`;
+              return (
+                <ListItem key={month.month} disablePadding>
+                  <ListItemButton
+                    component={Link}
+                    href={`/month/${month.month}`}
                     sx={{
-                      minWidth: 48,
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: 2,
-                      bgcolor: month.iconBgColor,
-                      width: 48,
-                      height: 48,
+                      gap: 2,
+                      p: 2,
+                      "&:hover": {
+                        bgcolor: (theme) => theme.palette.action.hover,
+                      },
                     }}
                   >
-                    {typeof month.icon === "string" ? (
-                      <Box
-                        component="span"
-                        className="material-symbols-outlined"
-                        sx={{
-                          fontSize: "1.5rem !important",
-                          fontFamily: '"Material Symbols Outlined" !important',
-                          fontWeight: 300,
-                          fontVariationSettings:
-                            '"FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24',
-                          display: "inline-block",
-                          lineHeight: 1,
-                          color: "#465362",
-                        }}
-                      >
-                        {month.icon}
-                      </Box>
-                    ) : (
-                      <month.icon
-                        sx={{ fontSize: "1.5rem", color: "#465362" }}
-                      />
-                    )}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={month.title}
-                    secondary={month.description}
-                    primaryTypographyProps={{
-                      fontWeight: 600,
-                      color: "#465362",
-                    }}
-                    secondaryTypographyProps={{
-                      color: "#627080",
-                      fontSize: "0.875rem",
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))}
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 48,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 2,
+                        bgcolor: month.iconBgColor,
+                        width: 48,
+                        height: 48,
+                      }}
+                    >
+                      {typeof month.icon === "string" ? (
+                        <Box
+                          component="span"
+                          className="material-symbols-outlined"
+                          sx={{
+                            fontSize: "1.5rem !important",
+                            fontFamily:
+                              '"Material Symbols Outlined" !important',
+                            fontWeight: isActive ? 400 : 300,
+                            fontVariationSettings: isActive
+                              ? '"FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24'
+                              : '"FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24',
+                            display: "inline-block",
+                            lineHeight: 1,
+                            color: isActive ? "#2a3441" : "#465362",
+                          }}
+                        >
+                          {month.icon}
+                        </Box>
+                      ) : (
+                        <month.icon
+                          sx={{
+                            fontSize: "1.5rem",
+                            color: isActive ? "#2a3441" : "#465362",
+                          }}
+                        />
+                      )}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={month.title}
+                      secondary={month.description}
+                      slotProps={{
+                        primary: {
+                          sx: {
+                            fontWeight: 600,
+                            color: "#465362",
+                          },
+                        },
+                        secondary: {
+                          sx: {
+                            color: "#627080",
+                            fontSize: "0.875rem",
+                          },
+                        },
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
           </List>
-
-          <Box
-            sx={{
-              p: 2,
-              borderTop: 1,
-              borderColor: "divider",
-            }}
-          >
-            <ListItemButton
-              component={Link}
-              href="/intro"
-              sx={{
-                "&:hover": {
-                  bgcolor: (theme) => theme.palette.action.hover,
-                },
-              }}
-            >
-              <ListItemText
-                primary="About This Scrapbook"
-                primaryTypographyProps={{
-                  fontWeight: 500,
-                  sx: {
-                    color: (theme) => theme.palette.text.primary,
-                  },
-                }}
-              />
-            </ListItemButton>
-          </Box>
         </Box>
       )}
 

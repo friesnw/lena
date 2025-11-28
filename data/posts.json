@@ -4,7 +4,7 @@
     "type": "photo",
     "title": "Jogging stroller ready, one year in advance",
     "month": 0,
-    "content": "/uploads/569449f7-7d79-4a09-8a70-24dc90d375e1.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/569449f7-7d79-4a09-8a70-24dc90d375e1.jpg",
     "createdAt": "2025-11-18T03:59:22.589Z",
     "updatedAt": "2025-11-21T17:35:16.110Z",
     "published": true,
@@ -18,7 +18,7 @@
     "type": "photo",
     "title": "Olympic National Park",
     "month": 0,
-    "content": "/uploads/9beb4f49-2519-4856-aa49-783c55a664b2.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/9beb4f49-2519-4856-aa49-783c55a664b2.jpg",
     "createdAt": "2025-11-18T04:12:34.175Z",
     "updatedAt": "2025-11-19T22:05:39.124Z",
     "published": true,
@@ -32,7 +32,7 @@
     "type": "photo",
     "title": "Your first photo",
     "month": 0,
-    "content": "/uploads/f5ef3353-f23f-46cc-bcce-fa5ee32fba9a.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/f5ef3353-f23f-46cc-bcce-fa5ee32fba9a.jpg",
     "caption": "We thought you looked cute",
     "createdAt": "2025-11-18T04:25:30.680Z",
     "updatedAt": "2025-11-21T17:32:28.768Z",
@@ -60,7 +60,7 @@
     "type": "photo",
     "title": "Your first ultrasound",
     "month": 0,
-    "content": "/uploads/41f4c489-9274-44c7-86d6-31c1ca6a4885.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/41f4c489-9274-44c7-86d6-31c1ca6a4885.jpg",
     "createdAt": "2025-11-18T04:30:49.736Z",
     "updatedAt": "2025-11-21T17:32:20.998Z",
     "published": true,
@@ -87,7 +87,7 @@
     "type": "photo",
     "title": "Proud mama",
     "month": 0,
-    "content": "/uploads/a71e9aaa-2b54-4f0d-808b-7256e3258f6a.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/a71e9aaa-2b54-4f0d-808b-7256e3258f6a.jpg",
     "createdAt": "2025-11-18T04:32:22.955Z",
     "updatedAt": "2025-11-21T17:32:36.806Z",
     "published": true,
@@ -114,7 +114,7 @@
     "type": "photo",
     "title": "Moorea, French Polynesia",
     "month": 10,
-    "content": "/uploads/2f03e816-b3dc-4c2f-bb1d-2ea1d86ca2ca.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/2f03e816-b3dc-4c2f-bb1d-2ea1d86ca2ca.jpg",
     "createdAt": "2025-11-18T04:36:36.901Z",
     "updatedAt": "2025-11-18T04:36:36.901Z",
     "published": true,
@@ -134,7 +134,7 @@
     "type": "photo",
     "title": "Plotting your personal color palette",
     "month": 2,
-    "content": "/uploads/a430e8f1-26a6-4e59-8591-bd6d449759f6.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/a430e8f1-26a6-4e59-8591-bd6d449759f6.jpg",
     "createdAt": "2025-11-18T04:42:08.081Z",
     "updatedAt": "2025-11-24T03:28:34.583Z",
     "published": true,
@@ -157,13 +157,13 @@
   {
     "id": "d9337694-a28d-45c4-b74a-b3f8c37138fa",
     "type": "text",
-    "title": "Summer travel",
+    "title": "Summer 2025",
     "month": 0,
-    "content": "In summer before you were born, we did lots of travel while you were cooking in your mama’s belly. \n\nYou went on trips with uncles, aunts, grandparents, and your cousin. You even made it all the way to New Zealand at one point. Some of the highlights below: ",
+    "content": "In summer before you arrived, we did lots of travel while you were cooking in your mama’s belly. \n\nYou went on trips with uncles, aunts, grandparents, and your cousin. You even made it all the way to New Zealand at one point. Some of the highlights below: ",
     "createdAt": "2025-11-19T04:37:47.912Z",
-    "updatedAt": "2025-11-24T02:50:31.281Z",
+    "updatedAt": "2025-11-24T21:24:46.698Z",
     "published": true,
-    "order": 1,
+    "order": 2,
     "tags": [
       "Hide Title"
     ]
@@ -189,7 +189,7 @@
     "month": 0,
     "content": "Because you were small, the doctors scheduled an induction on the evening of October 14, a couple weeks before you were due. We were very excited, and so was your uncle Cal, because there was a chance you could be born on October 16th, his birthday. \n \nBut when the evening of the 14th rolled around, we didn't get a call. We waited and waited, and then called the hospital to check in. It turned out it was an extra busy night, with lots of other babies being born. They told us to get some sleep, and they'd call us when they were ready. \n\nAnd then, around 1 am, we got the call. It was time! ",
     "createdAt": "2025-11-19T04:42:18.835Z",
-    "updatedAt": "2025-11-21T17:48:21.612Z",
+    "updatedAt": "2025-11-24T21:20:13.445Z",
     "published": true,
     "order": 31,
     "tags": []
@@ -199,7 +199,7 @@
     "type": "photo",
     "title": "Moorea, French Polynesia",
     "month": 0,
-    "content": "/uploads/f243751c-e3dd-4bb6-accb-cc071d3d8838.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/f243751c-e3dd-4bb6-accb-cc071d3d8838.jpg",
     "createdAt": "2025-11-19T21:56:15.410Z",
     "updatedAt": "2025-11-21T17:31:06.068Z",
     "published": true,
@@ -222,7 +222,7 @@
     "type": "video",
     "title": "Aitutaki, The Cook Islands",
     "month": 0,
-    "content": "/uploads/8296de5a-d7f3-40c4-99e0-2bb93043f82b.MOV",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/8296de5a-d7f3-40c4-99e0-2bb93043f82b.MOV",
     "createdAt": "2025-11-19T22:01:56.183Z",
     "updatedAt": "2025-11-24T03:08:04.733Z",
     "published": true,
@@ -241,7 +241,7 @@
     "type": "photo",
     "title": "Assembling your crib",
     "month": 0,
-    "content": "/uploads/ef6bf46f-7a6f-4ad4-b687-906074cfa2b6.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/ef6bf46f-7a6f-4ad4-b687-906074cfa2b6.jpg",
     "createdAt": "2025-11-20T20:52:32.145Z",
     "updatedAt": "2025-11-21T17:35:26.852Z",
     "published": true,
@@ -268,7 +268,7 @@
     "type": "photo",
     "title": "You and mom surveying the work",
     "month": 0,
-    "content": "/uploads/1e809eb3-8a41-4247-bcc6-afcdfbffe955.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/1e809eb3-8a41-4247-bcc6-afcdfbffe955.jpg",
     "createdAt": "2025-11-20T20:53:29.285Z",
     "updatedAt": "2025-11-20T20:53:29.285Z",
     "published": true,
@@ -295,7 +295,7 @@
     "type": "photo",
     "title": "Writing your name, to make sure we like it",
     "month": 0,
-    "content": "/uploads/9ca22165-6174-4129-91af-8a0cbf1d6b3d.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/9ca22165-6174-4129-91af-8a0cbf1d6b3d.jpg",
     "createdAt": "2025-11-20T20:54:35.075Z",
     "updatedAt": "2025-11-20T20:54:35.075Z",
     "published": true,
@@ -322,7 +322,7 @@
     "type": "photo",
     "title": "Showing off the menu (food wasn't great)",
     "month": 0,
-    "content": "/uploads/6f9cf34d-0a5b-47df-a58c-11a12b2d6a6d.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/6f9cf34d-0a5b-47df-a58c-11a12b2d6a6d.jpg",
     "createdAt": "2025-11-20T20:56:47.324Z",
     "updatedAt": "2025-11-21T18:02:11.172Z",
     "published": true,
@@ -349,7 +349,7 @@
     "type": "photo",
     "title": "Gorgeous as ever in the hospital",
     "month": 0,
-    "content": "/uploads/065fc218-6b82-49d7-919e-44b3a65a2ee0.JPG",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/065fc218-6b82-49d7-919e-44b3a65a2ee0.JPG",
     "createdAt": "2025-11-20T20:58:07.899Z",
     "updatedAt": "2025-11-20T20:58:07.899Z",
     "published": true,
@@ -367,7 +367,7 @@
     "type": "photo",
     "title": "Feeling the first contractions",
     "month": 0,
-    "content": "/uploads/7a2cce70-346d-4dfc-9bca-99cf803507c2.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/7a2cce70-346d-4dfc-9bca-99cf803507c2.jpg",
     "createdAt": "2025-11-20T20:59:03.336Z",
     "updatedAt": "2025-11-21T18:01:03.902Z",
     "published": true,
@@ -394,7 +394,7 @@
     "type": "photo",
     "title": "Meeting your mom",
     "month": 0,
-    "content": "/uploads/8bb866e6-a499-4b27-ac34-a1257c9dbafc.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/8bb866e6-a499-4b27-ac34-a1257c9dbafc.jpg",
     "createdAt": "2025-11-20T21:02:34.741Z",
     "updatedAt": "2025-11-23T21:08:26.118Z",
     "published": true,
@@ -421,7 +421,7 @@
     "type": "photo",
     "title": "First family photo",
     "month": 0,
-    "content": "/uploads/eefc881a-f417-441c-a766-7ee92879c4ef.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/eefc881a-f417-441c-a766-7ee92879c4ef.jpg",
     "createdAt": "2025-11-20T21:07:13.730Z",
     "updatedAt": "2025-11-23T21:08:53.197Z",
     "published": true,
@@ -448,7 +448,7 @@
     "type": "photo",
     "title": "The first time I held you",
     "month": 0,
-    "content": "/uploads/b7bcb767-b9fb-4dc2-be01-0fe5eca4b2a4.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/b7bcb767-b9fb-4dc2-be01-0fe5eca4b2a4.jpg",
     "createdAt": "2025-11-20T21:07:36.052Z",
     "updatedAt": "2025-11-23T21:09:26.695Z",
     "published": true,
@@ -475,22 +475,23 @@
     "type": "video",
     "title": "Headed to the hospital",
     "month": 0,
-    "content": "/uploads/54782681-cf28-46c2-b6b7-bf8633e5d4e6.MP4",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/54782681-cf28-46c2-b6b7-bf8633e5d4e6.MP4",
     "createdAt": "2025-11-20T21:13:13.543Z",
-    "updatedAt": "2025-11-20T21:13:13.543Z",
+    "updatedAt": "2025-11-24T21:20:24.691Z",
     "published": true,
-    "order": 34,
+    "order": 32,
     "metadata": {
       "dateCreated": "2025-11-20T21:13:13.524Z",
       "dateModified": "2025-11-20T21:13:13.524Z"
-    }
+    },
+    "tags": []
   },
   {
     "id": "e22f6d65-77c8-4262-9651-87fc2da70b41",
     "type": "video",
     "title": "Labor in the tub",
     "month": 0,
-    "content": "/uploads/33303782-931a-4ca6-a85e-a8ef2bdd1782.MOV",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/33303782-931a-4ca6-a85e-a8ef2bdd1782.MOV",
     "createdAt": "2025-11-20T21:15:14.490Z",
     "updatedAt": "2025-11-24T02:51:32.112Z",
     "published": true,
@@ -506,7 +507,7 @@
     "type": "video",
     "title": "Parading you through the hall",
     "month": 0,
-    "content": "/uploads/1af63402-166b-4bc8-bfc0-28406b8c6860.mov",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/1af63402-166b-4bc8-bfc0-28406b8c6860.mov",
     "createdAt": "2025-11-20T21:16:44.458Z",
     "updatedAt": "2025-11-21T20:16:03.453Z",
     "published": true,
@@ -522,7 +523,7 @@
     "type": "photo",
     "title": "My current view",
     "month": 12,
-    "content": "/uploads/c0e7b278-80da-4a08-ae28-7bebf55ed523.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/c0e7b278-80da-4a08-ae28-7bebf55ed523.jpg",
     "createdAt": "2025-11-21T05:24:30.299Z",
     "updatedAt": "2025-11-21T05:24:30.299Z",
     "published": false,
@@ -562,9 +563,9 @@
     "month": 0,
     "content": "Once we got to the hospital, we got checked in and got your momma all hooked up to the equipment. We had two monitors on her belly, one for her contractions, and another for your heart beat, just to make sure none of the activities were stressing you out too much. \n\nOver the next ~15 hours, the contractions were mild and things were pretty mellow. There was a lot of Netflix and reading. Your mom had decided to try and give birth without medication, and at that point we were feeling like labor might be a cakewalk. \n\nBut then she felt something go down her leg, and we called the nurses in. Her water had broken, and it turns out the fun was just beginning. ",
     "createdAt": "2025-11-21T17:47:23.610Z",
-    "updatedAt": "2025-11-21T17:59:46.301Z",
+    "updatedAt": "2025-11-24T21:20:37.326Z",
     "published": true,
-    "order": 35,
+    "order": 33,
     "tags": []
   },
   {
@@ -598,7 +599,7 @@
     "type": "audio",
     "title": "Hold On, I'm Comin'",
     "month": 0,
-    "content": "/uploads/eaf146ac-7ab1-46b0-a55c-dc55303f7e4b.m4a",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/eaf146ac-7ab1-46b0-a55c-dc55303f7e4b.m4a",
     "createdAt": "2025-11-21T20:06:33.404Z",
     "updatedAt": "2025-11-22T04:53:46.112Z",
     "published": true,
@@ -616,7 +617,7 @@
     "type": "audio",
     "title": "Cerca De Ti",
     "month": 0,
-    "content": "/uploads/56183bc5-3852-4a98-814b-8941bc512afc.m4a",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/56183bc5-3852-4a98-814b-8941bc512afc.m4a",
     "caption": "Hermanos Gutiérrez",
     "createdAt": "2025-11-22T04:03:15.062Z",
     "updatedAt": "2025-11-22T05:00:44.194Z",
@@ -648,7 +649,7 @@
     "type": "photo",
     "title": "In the heater",
     "month": 0,
-    "content": "/uploads/3daf2af3-dd2f-49f1-9cac-80390d86d9ba.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/3daf2af3-dd2f-49f1-9cac-80390d86d9ba.jpg",
     "createdAt": "2025-11-22T05:42:45.352Z",
     "updatedAt": "2025-11-23T21:08:35.270Z",
     "published": true,
@@ -675,7 +676,7 @@
     "type": "photo",
     "title": "The morning after",
     "month": 0,
-    "content": "/uploads/1c14639e-96af-4fa1-9e72-4b1ac9e0a6f5.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/1c14639e-96af-4fa1-9e72-4b1ac9e0a6f5.jpg",
     "createdAt": "2025-11-22T05:44:27.247Z",
     "updatedAt": "2025-11-23T21:09:38.545Z",
     "published": true,
@@ -702,7 +703,7 @@
     "type": "photo",
     "title": "Holding hands with Dad",
     "month": 0,
-    "content": "/uploads/19d4f2ea-0743-4703-a64b-24bab5dbc8d2.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/19d4f2ea-0743-4703-a64b-24bab5dbc8d2.jpg",
     "createdAt": "2025-11-22T05:44:57.000Z",
     "updatedAt": "2025-11-23T21:41:44.510Z",
     "published": true,
@@ -729,7 +730,7 @@
     "type": "video",
     "title": "Meeting Mac",
     "month": 0,
-    "content": "/uploads/1a55a687-7b7e-4563-add9-d11a759b1e41.mov",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/1a55a687-7b7e-4563-add9-d11a759b1e41.mov",
     "createdAt": "2025-11-23T21:23:50.294Z",
     "updatedAt": "2025-11-23T21:41:20.541Z",
     "published": true,
@@ -747,7 +748,7 @@
     "type": "photo",
     "title": "Resting up",
     "month": 0,
-    "content": "/uploads/8dcc7d6c-2bf3-4000-8c88-532ff6c79e02.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/8dcc7d6c-2bf3-4000-8c88-532ff6c79e02.jpg",
     "createdAt": "2025-11-23T21:25:09.292Z",
     "updatedAt": "2025-11-23T21:43:47.498Z",
     "published": true,
@@ -766,7 +767,7 @@
     "type": "photo",
     "title": "Meeting grandma and grandma (working titles, subject to change)",
     "month": 0,
-    "content": "/uploads/da7354ed-c5ee-4ceb-a040-149d1e452b15.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/da7354ed-c5ee-4ceb-a040-149d1e452b15.jpg",
     "createdAt": "2025-11-23T21:25:55.325Z",
     "updatedAt": "2025-11-23T21:43:16.866Z",
     "published": true,
@@ -785,7 +786,7 @@
     "type": "photo",
     "title": "Your family",
     "month": 0,
-    "content": "/uploads/c22881dd-d685-4e16-807f-1dfda7a6a945.JPG",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/c22881dd-d685-4e16-807f-1dfda7a6a945.JPG",
     "createdAt": "2025-11-23T21:26:36.437Z",
     "updatedAt": "2025-11-23T21:26:36.437Z",
     "published": true,
@@ -812,7 +813,7 @@
     "type": "photo",
     "title": "Sleeping at our bedside",
     "month": 0,
-    "content": "/uploads/481d241d-258b-4136-86ad-b761e0ea43a5.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/481d241d-258b-4136-86ad-b761e0ea43a5.jpg",
     "createdAt": "2025-11-23T21:28:43.726Z",
     "updatedAt": "2025-11-23T21:44:30.008Z",
     "published": true,
@@ -839,7 +840,7 @@
     "type": "photo",
     "title": "Meeting Uncle Cal & Aunt Kate. Hair looking fire.",
     "month": 0,
-    "content": "/uploads/451af339-8e0a-407d-a854-144486fe7f40.PNG",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/451af339-8e0a-407d-a854-144486fe7f40.PNG",
     "createdAt": "2025-11-23T21:30:09.091Z",
     "updatedAt": "2025-11-23T23:19:42.039Z",
     "published": true,
@@ -857,7 +858,7 @@
     "type": "photo",
     "title": "Hearing test. Took 2 tries to pass because your ear was clogged with fluid.",
     "month": 0,
-    "content": "/uploads/4af44f9f-8229-4e2f-9c49-3a192752c7e6.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/4af44f9f-8229-4e2f-9c49-3a192752c7e6.jpg",
     "createdAt": "2025-11-23T21:31:25.768Z",
     "updatedAt": "2025-11-23T21:31:25.768Z",
     "published": true,
@@ -882,22 +883,22 @@
   {
     "id": "25ce8c41-1e69-4873-b295-3d66de177fbb",
     "type": "photo",
-    "title": "My POV of you",
+    "title": "My current view of you",
     "month": 1,
-    "content": "/uploads/673cdbda-72c1-4fd0-90b2-2280cc7e0cef.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/174fd3f8-bb57-4c88-bb2d-76fd1f2efc0a.jpg",
     "createdAt": "2025-11-23T21:33:05.756Z",
-    "updatedAt": "2025-11-23T21:33:05.756Z",
+    "updatedAt": "2025-11-25T03:15:58.006Z",
     "published": true,
     "order": 0,
     "metadata": {
-      "dateTaken": "2025-10-19T05:46:12.000Z",
-      "dateModified": "2025-10-19T05:46:12.000Z",
+      "dateTaken": "2025-10-19T05:56:35.000Z",
+      "dateModified": "2025-10-19T05:56:35.000Z",
       "camera": "Apple iPhone 15",
       "location": {
         "latitude": [
           39,
           41,
-          32.39
+          32.52
         ],
         "longitude": null
       }
@@ -909,11 +910,11 @@
   {
     "id": "3d6c3a36-551a-4749-8ac3-6c23efdd8827",
     "type": "photo",
-    "title": "Your POV of me",
+    "title": "Your current view of me (if you actually had developed eyesight)",
     "month": 1,
-    "content": "/uploads/edb733fa-ce68-436e-b66b-0f078b7d0ab0.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/edb733fa-ce68-436e-b66b-0f078b7d0ab0.jpg",
     "createdAt": "2025-11-23T21:33:30.231Z",
-    "updatedAt": "2025-11-23T21:33:30.231Z",
+    "updatedAt": "2025-11-25T03:16:10.604Z",
     "published": true,
     "order": 2,
     "metadata": {
@@ -938,7 +939,7 @@
     "type": "photo",
     "title": "Meeting Papa Scott",
     "month": 0,
-    "content": "/uploads/98d20e8d-16f7-48d0-bafd-81e51428435d.JPG",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/98d20e8d-16f7-48d0-bafd-81e51428435d.JPG",
     "createdAt": "2025-11-23T23:11:53.142Z",
     "updatedAt": "2025-11-23T23:11:53.142Z",
     "published": true,
@@ -965,7 +966,7 @@
     "type": "photo",
     "title": "Aunt Madeline thought you were cute",
     "month": 0,
-    "content": "/uploads/19cda058-dff9-41ae-85ac-d0328d6cf9f7.JPG",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/19cda058-dff9-41ae-85ac-d0328d6cf9f7.JPG",
     "createdAt": "2025-11-23T23:15:47.969Z",
     "updatedAt": "2025-11-23T23:15:47.969Z",
     "published": true,
@@ -992,11 +993,11 @@
     "type": "photo",
     "title": "Napping with Grandma Mac",
     "month": 1,
-    "content": "/uploads/dccb5f74-e082-475e-aacf-d655414878b3.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/dccb5f74-e082-475e-aacf-d655414878b3.jpg",
     "createdAt": "2025-11-24T03:09:58.738Z",
-    "updatedAt": "2025-11-24T03:28:05.546Z",
+    "updatedAt": "2025-11-25T03:15:40.402Z",
     "published": true,
-    "order": 6,
+    "order": 0,
     "metadata": {
       "dateTaken": "2025-10-18T22:51:36.000Z",
       "dateModified": "2025-10-18T22:51:36.000Z",
@@ -1010,14 +1011,16 @@
         "longitude": null
       }
     },
-    "tags": []
+    "tags": [
+      "Carousel 3"
+    ]
   },
   {
     "id": "c2c9dd5a-ebde-4f67-a675-a7a592b045cf",
     "type": "photo",
     "title": "First day home",
     "month": 1,
-    "content": "/uploads/ac754728-4718-494e-8392-228e2edce0f2.JPG",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/ac754728-4718-494e-8392-228e2edce0f2.JPG",
     "createdAt": "2025-11-24T03:19:43.755Z",
     "updatedAt": "2025-11-24T03:19:43.755Z",
     "published": true,
@@ -1041,7 +1044,7 @@
     "type": "photo",
     "title": "Thanksgiving turkey",
     "month": 2,
-    "content": "/uploads/3fe204be-df12-4090-a104-2a2c9595dfc1.jpg",
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/3fe204be-df12-4090-a104-2a2c9595dfc1.jpg",
     "createdAt": "2025-11-24T03:23:17.519Z",
     "updatedAt": "2025-11-24T03:23:17.519Z",
     "published": true,
@@ -1065,13 +1068,1090 @@
     "type": "text",
     "title": "Home sweet home",
     "month": 1,
-    "content": "Home sweet home!\n\nAfter spending your entire newborn life (2 days) in a hospital, you were probably starting to think the world was a lot colder and more fluorescent than it really was. \n\nWe were happy to be home, and to show you all the beautiful things we have to offer like wood floors, warm lighting, Papa Scott’s famous biscuits and gravy, and our feral Monstera plant Kenny. \n\n",
+    "content": "Home sweet home!\n\nAfter spending your entire newborn life (2 days) in a hospital, you were probably starting to think the world was a lot colder and more fluorescent than it really was. \n\nWe were happy to be home, and to show you all the beautiful things we have to offer like wood floors, warm lighting, Papa Scott’s famous biscuits and gravy, and our Monstera plant Kenny. ",
     "createdAt": "2025-11-24T03:39:43.347Z",
-    "updatedAt": "2025-11-24T03:39:43.347Z",
+    "updatedAt": "2025-11-25T03:51:55.047Z",
     "published": true,
     "order": 2,
     "tags": [
       "Hide Title"
     ]
+  },
+  {
+    "id": "120c5169-d66b-441d-baf5-d5fb76d6a48f",
+    "type": "photo",
+    "title": "You, 0 days old",
+    "month": 0,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/ce98ce20-6877-42da-9d0b-60d00c82ce6c.jpg",
+    "createdAt": "2025-11-24T04:00:22.470Z",
+    "updatedAt": "2025-11-24T04:00:22.470Z",
+    "published": true,
+    "order": 0,
+    "metadata": {
+      "dateCreated": "2025-11-24T04:00:22.420Z",
+      "dateModified": "2025-11-24T04:00:22.420Z"
+    }
+  },
+  {
+    "id": "c84669ed-07f8-4b90-81ab-4d056b0ca857",
+    "type": "text",
+    "title": "You're probably wondering.",
+    "month": 0,
+    "content": "Yep, that's you in that heater. You're probably wondering how you got here. Well, let's take it back a few months, before you were born. ",
+    "createdAt": "2025-11-24T04:02:22.384Z",
+    "updatedAt": "2025-11-24T21:24:09.128Z",
+    "published": true,
+    "order": 1,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "1df29f9e-a755-475f-8652-0e18053d7e46",
+    "type": "photo",
+    "title": "Home",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/27a2db2d-c410-473c-870f-cbecc000f3e8.JPG",
+    "createdAt": "2025-11-24T21:51:37.980Z",
+    "updatedAt": "2025-11-25T03:14:38.242Z",
+    "published": true,
+    "order": 1,
+    "metadata": {
+      "dateTaken": "2025-10-17T18:06:59.000Z",
+      "dateModified": "2025-10-17T18:06:59.000Z",
+      "camera": "Apple iPhone 15 Pro Max",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.43
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 1"
+    ]
+  },
+  {
+    "id": "5523030d-3b7d-4ffe-9dba-668def272443",
+    "type": "text",
+    "title": "1am in the recliner",
+    "month": 1,
+    "content": "When you were first born, you were so exhausted that you slept like a rock in your bassinet. But now in night three, you have apparently become aware that you're not actually in the womb, and this has caused great distress. You want to be held and to be close to us, and if we put you down you just cannot sleep. \n\nSo here I am, writing this part at 1:00 am in a recliner in your nursery, covered in blankets and wearing a mask because I managed to get sick at the hospital. You're sleeping in my arms, and we're exhausted but who cares because here you are! You finally showed up, and you’re cuddled into my right arm with you head in my elbow, feet in my hand, sweet as can be. \n\nAs tired as your mom and I are, we wouldn’t trade these cuddles for anything.",
+    "createdAt": "2025-11-24T21:56:43.032Z",
+    "updatedAt": "2025-11-25T04:14:13.633Z",
+    "published": true,
+    "order": 13,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "ee80d77b-f635-4e01-ab66-ff17ffacf6b5",
+    "type": "text",
+    "title": "Your effect",
+    "month": 1,
+    "content": "You seem to have a sentimental effect on people. Grandma Mac stayed with us an extra few days to help out, and twice I walked in on her sitting in the rocking chair with you in her arms and tears rolling down her face. And a few days later when Grandma C was here, you did the same thing to her. \n\nThere's something about looking down at you that brings out a feeling words can't express. And what it must be like for our parents! They sat in similar rocking chairs 31 years ago, cradling us when we were just as little.",
+    "createdAt": "2025-11-24T22:34:20.754Z",
+    "updatedAt": "2025-11-26T22:49:56.187Z",
+    "published": true,
+    "order": 20,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "adff8f5a-a6ae-45b3-a84e-b0b460ff19c5",
+    "type": "photo",
+    "title": "Napping with Grandma C",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/39b7ce92-4e57-4a26-89af-84c2335db49d.jpg",
+    "createdAt": "2025-11-24T22:57:46.955Z",
+    "updatedAt": "2025-11-25T04:06:12.275Z",
+    "published": true,
+    "order": 11,
+    "metadata": {
+      "dateTaken": "2025-10-30T14:14:00.000Z",
+      "dateModified": "2025-10-30T14:14:00.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.11
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 3"
+    ]
+  },
+  {
+    "id": "fd5d2c6c-1469-4c86-94ab-efe8a8865a6a",
+    "type": "video",
+    "title": "Getting burped. Visualizing success.",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/37f1839e-eb19-4d7d-b459-c77453dc5dd8.mov",
+    "createdAt": "2025-11-24T22:59:29.101Z",
+    "updatedAt": "2025-11-26T04:15:20.544Z",
+    "published": true,
+    "order": 60,
+    "metadata": {
+      "dateCreated": "2025-11-24T22:59:29.060Z",
+      "dateModified": "2025-11-24T22:59:29.060Z"
+    },
+    "tags": []
+  },
+  {
+    "id": "1559c3a2-8d87-4cb7-82f6-4739a9c48ac1",
+    "type": "text",
+    "title": "Visitors",
+    "month": 1,
+    "content": "Over the coming days, a stream of our best friends visited to pay their respects like wisemen bringing gifts to baby jesus. We started collecting polaroid photos of you with them:",
+    "createdAt": "2025-11-25T02:54:20.598Z",
+    "updatedAt": "2025-11-25T04:20:36.450Z",
+    "published": true,
+    "order": 31,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "a69b5e3f-8e5a-439c-94ac-26549fcb1efb",
+    "type": "photo",
+    "title": "With Mac",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/a812327c-3fda-4ae0-9729-b0b77b5c9278.jpg",
+    "createdAt": "2025-11-25T03:14:06.529Z",
+    "updatedAt": "2025-11-25T03:38:00.388Z",
+    "published": true,
+    "order": 2,
+    "metadata": {
+      "dateTaken": "2025-10-20T00:08:01.000Z",
+      "dateModified": "2025-10-20T00:08:01.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          31.81
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Hide Title",
+      "Carousel 3"
+    ]
+  },
+  {
+    "id": "076cddbc-0ccd-43ea-9779-ae547a3a285a",
+    "type": "photo",
+    "title": "Hands in mouth",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/6faa9d45-9945-4f7f-89cc-fe127ef0d200.jpg",
+    "createdAt": "2025-11-25T03:24:28.233Z",
+    "updatedAt": "2025-11-25T03:37:45.587Z",
+    "published": true,
+    "order": 2,
+    "metadata": {
+      "dateTaken": "2025-10-20T00:08:05.000Z",
+      "dateModified": "2025-10-20T00:08:05.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.14
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 3"
+    ]
+  },
+  {
+    "id": "cc43abb1-8851-4573-84f2-39b06e4d5ac8",
+    "type": "photo",
+    "title": "Closeup",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/479fadf0-a6d8-466a-b7ab-b37aa430fe21.jpg",
+    "createdAt": "2025-11-25T03:25:10.719Z",
+    "updatedAt": "2025-11-25T03:30:41.886Z",
+    "published": true,
+    "order": 8,
+    "metadata": {
+      "dateTaken": "2025-10-20T00:09:30.000Z",
+      "dateModified": "2025-10-20T00:09:30.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.21
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 3",
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "0f85b6a3-bcf0-44e6-a946-c63caf83d45d",
+    "type": "photo",
+    "title": "Liz holding lena 1",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/baeb311b-8d2c-4d4b-a951-48f1363f8558.jpg",
+    "createdAt": "2025-11-25T03:26:22.093Z",
+    "updatedAt": "2025-11-26T04:58:57.407Z",
+    "published": true,
+    "order": 60,
+    "metadata": {
+      "dateTaken": "2025-10-20T18:28:31.000Z",
+      "dateModified": "2025-10-20T18:28:31.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.15
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 5"
+    ]
+  },
+  {
+    "id": "79cb0eff-4f69-46a1-927e-a60744edc6a6",
+    "type": "photo",
+    "title": "Liz holding lena 2",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/a59c962a-7164-42c3-99f9-f29eec3d750f.jpg",
+    "createdAt": "2025-11-25T03:27:01.071Z",
+    "updatedAt": "2025-11-26T04:59:28.264Z",
+    "published": true,
+    "order": 61,
+    "metadata": {
+      "dateTaken": "2025-10-20T18:28:36.000Z",
+      "dateModified": "2025-10-20T18:28:36.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.17
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Hide Title",
+      "Carousel 5"
+    ]
+  },
+  {
+    "id": "8c69fa86-7eaa-4477-a07a-b58158386955",
+    "type": "photo",
+    "title": "Quality time with Grandma C",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/48729795-ec39-4f4a-98ec-3fa70bac6fcd.jpg",
+    "createdAt": "2025-11-25T03:27:53.409Z",
+    "updatedAt": "2025-11-25T04:05:58.320Z",
+    "published": true,
+    "order": 10,
+    "metadata": {
+      "dateTaken": "2025-10-27T18:13:58.000Z",
+      "dateModified": "2025-10-27T18:13:58.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.11
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 3"
+    ]
+  },
+  {
+    "id": "f68e5bcf-e798-407e-9d2d-6f678755cc41",
+    "type": "photo",
+    "title": "Bed time with Grandma C",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/1f15eb52-bac0-4ba9-89d9-629571863090.jpg",
+    "createdAt": "2025-11-25T03:30:05.177Z",
+    "updatedAt": "2025-11-25T04:05:10.707Z",
+    "published": true,
+    "order": 11,
+    "metadata": {
+      "dateTaken": "2025-10-28T01:01:04.000Z",
+      "dateModified": "2025-10-28T01:01:04.000Z",
+      "camera": "Apple iPhone 15"
+    },
+    "tags": [
+      "Carousel 3"
+    ]
+  },
+  {
+    "id": "965ed104-c93f-43ec-bad2-23ef0a22ff33",
+    "type": "video",
+    "title": "First walk",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/a87f8a55-e634-4375-83c8-216f6ae68426.MOV",
+    "createdAt": "2025-11-25T03:47:29.970Z",
+    "updatedAt": "2025-11-26T22:55:11.757Z",
+    "published": true,
+    "order": 12,
+    "metadata": {
+      "dateCreated": "2025-11-25T04:11:19.269Z",
+      "dateModified": "2025-11-25T04:11:19.269Z",
+      "dateTaken": "2025-10-17T15:11:00.000Z"
+    },
+    "tags": [
+      "Carousel 1"
+    ]
+  },
+  {
+    "id": "c42522c5-f3e3-46a9-a031-5009c835df79",
+    "type": "text",
+    "title": "One song",
+    "month": 1,
+    "content": "I remember one moment from that week, when it was just us three in bed, and everything felt just right. Your mom had this song playing:",
+    "createdAt": "2025-11-25T04:03:50.712Z",
+    "updatedAt": "2025-11-25T04:12:17.608Z",
+    "published": true,
+    "order": 10,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "b6a0cd4a-94ce-46f6-8452-0a8a71fcf219",
+    "type": "audio",
+    "title": "Astral Plane",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/19349969-1948-4c55-abba-913f1fa6118d.m4a",
+    "caption": "Valerie June",
+    "createdAt": "2025-11-25T04:04:43.259Z",
+    "updatedAt": "2025-11-25T04:12:00.377Z",
+    "published": true,
+    "order": 10,
+    "metadata": {
+      "dateTaken": "2025-11-25T04:04:42.472Z",
+      "dateCreated": "2025-11-25T04:04:42.472Z",
+      "dateModified": "2025-11-25T04:04:42.472Z",
+      "albumCoverUrl": "/uploads/814c868b-3a50-4a8c-9e83-283814ff0414.jpg"
+    },
+    "tags": []
+  },
+  {
+    "id": "1909a865-15f4-4a80-896a-00d9de6fc2a0",
+    "type": "photo",
+    "title": "Swaddled up",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/bcf9b37b-c2f0-4f8e-bf72-3ceb22d68ee8.jpg",
+    "createdAt": "2025-11-25T04:10:37.564Z",
+    "updatedAt": "2025-11-25T04:10:37.564Z",
+    "published": true,
+    "order": 16,
+    "metadata": {
+      "dateTaken": "2025-10-17T18:54:31.000Z",
+      "dateModified": "2025-10-17T18:54:31.000Z",
+      "camera": "Apple iPhone 14 Pro",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.17
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 1",
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "bd4d2fab-333c-4551-9671-188d089d1ea2",
+    "type": "photo",
+    "title": "Polaroids",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/87ef64a7-a83a-4816-a900-cf6cbb303fbf.JPG",
+    "createdAt": "2025-11-25T04:21:21.684Z",
+    "updatedAt": "2025-11-25T04:21:21.684Z",
+    "published": true,
+    "order": 33,
+    "metadata": {
+      "dateTaken": "2025-10-26T14:57:35.000Z",
+      "dateModified": "2025-10-26T14:57:35.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32
+        ],
+        "longitude": null
+      }
+    }
+  },
+  {
+    "id": "6a859d64-de36-4030-b62c-d62af6459a24",
+    "type": "text",
+    "title": "Peaches",
+    "month": 1,
+    "content": "And so the fun began. \n\nThe mornings were your best times for play, because your brain was fresh and not over stimulated yet. As long as the nights could be, we never felt tired the next day.",
+    "createdAt": "2025-11-25T04:34:52.399Z",
+    "updatedAt": "2025-11-26T03:54:55.077Z",
+    "published": true,
+    "order": 34,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "f7721c86-6c3c-4fa0-8983-8a822f44d65d",
+    "type": "audio",
+    "title": "Peaches",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/791d84ff-b9ab-4c1d-9eda-3e4cc604898f.m4a",
+    "caption": "Bob Schneider",
+    "createdAt": "2025-11-25T04:37:29.270Z",
+    "updatedAt": "2025-11-26T04:01:55.812Z",
+    "published": true,
+    "order": 36,
+    "metadata": {
+      "dateTaken": "2025-11-25T04:37:29.189Z",
+      "dateCreated": "2025-11-25T04:37:29.189Z",
+      "dateModified": "2025-11-25T04:37:29.189Z",
+      "albumCoverUrl": "/uploads/1b0e38f0-955d-48e6-9297-8bed400f43e4.jpg"
+    },
+    "tags": []
+  },
+  {
+    "id": "34b8d1e0-8da3-442a-9d01-920e58a00dfe",
+    "type": "video",
+    "title": "Dancing to \"Peaches\" by Bob Schneider",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/1a70b932-a152-4f5c-94cb-879ef59510aa.mov",
+    "createdAt": "2025-11-26T03:58:06.715Z",
+    "updatedAt": "2025-11-26T23:02:14.581Z",
+    "published": true,
+    "order": 34,
+    "metadata": {
+      "dateTaken": "2025-11-07T03:58:00.000Z",
+      "dateCreated": "2025-11-26T03:58:06.613Z",
+      "dateModified": "2025-11-26T03:58:06.613Z"
+    },
+    "tags": []
+  },
+  {
+    "id": "82a4f67e-8183-414c-b22b-69226edbb018",
+    "type": "text",
+    "title": "Crinkle toy",
+    "month": 1,
+    "content": "We had this black and white banner toy that make a loud crinkle sound. It consistently caught your attention and made your head turn, which I think technically makes it your first favorite toy. Pretty cool. ",
+    "createdAt": "2025-11-26T04:05:53.278Z",
+    "updatedAt": "2025-11-26T04:05:53.278Z",
+    "published": true,
+    "order": 37,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "d600c438-37f4-4161-bb8d-354c5ae88259",
+    "type": "photo",
+    "title": "Introduction to Crinkle Toy",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/65e987d3-1abe-4423-8a83-720b077aacd8.jpg",
+    "createdAt": "2025-11-26T04:07:41.575Z",
+    "updatedAt": "2025-11-26T04:53:24.154Z",
+    "published": true,
+    "order": 1,
+    "metadata": {
+      "dateTaken": "2025-11-06T14:15:36.000Z",
+      "dateModified": "2025-11-06T14:15:36.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          31.88
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 4"
+    ]
+  },
+  {
+    "id": "44dae724-c233-470e-9b29-794512d0de47",
+    "type": "video",
+    "title": "Early mornings on South Pearl",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/4de1a67d-d357-47e7-a614-2ddd724dbacf.mov",
+    "createdAt": "2025-11-26T04:12:33.346Z",
+    "updatedAt": "2025-11-26T22:58:03.225Z",
+    "published": true,
+    "order": 20,
+    "metadata": {
+      "dateTaken": "2025-10-24T03:12:00.000Z",
+      "dateCreated": "2025-11-26T04:12:33.277Z",
+      "dateModified": "2025-11-26T04:12:33.277Z"
+    },
+    "tags": [
+      "Carousel 2"
+    ]
+  },
+  {
+    "id": "3915f1eb-27bb-4339-9313-4a3012d54fb2",
+    "type": "photo",
+    "title": "Rediscovering your chalk name, drawn the day before you were born",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/2d2f1d0c-b711-4e81-9a1c-8a20ae416213.jpg",
+    "createdAt": "2025-11-26T04:22:09.969Z",
+    "updatedAt": "2025-11-26T04:55:23.898Z",
+    "published": true,
+    "order": 17,
+    "metadata": {
+      "dateTaken": "2025-10-21T16:35:27.000Z",
+      "dateModified": "2025-10-21T16:35:27.000Z",
+      "camera": "Apple iPhone 14 Pro",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          14.66
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 4"
+    ]
+  },
+  {
+    "id": "296404a3-de1b-49a9-8ffa-4b37cf47dbbf",
+    "type": "photo",
+    "title": "Tiny",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/3a2df24b-4b4c-483e-bb59-ce1fbbca2ec3.jpg",
+    "createdAt": "2025-11-26T04:22:57.536Z",
+    "updatedAt": "2025-11-26T04:22:57.536Z",
+    "published": true,
+    "order": 24,
+    "metadata": {
+      "dateTaken": "2025-10-23T01:16:45.000Z",
+      "dateModified": "2025-10-23T01:16:45.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          31.99
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 4"
+    ]
+  },
+  {
+    "id": "ba1b6b6a-c75e-4e37-83e8-e2b8662d0386",
+    "type": "photo",
+    "title": "In Wash Park",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/4594e966-fade-47c0-8732-b0b5e7ccc6d6.jpg",
+    "createdAt": "2025-11-26T04:24:22.257Z",
+    "updatedAt": "2025-11-26T22:51:02.233Z",
+    "published": true,
+    "order": 13,
+    "metadata": {
+      "dateTaken": "2025-10-23T17:36:00.000Z",
+      "dateModified": "2025-10-23T17:36:08.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          44.31
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 4"
+    ]
+  },
+  {
+    "id": "c5bceb1e-f3b8-4597-9d26-41927f70b766",
+    "type": "photo",
+    "title": "Milk drunk.",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/2e59a1df-d885-4834-a435-84551a43cab5.jpg",
+    "createdAt": "2025-11-26T04:25:22.124Z",
+    "updatedAt": "2025-11-26T22:52:29.016Z",
+    "published": true,
+    "order": 80,
+    "metadata": {
+      "dateTaken": "2025-10-23T20:52:00.000Z",
+      "dateModified": "2025-10-23T20:52:19.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.08
+        ],
+        "longitude": null
+      }
+    },
+    "tags": []
+  },
+  {
+    "id": "e133b4a6-bd7a-4e43-bbe4-9a99e09012f4",
+    "type": "video",
+    "title": "Reading",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/2f43ff48-8706-4e7e-a3e2-4efeace4d499.mov",
+    "createdAt": "2025-11-26T04:30:16.244Z",
+    "updatedAt": "2025-11-26T23:06:59.384Z",
+    "published": true,
+    "order": 11,
+    "metadata": {
+      "dateTaken": "2025-10-31T03:30:00.000Z",
+      "dateCreated": "2025-11-26T04:30:16.183Z",
+      "dateModified": "2025-11-26T04:30:16.183Z"
+    },
+    "tags": [
+      "Carousel 4",
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "c3da63ed-fbc8-48af-b6af-3c12cab400cf",
+    "type": "photo",
+    "title": "Mid morning nap",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/fad737f7-33da-48f6-bb6c-9c32f8f2ba74.jpg",
+    "createdAt": "2025-11-26T04:31:27.001Z",
+    "updatedAt": "2025-11-26T04:31:27.001Z",
+    "published": true,
+    "order": 80,
+    "metadata": {
+      "dateTaken": "2025-10-28T15:49:47.000Z",
+      "dateModified": "2025-10-28T15:49:47.000Z",
+      "camera": "Apple iPhone 15"
+    }
+  },
+  {
+    "id": "0b129b0b-867b-481d-a8aa-03ea81e54a77",
+    "type": "photo",
+    "title": "Superior neck control",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/2509b9c3-ceff-4949-9b16-aa3e0a8b8f7e.jpg",
+    "createdAt": "2025-11-26T04:32:06.192Z",
+    "updatedAt": "2025-11-26T22:51:34.796Z",
+    "published": true,
+    "order": 14,
+    "metadata": {
+      "dateTaken": "2025-10-28T17:22:00.000Z",
+      "dateModified": "2025-10-28T17:22:04.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.07
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 4"
+    ]
+  },
+  {
+    "id": "57d0a97b-a48a-4c22-b88a-75e9e29c3a72",
+    "type": "photo",
+    "title": "Planning a trip to mexico",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/7f017e8c-2fc2-4f0b-867b-bed1c1d8f6cd.jpg",
+    "createdAt": "2025-11-26T04:32:55.781Z",
+    "updatedAt": "2025-11-26T04:32:55.781Z",
+    "published": true,
+    "order": 80,
+    "metadata": {
+      "dateTaken": "2025-10-30T22:45:58.000Z",
+      "dateModified": "2025-10-30T22:45:58.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          40,
+          57.48
+        ],
+        "longitude": null
+      }
+    }
+  },
+  {
+    "id": "5737f618-4bb6-45e2-8a40-18a3cdca1ceb",
+    "type": "video",
+    "title": "Pobre",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/bb33f8da-6ba1-49f1-b9d0-cb26623e1e66.MOV",
+    "createdAt": "2025-11-26T04:35:45.219Z",
+    "updatedAt": "2025-11-26T04:35:45.219Z",
+    "published": true,
+    "order": 80,
+    "metadata": {
+      "dateTaken": "2025-11-26T04:35:44.586Z",
+      "dateCreated": "2025-11-26T04:35:44.586Z",
+      "dateModified": "2025-11-26T04:35:44.586Z"
+    }
+  },
+  {
+    "id": "a7d8d856-3085-4c92-8964-297864a4aab8",
+    "type": "photo",
+    "title": "Milk fiend",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/a4c86b13-4a58-4e0b-b6fc-7ef4812ecdf7.jpg",
+    "createdAt": "2025-11-26T04:36:55.796Z",
+    "updatedAt": "2025-11-26T04:56:30.801Z",
+    "published": true,
+    "order": 80,
+    "metadata": {
+      "dateTaken": "2025-11-04T01:52:25.000Z",
+      "dateModified": "2025-11-26T04:36:55.770Z"
+    },
+    "tags": [
+      "Carousel 4"
+    ]
+  },
+  {
+    "id": "04e929a0-a09d-4bf2-bdc3-f8c236f380c2",
+    "type": "photo",
+    "title": "pooping",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/5c7bcdd9-53ca-467a-90a3-4114cc68bf3d.jpg",
+    "createdAt": "2025-11-26T04:37:25.008Z",
+    "updatedAt": "2025-11-26T04:37:25.008Z",
+    "published": true,
+    "order": 80,
+    "metadata": {
+      "dateTaken": "2025-11-04T22:49:36.000Z",
+      "dateModified": "2025-11-04T22:49:36.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.15
+        ],
+        "longitude": null
+      }
+    }
+  },
+  {
+    "id": "93685bea-f24b-49e0-9f46-be74c0082fa7",
+    "type": "video",
+    "title": "Acknowledgement of Crinkle Toy",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/2e9eb0df-6faa-4e93-afbf-0f2b2b99179d.mov",
+    "createdAt": "2025-11-26T04:40:24.220Z",
+    "updatedAt": "2025-11-26T23:03:13.358Z",
+    "published": true,
+    "order": 4,
+    "metadata": {
+      "dateTaken": "2025-11-08T04:40:00.000Z",
+      "dateCreated": "2025-11-26T04:40:23.602Z",
+      "dateModified": "2025-11-26T04:40:23.602Z"
+    },
+    "tags": [
+      "Carousel 4"
+    ]
+  },
+  {
+    "id": "621c5041-d158-46d6-b140-efcc9797f90e",
+    "type": "photo",
+    "title": "Evergreen lake",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/5ed57fd2-7f8c-4a7f-b455-3c71aeae8a5c.jpg",
+    "createdAt": "2025-11-26T04:42:57.276Z",
+    "updatedAt": "2025-11-26T04:42:57.276Z",
+    "published": true,
+    "order": 79,
+    "metadata": {
+      "dateTaken": "2025-11-07T16:57:09.000Z",
+      "dateModified": "2025-11-07T16:57:09.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          37,
+          57.03
+        ],
+        "longitude": null
+      }
+    }
+  },
+  {
+    "id": "77dadc1c-fc5f-4c8e-8715-c7b3b2034620",
+    "type": "photo",
+    "title": "Worship of Crinkle Toy",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/0e97c180-80cb-4d0b-b8ac-555f99b13f50.jpg",
+    "createdAt": "2025-11-26T04:43:23.532Z",
+    "updatedAt": "2025-11-26T04:54:02.866Z",
+    "published": true,
+    "order": 6,
+    "metadata": {
+      "dateTaken": "2025-11-08T18:28:00.000Z",
+      "dateModified": "2025-11-08T18:28:00.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.07
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 4"
+    ]
+  },
+  {
+    "id": "7918d70a-25fa-4a31-a0fe-75d39473987e",
+    "type": "video",
+    "title": "Farmers market with Grandpa B",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/3b2b82e2-6a33-482c-a893-8d92f467e28b.mov",
+    "createdAt": "2025-11-26T04:44:57.658Z",
+    "updatedAt": "2025-11-26T04:44:57.658Z",
+    "published": true,
+    "order": 79,
+    "metadata": {
+      "dateTaken": "2025-11-26T04:44:57.567Z",
+      "dateCreated": "2025-11-26T04:44:57.567Z",
+      "dateModified": "2025-11-26T04:44:57.567Z"
+    }
+  },
+  {
+    "id": "d8d6f2ef-8379-40a7-8c17-727d561e06db",
+    "type": "photo",
+    "title": "Bath",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/1979852f-48ff-4c72-9b43-554762e22ad4.jpg",
+    "createdAt": "2025-11-26T04:47:03.475Z",
+    "updatedAt": "2025-11-26T04:47:03.475Z",
+    "published": true,
+    "order": 79,
+    "metadata": {
+      "dateTaken": "2025-11-10T16:05:38.000Z",
+      "dateModified": "2025-11-10T16:05:38.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          31.86
+        ],
+        "longitude": null
+      }
+    }
+  },
+  {
+    "id": "0d3bc684-f093-4eb8-a327-9c0764e00d0c",
+    "type": "audio",
+    "title": "Easy Does It",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/fe9d9595-362f-4116-8cb9-df1cc36eebc2.m4a",
+    "caption": "GoldFord",
+    "createdAt": "2025-11-26T04:50:16.664Z",
+    "updatedAt": "2025-11-26T04:50:16.664Z",
+    "published": true,
+    "order": 45,
+    "metadata": {
+      "dateTaken": "2025-11-26T04:50:16.527Z",
+      "dateCreated": "2025-11-26T04:50:16.527Z",
+      "dateModified": "2025-11-26T04:50:16.527Z",
+      "albumCoverUrl": "/uploads/c401fa21-35cc-4407-b69e-1bf82ef86dbf.jpg"
+    }
+  },
+  {
+    "id": "516107cd-6d2e-4e8b-9426-32cfb5132d7e",
+    "type": "text",
+    "title": "Family Night",
+    "month": 1,
+    "content": "With all the extra free time, we quickly began a tradition called \"Family Night\".which could mean anything from baths to board games, ice cream, or wine (and milk) on the front swing porch.\n\nOverall, that extra time was put to ",
+    "createdAt": "2025-11-26T05:01:59.865Z",
+    "updatedAt": "2025-11-26T05:01:59.865Z",
+    "published": true,
+    "order": 50,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "4bdef167-0eff-4d90-9f24-4dfa461d22e1",
+    "type": "text",
+    "title": "Next month",
+    "month": 1,
+    "content": "Will you learn to poop better next month? Tune in to find out. ",
+    "createdAt": "2025-11-26T05:05:34.290Z",
+    "updatedAt": "2025-11-26T05:05:34.290Z",
+    "published": true,
+    "order": 200,
+    "tags": [
+      "Hide Title"
+    ]
+  },
+  {
+    "id": "a002052b-f793-4617-9355-096f72c95599",
+    "type": "photo",
+    "title": "Aquarium toy (highly advanced)",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/c098726e-8876-4d4c-b6c7-e1308136f55c.jpg",
+    "createdAt": "2025-11-26T23:12:23.281Z",
+    "updatedAt": "2025-11-26T23:12:23.281Z",
+    "published": true,
+    "order": 90,
+    "metadata": {
+      "dateTaken": "2025-11-08T18:25:41.000Z",
+      "dateModified": "2025-11-08T18:25:41.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.19
+        ],
+        "longitude": null
+      }
+    },
+    "tags": [
+      "Carousel 4"
+    ]
+  },
+  {
+    "id": "a1070ba6-f056-4c7c-bc89-1d9fe5ef4dd6",
+    "type": "video",
+    "title": "Getting your \"suck burst\" measured. You scored highest in the entire mountain west region.",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/8d7e0e5a-c6ce-4f0f-9bbd-728991cd5f50.MOV",
+    "createdAt": "2025-11-26T23:19:06.457Z",
+    "updatedAt": "2025-11-26T23:19:06.457Z",
+    "published": true,
+    "order": 90,
+    "metadata": {
+      "dateTaken": "2025-11-26T23:19:06.405Z",
+      "dateCreated": "2025-11-26T23:19:06.405Z",
+      "dateModified": "2025-11-26T23:19:06.405Z"
+    }
+  },
+  {
+    "id": "aa249483-dc17-4055-afc4-65181f479a9e",
+    "type": "video",
+    "title": "Bath 1",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/3378ddb7-1c89-4b37-8aa1-f8c70d92a75d.MOV",
+    "createdAt": "2025-11-26T23:19:57.537Z",
+    "updatedAt": "2025-11-26T23:19:57.537Z",
+    "published": true,
+    "order": 90,
+    "metadata": {
+      "dateTaken": "2025-11-27T03:23:00.000Z",
+      "dateCreated": "2025-11-26T23:19:57.492Z",
+      "dateModified": "2025-11-26T23:19:57.492Z"
+    }
+  },
+  {
+    "id": "cbc7c267-549e-4d15-ad2c-ace9dae70aa5",
+    "type": "photo",
+    "title": "This is a classic Pobre. Inconsolible.",
+    "month": 2,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/ceae8d84-b9e1-4894-afd9-14b8927f3d8e.jpg",
+    "createdAt": "2025-11-27T06:04:59.833Z",
+    "updatedAt": "2025-11-27T06:04:59.833Z",
+    "published": true,
+    "order": 90,
+    "metadata": {
+      "dateTaken": "2025-11-24T20:18:43.000Z",
+      "dateModified": "2025-11-24T20:18:43.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.1
+        ],
+        "longitude": null
+      }
+    }
+  },
+  {
+    "id": "2bb09d36-b16d-4cac-b3fd-32c2cf9857d0",
+    "type": "photo",
+    "title": "bath 2",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/d4116244-7601-46e9-b882-fec4ca3418d4.jpg",
+    "createdAt": "2025-11-27T06:06:58.114Z",
+    "updatedAt": "2025-11-27T06:06:58.114Z",
+    "published": true,
+    "order": 90,
+    "metadata": {
+      "dateTaken": "2025-11-13T22:39:59.000Z",
+      "dateModified": "2025-11-13T22:39:59.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.17
+        ],
+        "longitude": null
+      }
+    }
+  },
+  {
+    "id": "c8e2eceb-4de9-4fb2-b43f-7d7e17c67b7d",
+    "type": "photo",
+    "title": "bath 3",
+    "month": 1,
+    "content": "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/baf23cee-f7e4-40ec-b5ae-77b154a8271e.jpg",
+    "createdAt": "2025-11-27T06:07:09.878Z",
+    "updatedAt": "2025-11-27T06:07:09.878Z",
+    "published": true,
+    "order": 90,
+    "metadata": {
+      "dateTaken": "2025-11-15T22:59:34.000Z",
+      "dateModified": "2025-11-15T22:59:34.000Z",
+      "camera": "Apple iPhone 15",
+      "location": {
+        "latitude": [
+          39,
+          41,
+          32.25
+        ],
+        "longitude": null
+      }
+    }
   }
 ]

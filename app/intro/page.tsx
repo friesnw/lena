@@ -15,7 +15,7 @@ import { getDaysSinceOct15_2025 } from "@/lib/utils";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
 const introPhoto = {
-  src: "/uploads/c0e7b278-80da-4a08-ae28-7bebf55ed523.jpg",
+  src: "https://letters-for-lena-media.s3.us-east-2.amazonaws.com/uploads/c0e7b278-80da-4a08-ae28-7bebf55ed523.jpg",
   title: "My current view",
   dateTaken: "2025-10-15T12:00:00.000Z",
 };

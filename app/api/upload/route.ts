@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { existsSync } from "fs";
-import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import sharp from "sharp";
 import exifr from "exifr";
 import { parseBuffer } from "music-metadata";
+import { uploadToS3, isS3Configured } from "@/lib/s3";
 
 // Route segment config for handling large file uploads
 export const maxDuration = 300; // 5 minutes for large video uploads
@@ -98,10 +96,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Ensure uploads directory exists
-    const uploadsDir = path.join(process.cwd(), "public", "uploads");
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true });
+    // Check if S3 is configured
+    if (!isS3Configured()) {
+      return NextResponse.json(
+        {
+          error:
+            "S3 is not properly configured. Please check your environment variables.",
+        },
+        { status: 500 }
+      );
     }
 
     // Get file as ArrayBuffer (needed for heic-convert)
@@ -221,24 +224,91 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Handle video files - extract basic metadata if possible
+    // Handle video files - extract metadata (especially date taken/created)
     if (fileType === "video") {
       try {
-        // For now, we'll just log video info
-        // Future: could use ffmpeg or similar to extract duration, dimensions, etc.
-        console.log("Processing video file:", {
-          name: file.name,
-          type: file.type,
-          size: file.size,
+        // Extract metadata from video files using exifr
+        // exifr can extract metadata from many video formats (MP4, MOV, etc.)
+        const videoExifData = await exifr.parse(buffer, {
+          pick: [
+            "DateTimeOriginal",
+            "CreateDate",
+            "ModifyDate",
+            "MediaCreateDate",
+            "MediaModifyDate",
+            "TrackCreateDate",
+            "TrackModifyDate",
+            "MovieHeaderCreateDate",
+            "MovieHeaderModifyDate",
+          ],
         });
+
+        if (videoExifData) {
+          // Date taken/created - prioritize DateTimeOriginal, then various creation date fields
+          if (videoExifData.DateTimeOriginal) {
+            metadata.dateTaken = new Date(
+              videoExifData.DateTimeOriginal
+            ).toISOString();
+          } else if (videoExifData.CreateDate) {
+            metadata.dateTaken = new Date(
+              videoExifData.CreateDate
+            ).toISOString();
+          } else if (videoExifData.MediaCreateDate) {
+            metadata.dateTaken = new Date(
+              videoExifData.MediaCreateDate
+            ).toISOString();
+          } else if (videoExifData.TrackCreateDate) {
+            metadata.dateTaken = new Date(
+              videoExifData.TrackCreateDate
+            ).toISOString();
+          } else if (videoExifData.MovieHeaderCreateDate) {
+            metadata.dateTaken = new Date(
+              videoExifData.MovieHeaderCreateDate
+            ).toISOString();
+          }
+
+          // Date modified
+          if (videoExifData.ModifyDate) {
+            metadata.dateModified = new Date(
+              videoExifData.ModifyDate
+            ).toISOString();
+          } else if (videoExifData.MediaModifyDate) {
+            metadata.dateModified = new Date(
+              videoExifData.MediaModifyDate
+            ).toISOString();
+          } else if (videoExifData.TrackModifyDate) {
+            metadata.dateModified = new Date(
+              videoExifData.TrackModifyDate
+            ).toISOString();
+          } else if (videoExifData.MovieHeaderModifyDate) {
+            metadata.dateModified = new Date(
+              videoExifData.MovieHeaderModifyDate
+            ).toISOString();
+          }
+
+          // Store all video EXIF data for reference
+          metadata.videoExif = videoExifData;
+
+          console.log("Video metadata extracted:", {
+            name: file.name,
+            dateTaken: metadata.dateTaken,
+            dateModified: metadata.dateModified,
+          });
+        } else {
+          console.log("No video metadata found in file:", file.name);
+        }
       } catch (videoError) {
-        console.warn("Failed to process video metadata:", videoError);
+        console.warn("Failed to extract video metadata:", videoError);
+        // Continue without video metadata - will fall back to file.lastModified
       }
     }
 
-    // Fallback to file's lastModified date if no EXIF date found
+    // Fallback to file's lastModified date if no metadata date found
+    // Set both dateTaken and dateCreated so day calculation can use dateTaken
     if (!metadata.dateTaken && !metadata.dateCreated) {
-      metadata.dateCreated = new Date(file.lastModified).toISOString();
+      const fallbackDate = new Date(file.lastModified).toISOString();
+      metadata.dateTaken = fallbackDate;
+      metadata.dateCreated = fallbackDate;
     }
 
     // Also store file's lastModified as a fallback
@@ -260,8 +330,8 @@ export async function POST(request: NextRequest) {
     });
 
     let uniqueFileName: string;
-    let filePath: string;
     let finalBuffer: Buffer;
+    let finalContentType: string;
 
     if (isHeic && fileType === "photo") {
       // Convert HEIC to JPEG using heic-convert
@@ -355,7 +425,7 @@ export async function POST(request: NextRequest) {
         }
 
         uniqueFileName = `${uuidv4()}.jpg`;
-        filePath = path.join(uploadsDir, uniqueFileName);
+        finalContentType = "image/jpeg";
       } catch (error) {
         console.error("HEIC conversion error:", error);
         const errorMessage =
@@ -383,38 +453,32 @@ export async function POST(request: NextRequest) {
       }
     } else {
       // Use original file
-      const fileExtension = path.extname(file.name);
-      uniqueFileName = `${uuidv4()}${fileExtension}`;
-      filePath = path.join(uploadsDir, uniqueFileName);
+      const fileExtension = file.name.split(".").pop() || "";
+      uniqueFileName = `${uuidv4()}.${fileExtension}`;
       finalBuffer = buffer;
+      finalContentType = file.type;
     }
 
-    // TODO:
-    // Generate derivatives:
-    // •	Original (or near-original) quality: e.g. 3000px wide JPEG.
-    // •	Medium: ~1200px.
-    // •	Thumbnail: ~300px.
-    // 4.	Store in object storage (S3 / GCS / Azure Blob):
-    // •	E.g. /photos/{id}/original.heic (if you keep the original)
-    // •	and /photos/{id}/full.jpg, /photos/{id}/1200.webp, /photos/{id}/300.jpg.
-    // 5.	Return metadata to the FE, not the raw HEIC:
-
-    // Save file
+    // Upload file to S3
+    let s3Url: string;
     try {
-      console.log("Writing file to disk...", {
-        filePath,
+      console.log("Uploading file to S3...", {
+        fileName: uniqueFileName,
         bufferSize: finalBuffer.length,
         fileType,
+        contentType: finalContentType,
       });
-      await writeFile(filePath, finalBuffer);
-      console.log("File written successfully");
-    } catch (writeError) {
-      console.error("Failed to write file:", writeError);
+      s3Url = await uploadToS3(finalBuffer, uniqueFileName, finalContentType);
+      console.log("File uploaded successfully to S3:", s3Url);
+    } catch (uploadError) {
+      console.error("Failed to upload file to S3:", uploadError);
       const errorMessage =
-        writeError instanceof Error ? writeError.message : String(writeError);
+        uploadError instanceof Error
+          ? uploadError.message
+          : String(uploadError);
       return NextResponse.json(
         {
-          error: "Failed to save file",
+          error: "Failed to upload file to S3",
           details:
             process.env.NODE_ENV === "development"
               ? { message: errorMessage }
@@ -424,9 +488,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Return the public path (relative to public directory)
-    const publicPath = `/uploads/${uniqueFileName}`;
-
     // Determine the final file type (JPEG if converted from HEIC)
     const finalType = isHeic && fileType === "photo" ? "image/jpeg" : file.type;
     const finalSize =
@@ -435,7 +496,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        path: publicPath,
+        path: s3Url, // Return full S3 URL instead of relative path
         filename: uniqueFileName,
         originalName: file.name,
         size: finalSize,

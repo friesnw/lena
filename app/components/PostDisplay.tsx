@@ -101,7 +101,7 @@ export default function PostDisplay({ post }: PostDisplayProps) {
                   preload="metadata"
                   sx={{
                     width: "100%",
-                    height: "100%",
+                    height: "800px",
                     objectFit: "cover",
                   }}
                 >

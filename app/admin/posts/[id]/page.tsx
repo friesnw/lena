@@ -69,8 +69,27 @@ export default function EditPost() {
   const [order, setOrder] = useState<number>(0);
   const [albumCoverFile, setAlbumCoverFile] = useState<File | null>(null);
   const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [mediaFilePreviewUrl, setMediaFilePreviewUrl] = useState<string | null>(
+    null
+  );
+  const [albumCoverPreviewUrl, setAlbumCoverPreviewUrl] = useState<
+    string | null
+  >(null);
+  const [dateTaken, setDateTaken] = useState<string>("");
   const pageTitle = "Edit Post";
   usePageTitle(pageTitle);
+
+  // Clean up preview URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      if (mediaFilePreviewUrl) {
+        URL.revokeObjectURL(mediaFilePreviewUrl);
+      }
+      if (albumCoverPreviewUrl) {
+        URL.revokeObjectURL(albumCoverPreviewUrl);
+      }
+    };
+  }, [mediaFilePreviewUrl, albumCoverPreviewUrl]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -93,6 +112,17 @@ export default function EditPost() {
               getAllowedTags(data.type).includes(tag)
             )
           );
+          // Load dateTaken if available, convert to date format
+          if (data.metadata?.dateTaken) {
+            // Convert ISO string to date format (YYYY-MM-DD)
+            const date = new Date(data.metadata.dateTaken);
+            const localDate = new Date(
+              date.getTime() - date.getTimezoneOffset() * 60000
+            )
+              .toISOString()
+              .slice(0, 10);
+            setDateTaken(localDate);
+          }
         } else {
           setError(data.error || "Failed to load post");
         }
@@ -173,6 +203,14 @@ export default function EditPost() {
         };
       }
 
+      // Override with manually entered dateTaken if provided
+      if (dateTaken && (type === "photo" || type === "video")) {
+        metadataToSave = {
+          ...(metadataToSave || {}),
+          dateTaken: new Date(dateTaken).toISOString(),
+        };
+      }
+
       const response = await fetch(`/api/posts/${postId}`, {
         method: "PATCH",
         headers: {
@@ -196,6 +234,15 @@ export default function EditPost() {
       if (response.ok) {
         setSuccess("Post updated successfully!");
         setPost(data);
+        // Clean up preview URLs
+        if (mediaFilePreviewUrl) {
+          URL.revokeObjectURL(mediaFilePreviewUrl);
+          setMediaFilePreviewUrl(null);
+        }
+        if (albumCoverPreviewUrl) {
+          URL.revokeObjectURL(albumCoverPreviewUrl);
+          setAlbumCoverPreviewUrl(null);
+        }
         setMediaFile(null);
         setAlbumCoverFile(null);
         // Reset file inputs
@@ -380,7 +427,15 @@ export default function EditPost() {
                     type="file"
                     onChange={(e) => {
                       if (e.target.files && e.target.files[0]) {
-                        setMediaFile(e.target.files[0]);
+                        const selectedFile = e.target.files[0];
+                        setMediaFile(selectedFile);
+                        // Clean up old preview URL
+                        if (mediaFilePreviewUrl) {
+                          URL.revokeObjectURL(mediaFilePreviewUrl);
+                        }
+                        // Create new preview URL
+                        const previewUrl = URL.createObjectURL(selectedFile);
+                        setMediaFilePreviewUrl(previewUrl);
                       }
                     }}
                   />
@@ -392,14 +447,85 @@ export default function EditPost() {
                     </Button>
                   </label>
                   {mediaFile && (
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ mt: 1 }}
-                    >
-                      New file: {mediaFile.name} (
-                      {(mediaFile.size / 1024).toFixed(2)} KB)
-                    </Typography>
+                    <Box sx={{ mt: 2 }}>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mb: 1 }}
+                      >
+                        New file: {mediaFile.name} (
+                        {(mediaFile.size / 1024).toFixed(2)} KB)
+                      </Typography>
+                      {mediaFilePreviewUrl && (
+                        <Box sx={{ mt: 2 }}>
+                          {type === "photo" && (
+                            <>
+                              {mediaFile.name.toLowerCase().endsWith(".heic") ||
+                              mediaFile.name.toLowerCase().endsWith(".heif") ||
+                              mediaFile.type === "image/heic" ||
+                              mediaFile.type === "image/heif" ? (
+                                <Alert severity="info" sx={{ mb: 2 }}>
+                                  HEIC files will be converted to JPEG on
+                                  upload. Preview not available in browser.
+                                </Alert>
+                              ) : (
+                                <Box
+                                  sx={{
+                                    position: "relative",
+                                    width: "100%",
+                                    maxWidth: "400px",
+                                    height: "auto",
+                                    borderRadius: 1,
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  <Image
+                                    src={mediaFilePreviewUrl}
+                                    alt="Preview"
+                                    width={400}
+                                    height={300}
+                                    style={{
+                                      width: "100%",
+                                      height: "auto",
+                                      objectFit: "contain",
+                                    }}
+                                    unoptimized
+                                    onError={() => {
+                                      // If image fails to load, show message
+                                      console.warn("Failed to load preview");
+                                    }}
+                                  />
+                                </Box>
+                              )}
+                            </>
+                          )}
+                          {type === "video" && (
+                            <Box
+                              component="video"
+                              src={mediaFilePreviewUrl}
+                              controls
+                              style={{
+                                width: "100%",
+                                maxWidth: "600px",
+                                height: "auto",
+                                borderRadius: 4,
+                              }}
+                            />
+                          )}
+                          {type === "audio" && (
+                            <Box
+                              component="audio"
+                              src={mediaFilePreviewUrl}
+                              controls
+                              style={{
+                                width: "100%",
+                                maxWidth: "600px",
+                              }}
+                            />
+                          )}
+                        </Box>
+                      )}
+                    </Box>
                   )}
                 </Box>
                 <TextField
@@ -423,6 +549,35 @@ export default function EditPost() {
               />
             )}
 
+            {/* Date Taken field for photos & videos */}
+            {(type === "photo" || type === "video") && (
+              <Box sx={{ mb: 2 }}>
+                <TextField
+                  fullWidth
+                  type="date"
+                  label="Capture Date"
+                  value={dateTaken}
+                  onChange={(e) => setDateTaken(e.target.value)}
+                  slotProps={{
+                    inputLabel: {
+                      shrink: true,
+                    },
+                  }}
+                  helperText="Set the capture date for this media"
+                />
+                {post.metadata?.dateTaken && (
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ mt: 1, display: "block" }}
+                  >
+                    Current:{" "}
+                    {new Date(post.metadata.dateTaken).toLocaleDateString()}
+                  </Typography>
+                )}
+              </Box>
+            )}
+
             {type === "audio" && (
               <Box sx={{ mb: 2 }}>
                 <input
@@ -432,7 +587,15 @@ export default function EditPost() {
                   type="file"
                   onChange={(e) => {
                     if (e.target.files && e.target.files[0]) {
-                      setAlbumCoverFile(e.target.files[0]);
+                      const selectedFile = e.target.files[0];
+                      setAlbumCoverFile(selectedFile);
+                      // Clean up old preview URL
+                      if (albumCoverPreviewUrl) {
+                        URL.revokeObjectURL(albumCoverPreviewUrl);
+                      }
+                      // Create new preview URL
+                      const previewUrl = URL.createObjectURL(selectedFile);
+                      setAlbumCoverPreviewUrl(previewUrl);
                     }
                   }}
                 />
@@ -446,14 +609,36 @@ export default function EditPost() {
                   </Button>
                 </label>
                 {albumCoverFile && (
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 1 }}
-                  >
-                    {albumCoverFile.name} (
-                    {(albumCoverFile.size / 1024).toFixed(2)} KB)
-                  </Typography>
+                  <Box sx={{ mt: 2 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mb: 1 }}
+                    >
+                      New album cover: {albumCoverFile.name} (
+                      {(albumCoverFile.size / 1024).toFixed(2)} KB)
+                    </Typography>
+                    {albumCoverPreviewUrl && (
+                      <Box
+                        sx={{
+                          position: "relative",
+                          width: 200,
+                          height: 200,
+                          borderRadius: 2,
+                          overflow: "hidden",
+                          mt: 1,
+                        }}
+                      >
+                        <Image
+                          src={albumCoverPreviewUrl}
+                          alt="Album cover preview"
+                          fill
+                          style={{ objectFit: "cover" }}
+                          unoptimized
+                        />
+                      </Box>
+                    )}
+                  </Box>
                 )}
                 {!albumCoverFile && post.metadata?.albumCoverUrl && (
                   <Box sx={{ mt: 1 }}>

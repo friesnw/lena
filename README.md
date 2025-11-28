@@ -1,5 +1,45 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment Setup
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```env
+# Authentication
+PASSWORD=your_password_here
+
+# AWS S3 Configuration (Required for file uploads)
+AWS_REGION=us-east-2
+AWS_ACCESS_KEY_ID=your_access_key_id
+AWS_SECRET_ACCESS_KEY=your_secret_access_key
+AWS_S3_BUCKET_NAME=letters-for-lena-media
+NEXT_PUBLIC_MEDIA_BASE_URL=https://letters-for-lena-media.s3.us-east-2.amazonaws.com
+```
+
+### AWS S3 Setup
+
+1. Create an S3 bucket in your AWS account
+2. Configure bucket permissions:
+   - Enable public read access for uploaded files, or
+   - Set up a CloudFront distribution for private buckets
+3. Create an IAM user with S3 upload permissions
+4. Add the credentials to your `.env.local` file
+
+Required IAM permissions:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:PutObjectAcl"],
+      "Resource": "arn:aws:s3:::your-bucket-name/*"
+    }
+  ]
+}
+```
+
 ## Getting Started
 
 First, run the development server:
@@ -33,4 +73,46 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Quick Deploy
+
+1. **Push your code to GitHub** (or GitLab/Bitbucket)
+
+2. **Import your project to Vercel:**
+
+   - Go to [vercel.com/new](https://vercel.com/new)
+   - Import your Git repository
+   - Vercel will auto-detect Next.js
+
+3. **Configure Environment Variables:**
+
+   - In your Vercel project dashboard, go to **Settings** > **Environment Variables**
+   - Add the following variables (for Production, Preview, and Development environments):
+
+   ```env
+   PASSWORD=your_password_here
+   AWS_REGION=us-east-2
+   AWS_ACCESS_KEY_ID=your_access_key_id
+   AWS_SECRET_ACCESS_KEY=your_secret_access_key
+   AWS_S3_BUCKET_NAME=letters-for-lena-media
+   NEXT_PUBLIC_MEDIA_BASE_URL=https://letters-for-lena-media.s3.us-east-2.amazonaws.com
+   ```
+
+4. **Deploy:**
+   - Click **Deploy**
+   - Vercel will build and deploy your app automatically
+   - Your app will be live at `https://your-project.vercel.app`
+
+### Important Notes
+
+- **Vercel Plan Requirements:** The upload API route requires a 5-minute timeout for large video uploads. This requires a **Vercel Pro** or **Enterprise** plan. The free tier has a 10-second timeout limit.
+- **Environment Variables:** Make sure all environment variables are set in Vercel before deploying. The app will not function properly without AWS S3 credentials.
+- **Build Settings:** Vercel will automatically detect Next.js and use the build command from `package.json` (`next build`).
+- **File Uploads:** Large file uploads (up to 15MB) are supported via the configured serverless function timeout.
+
+### Troubleshooting
+
+- If uploads fail, verify your AWS S3 credentials are correctly set in Vercel environment variables
+- Check the Vercel function logs in the dashboard for detailed error messages
+- Ensure your S3 bucket has the correct CORS configuration if needed
+
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

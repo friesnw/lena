@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import type { FileMetadata, PostType } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import Image from "next/image";
 
 const HIDE_TITLE_TAG = "Hide Title";
 const MEDIA_TAG_OPTIONS = [
@@ -57,11 +58,16 @@ export default function Upload() {
   // Create a state value called file, which starts as null. Later when the user selects a file, store the actual File object here and use setFile() to update it.
   const [file, setFile] = useState<File | null>(null);
   const [albumCoverFile, setAlbumCoverFile] = useState<File | null>(null);
+  const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>(null);
+  const [albumCoverPreviewUrl, setAlbumCoverPreviewUrl] = useState<
+    string | null
+  >(null);
   const [caption, setCaption] = useState("");
   const [month, setMonth] = useState<number | "">("");
   const [order, setOrder] = useState<number | "">(0);
   const [published, setPublished] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
+  const [dateTaken, setDateTaken] = useState<string>("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -94,16 +100,38 @@ export default function Upload() {
   //This is a function to handle changes on a file <input>. React will pass it an event object called e
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
       setContent(""); // Clear text content when file is selected
+
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(selectedFile);
+      setFilePreviewUrl(previewUrl);
     }
   };
 
   const handleAlbumCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setAlbumCoverFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      setAlbumCoverFile(selectedFile);
+
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(selectedFile);
+      setAlbumCoverPreviewUrl(previewUrl);
     }
   };
+
+  // Clean up preview URLs when component unmounts or files change
+  useEffect(() => {
+    return () => {
+      if (filePreviewUrl) {
+        URL.revokeObjectURL(filePreviewUrl);
+      }
+      if (albumCoverPreviewUrl) {
+        URL.revokeObjectURL(albumCoverPreviewUrl);
+      }
+    };
+  }, [filePreviewUrl, albumCoverPreviewUrl]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent page reload
@@ -148,6 +176,14 @@ export default function Upload() {
         // Capture metadata if available
         if (uploadData.metadata) {
           fileMetadata = uploadData.metadata;
+        }
+
+        // Override with manually entered dateTaken if provided (videos only on upload)
+        if (dateTaken && type === "video") {
+          fileMetadata = {
+            ...(fileMetadata || {}),
+            dateTaken: new Date(dateTaken).toISOString(),
+          };
         }
 
         // Optional album cover upload for audio posts
@@ -240,17 +276,31 @@ export default function Upload() {
 
       if (response.ok) {
         setSuccess("Post created successfully!");
-        // Reset form
+        // Store values to persist
+        const persistedMonth = month;
+        const persistedOrder = order;
+        const persistedTags = [...tags];
+        // Reset form (but keep order, month, and tags)
         setType("photo");
         setTitle("");
         setContent("");
         setFile(null);
         setCaption("");
-        setMonth("");
-        setOrder(0);
+        setMonth(persistedMonth);
+        setOrder(persistedOrder);
         setPublished(false);
-        setTags([]);
+        setTags(persistedTags);
         setAlbumCoverFile(null);
+        setDateTaken("");
+        // Clean up preview URLs
+        if (filePreviewUrl) {
+          URL.revokeObjectURL(filePreviewUrl);
+          setFilePreviewUrl(null);
+        }
+        if (albumCoverPreviewUrl) {
+          URL.revokeObjectURL(albumCoverPreviewUrl);
+          setAlbumCoverPreviewUrl(null);
+        }
         // Reset file input
         const fileInput = document.getElementById(
           "file-input"
@@ -356,13 +406,84 @@ export default function Upload() {
                   </Button>
                 </label>
                 {file && (
-                  <MuiTypography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mt: 1 }}
-                  >
-                    Selected: {file.name} ({(file.size / 1024).toFixed(2)} KB)
-                  </MuiTypography>
+                  <Box sx={{ mt: 2 }}>
+                    <MuiTypography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mb: 1 }}
+                    >
+                      Selected: {file.name} ({(file.size / 1024).toFixed(2)} KB)
+                    </MuiTypography>
+                    {filePreviewUrl && (
+                      <Box sx={{ mt: 2 }}>
+                        {type === "photo" && (
+                          <>
+                            {file.name.toLowerCase().endsWith(".heic") ||
+                            file.name.toLowerCase().endsWith(".heif") ||
+                            file.type === "image/heic" ||
+                            file.type === "image/heif" ? (
+                              <Alert severity="info" sx={{ mb: 2 }}>
+                                HEIC files will be converted to JPEG on upload.
+                                Preview not available in browser.
+                              </Alert>
+                            ) : (
+                              <Box
+                                sx={{
+                                  position: "relative",
+                                  width: "100%",
+                                  maxWidth: "400px",
+                                  height: "auto",
+                                  borderRadius: 1,
+                                  overflow: "hidden",
+                                }}
+                              >
+                                <Image
+                                  src={filePreviewUrl}
+                                  alt="Preview"
+                                  width={400}
+                                  height={300}
+                                  style={{
+                                    width: "100%",
+                                    height: "auto",
+                                    objectFit: "contain",
+                                  }}
+                                  unoptimized
+                                  onError={() => {
+                                    // If image fails to load, show message
+                                    console.warn("Failed to load preview");
+                                  }}
+                                />
+                              </Box>
+                            )}
+                          </>
+                        )}
+                        {type === "video" && (
+                          <Box
+                            component="video"
+                            src={filePreviewUrl}
+                            controls
+                            style={{
+                              width: "100%",
+                              maxWidth: "600px",
+                              height: "auto",
+                              borderRadius: 4,
+                            }}
+                          />
+                        )}
+                        {type === "audio" && (
+                          <Box
+                            component="audio"
+                            src={filePreviewUrl}
+                            controls
+                            style={{
+                              width: "100%",
+                              maxWidth: "600px",
+                            }}
+                          />
+                        )}
+                      </Box>
+                    )}
+                  </Box>
                 )}
               </Box>
             )}
@@ -376,6 +497,24 @@ export default function Upload() {
                 onChange={(e) => setCaption(e.target.value)}
                 sx={{ mb: 2 }}
                 placeholder="Enter a caption (optional)"
+              />
+            )}
+
+            {/* Date Taken field for videos only */}
+            {type === "video" && (
+              <TextField
+                fullWidth
+                type="date"
+                label="Capture Date"
+                value={dateTaken}
+                onChange={(e) => setDateTaken(e.target.value)}
+                sx={{ mb: 2 }}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
+                helperText="Optional: Manually set the capture date. Leave empty to use metadata from file."
               />
             )}
 
@@ -396,29 +535,55 @@ export default function Upload() {
                   </Button>
                 </label>
                 {albumCoverFile && (
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    sx={{ mt: 1 }}
-                  >
-                    <MuiTypography variant="body2" color="text.secondary">
-                      {albumCoverFile.name} (
-                      {(albumCoverFile.size / 1024).toFixed(2)} KB)
-                    </MuiTypography>
-                    <Button
-                      size="small"
-                      onClick={() => {
-                        setAlbumCoverFile(null);
-                        const coverInput = document.getElementById(
-                          "album-cover-input"
-                        ) as HTMLInputElement;
-                        if (coverInput) coverInput.value = "";
-                      }}
+                  <Box sx={{ mt: 2 }}>
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      sx={{ mb: 1 }}
                     >
-                      Remove
-                    </Button>
-                  </Stack>
+                      <MuiTypography variant="body2" color="text.secondary">
+                        {albumCoverFile.name} (
+                        {(albumCoverFile.size / 1024).toFixed(2)} KB)
+                      </MuiTypography>
+                      <Button
+                        size="small"
+                        onClick={() => {
+                          if (albumCoverPreviewUrl) {
+                            URL.revokeObjectURL(albumCoverPreviewUrl);
+                          }
+                          setAlbumCoverFile(null);
+                          setAlbumCoverPreviewUrl(null);
+                          const coverInput = document.getElementById(
+                            "album-cover-input"
+                          ) as HTMLInputElement;
+                          if (coverInput) coverInput.value = "";
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </Stack>
+                    {albumCoverPreviewUrl && (
+                      <Box
+                        sx={{
+                          position: "relative",
+                          width: 200,
+                          height: 200,
+                          borderRadius: 2,
+                          overflow: "hidden",
+                          mt: 1,
+                        }}
+                      >
+                        <Image
+                          src={albumCoverPreviewUrl}
+                          alt="Album cover preview"
+                          fill
+                          style={{ objectFit: "cover" }}
+                          unoptimized
+                        />
+                      </Box>
+                    )}
+                  </Box>
                 )}
               </Box>
             )}

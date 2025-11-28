@@ -143,47 +143,52 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
   return (
     <Box
       sx={{
-        maxWidth: "600px",
-        mx: { xs: "auto", md: 0 }, // Center on mobile, no auto margins on desktop
-        ml: { md: "calc(320px + 2rem)" }, // Account for 320px sidebar + spacing on desktop
-        mr: { md: "auto" }, // Auto right margin on desktop to center in remaining space
+        width: "100%",
+        pl: { md: "320px" }, // Account for sidebar on desktop
         mt: 4,
         mb: 4,
-        px: 2,
       }}
     >
-      <Typography variant="h1" component="h1" sx={{ mb: 1 }}>
-        {monthName}
-      </Typography>
-
-      <Typography
-        variant="h6"
-        fontSize="1.25rem"
-        color="text.secondary"
-        sx={{ mb: 3 }}
+      <Box
+        sx={{
+          maxWidth: "600px",
+          mx: { xs: "auto", md: "auto" }, // Center on both mobile and desktop
+          px: 2,
+        }}
       >
-        {getMonthRangeText(month)}
-      </Typography>
-
-      {loading && (
-        <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
-          <CircularProgress />
-        </Box>
-      )}
-
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
-
-      {!loading && !error && posts.length === 0 && (
-        <Typography variant="body1" color="text.secondary">
-          No posts yet for this month.
+        <Typography variant="h1" component="h1" sx={{ mb: 1 }}>
+          {monthName}
         </Typography>
-      )}
 
-      {!loading && !error && posts.length > 0 && renderPostsWithCarousels()}
+        <Typography
+          variant="h6"
+          fontSize="1.25rem"
+          color="text.secondary"
+          sx={{ mb: 3 }}
+        >
+          {getMonthRangeText(month)}
+        </Typography>
+
+        {loading && (
+          <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+            <CircularProgress />
+          </Box>
+        )}
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        {!loading && !error && posts.length === 0 && (
+          <Typography variant="body1" color="text.secondary">
+            No posts yet for this month.
+          </Typography>
+        )}
+
+        {!loading && !error && posts.length > 0 && renderPostsWithCarousels()}
+      </Box>
     </Box>
   );
 }

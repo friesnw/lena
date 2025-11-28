@@ -14,8 +14,11 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  IconButton,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { useEffect, useState, useMemo } from "react";
 import type { ReactElement } from "react";
 import { useRouter } from "next/navigation";
@@ -113,34 +116,144 @@ export default function AdminMonthPage({
     router.push(`/admin/posts/${postId}`);
   };
 
-  const renderPostCard = (post: Post) => (
-    <Card
-      key={post.id}
-      sx={{
-        mb: 2,
-        cursor: "pointer",
-        "&:hover": {
-          boxShadow: 4,
-        },
-      }}
-      onClick={() => handlePostClick(post.id)}
-    >
-      <CardContent>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
-            <Chip
-              label={post.type}
-              size="small"
-              color={post.published ? "success" : "default"}
-            />
-            {post.published ? (
-              <Chip label="Published" size="small" color="success" />
-            ) : (
-              <Chip label="Draft" size="small" />
-            )}
-          </Stack>
-          <Typography color="text.secondary">Order: {post.order}</Typography>
-        </Box>
+  // Get sorted posts by order for finding adjacent posts
+  const sortedPostsByOrder = useMemo(() => {
+    return [...posts].sort((a, b) => {
+      if (a.order !== b.order) {
+        return a.order - b.order;
+      }
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    });
+  }, [posts]);
+
+  const handleOrderChange = async (
+    postId: string,
+    direction: "up" | "down"
+  ) => {
+    const currentPost = posts.find((p) => p.id === postId);
+    if (!currentPost) return;
+
+    // Calculate new order (increment/decrement by 1)
+    const newOrder = direction === "up" ? currentPost.order - 1 : currentPost.order + 1;
+    
+    // Don't allow negative orders
+    if (newOrder < 0) return;
+
+    // Check if another post has this order value
+    const conflictingPost = posts.find(
+      (p) => p.id !== postId && p.order === newOrder
+    );
+
+    try {
+      if (conflictingPost) {
+        // Swap orders with the conflicting post
+        const [response1, response2] = await Promise.all([
+          fetch(`/api/posts/${postId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ order: newOrder }),
+          }),
+          fetch(`/api/posts/${conflictingPost.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ order: currentPost.order }),
+          }),
+        ]);
+
+        if (response1.ok && response2.ok) {
+          // Refresh posts
+          const refreshResponse = await fetch(`/api/posts/admin?month=${month}`);
+          if (refreshResponse.ok) {
+            const refreshedPosts = await refreshResponse.json();
+            setPosts(refreshedPosts);
+          }
+        } else {
+          setError("Failed to update post order");
+        }
+      } else {
+        // No conflict, just update this post's order
+        const response = await fetch(`/api/posts/${postId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ order: newOrder }),
+        });
+
+        if (response.ok) {
+          // Refresh posts
+          const refreshResponse = await fetch(`/api/posts/admin?month=${month}`);
+          if (refreshResponse.ok) {
+            const refreshedPosts = await refreshResponse.json();
+            setPosts(refreshedPosts);
+          }
+        } else {
+          setError("Failed to update post order");
+        }
+      }
+    } catch (err) {
+      setError("Something went wrong while updating order");
+    }
+  };
+
+  const renderPostCard = (post: Post) => {
+    // Can move up if order > 0
+    const canMoveUp = post.order > 0;
+    // Can move down - always allowed (order can increase)
+    const canMoveDown = true;
+
+    return (
+      <Card
+        key={post.id}
+        sx={{
+          mb: 2,
+          cursor: "pointer",
+          "&:hover": {
+            boxShadow: 4,
+          },
+        }}
+        onClick={() => handlePostClick(post.id)}
+      >
+        <CardContent>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
+              <Chip
+                label={post.type}
+                size="small"
+                color={post.published ? "success" : "default"}
+              />
+              {post.published ? (
+                <Chip label="Published" size="small" color="success" />
+              ) : (
+                <Chip label="Draft" size="small" />
+              )}
+            </Stack>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography color="text.secondary" sx={{ mr: 1 }}>
+                Order: {post.order}
+              </Typography>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOrderChange(post.id, "up");
+                }}
+                disabled={!canMoveUp}
+                sx={{ color: canMoveUp ? "primary.main" : "action.disabled" }}
+              >
+                <ArrowUpwardIcon />
+              </IconButton>
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOrderChange(post.id, "down");
+                }}
+                disabled={!canMoveDown}
+                sx={{ color: canMoveDown ? "primary.main" : "action.disabled" }}
+              >
+                <ArrowDownwardIcon />
+              </IconButton>
+            </Stack>
+          </Box>
 
         <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: "medium" }}>
           {post.title}
@@ -212,7 +325,8 @@ export default function AdminMonthPage({
         </Typography>
       </CardContent>
     </Card>
-  );
+    );
+  };
 
   const renderCarouselAccordion = (carouselNum: number) => {
     const postsForCarousel = carouselPosts[carouselNum];

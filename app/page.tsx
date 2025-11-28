@@ -329,10 +329,12 @@ export default function Home() {
                       {month.title}
                     </Typography>
                     <Typography
-                      variant="body2"
+                      variant="h5"
                       sx={{
                         color: "#627080",
                         fontSize: "0.875rem",
+                        fontFamily: "var(--font-lora), serif",
+                        mb: 0.5,
                       }}
                     >
                       {month.description}
