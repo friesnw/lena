@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import exifr from "exifr";
-import { parseBuffer } from "music-metadata";
 
 // Maximum file size: 11MB
 const MAX_FILE_SIZE = 11 * 1024 * 1024;
@@ -110,18 +109,6 @@ export async function POST(request: NextRequest) {
       } catch (exifError) {
         console.warn("Failed to extract EXIF data:", exifError);
         // Continue without EXIF data
-      }
-    }
-
-    // Capture audio duration
-    if (fileType === "audio") {
-      try {
-        const audioMetadata = await parseBuffer(buffer, file.type);
-        if (audioMetadata.format.duration) {
-          metadata.durationSeconds = Math.round(audioMetadata.format.duration);
-        }
-      } catch (audioError) {
-        console.warn("Failed to extract audio metadata:", audioError);
       }
     }
 
