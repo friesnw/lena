@@ -20,7 +20,7 @@ async function readPostsFile(): Promise<Post[]> {
     // read the file as a text string, return the parsed JSON as an array of Post objects
     const fileContents = await fs.readFile(POSTS_FILE, "utf-8");
     const trimmed = fileContents.trim();
-    
+
     try {
       // Try to parse directly first
       return JSON.parse(trimmed) as Post[];
@@ -28,21 +28,21 @@ async function readPostsFile(): Promise<Post[]> {
       // If parsing fails, try to fix common corruption (extra closing brackets)
       // Look for trailing closing brackets and remove them
       let fixed = trimmed;
-      
+
       // Find the last valid closing bracket by counting brackets
       let openCount = 0;
       let lastValidBracket = -1;
-      
+
       for (let i = 0; i < fixed.length; i++) {
-        if (fixed[i] === '[') openCount++;
-        if (fixed[i] === ']') {
+        if (fixed[i] === "[") openCount++;
+        if (fixed[i] === "]") {
           openCount--;
-          if (openCount === 0 && fixed.trim().startsWith('[')) {
+          if (openCount === 0 && fixed.trim().startsWith("[")) {
             lastValidBracket = i;
           }
         }
       }
-      
+
       // If we found a valid bracket and there's content after it, remove the extra
       if (lastValidBracket >= 0 && lastValidBracket < fixed.length - 1) {
         const afterBracket = fixed.substring(lastValidBracket + 1).trim();
@@ -52,9 +52,15 @@ async function readPostsFile(): Promise<Post[]> {
           try {
             const parsed = JSON.parse(fixed);
             if (Array.isArray(parsed)) {
-              console.warn("Fixed corrupted posts.json file (removed extra brackets)");
+              console.warn(
+                "Fixed corrupted posts.json file (removed extra brackets)"
+              );
               // Write the fixed version back
-              await fs.writeFile(POSTS_FILE, JSON.stringify(parsed, null, 2), "utf-8");
+              await fs.writeFile(
+                POSTS_FILE,
+                JSON.stringify(parsed, null, 2),
+                "utf-8"
+              );
               return parsed as Post[];
             }
           } catch {
@@ -62,7 +68,7 @@ async function readPostsFile(): Promise<Post[]> {
           }
         }
       }
-      
+
       // If we couldn't fix it, throw the original error
       throw parseError;
     }
@@ -84,15 +90,15 @@ async function writePostsFile(posts: Post[]): Promise<void> {
     if (!Array.isArray(posts)) {
       throw new Error("Posts must be an array");
     }
-    
+
     // Stringify the JSON
     const jsonString = JSON.stringify(posts, null, 2);
-    
+
     // Write to a temporary file first, then rename (atomic write)
     // This prevents corruption if the process is interrupted
     const tempFile = POSTS_FILE + ".tmp";
     await fs.writeFile(tempFile, jsonString, "utf-8");
-    
+
     // Validate the written file by reading it back
     const verify = await fs.readFile(tempFile, "utf-8");
     const parsed = JSON.parse(verify);
@@ -100,7 +106,7 @@ async function writePostsFile(posts: Post[]): Promise<void> {
       await fs.unlink(tempFile).catch(() => {});
       throw new Error("Written file is not a valid JSON array");
     }
-    
+
     // If validation passes, rename temp file to actual file (atomic on most systems)
     await fs.rename(tempFile, POSTS_FILE);
   } catch (error) {
@@ -115,9 +121,10 @@ async function writePostsFile(posts: Post[]): Promise<void> {
   }
 }
 
-// get all posts
+// get all posts (excluding deleted)
 export async function getAllPosts(): Promise<Post[]> {
-  return await readPostsFile();
+  const posts = await readPostsFile();
+  return posts.filter((post) => !post.deleted);
 }
 
 // get only published posts, ordered by `order` ascending
@@ -164,7 +171,8 @@ export async function updatePost(
   id: string,
   updates: Partial<Post>
 ): Promise<Post | null> {
-  const posts = await getAllPosts();
+  // Read all posts including deleted ones, so we can update deleted posts (e.g., to undelete)
+  const posts = await readPostsFile();
   const index = posts.findIndex((p) => p.id === id);
 
   if (index === -1) {
@@ -185,15 +193,6 @@ export async function updatePost(
 }
 
 export async function deletePost(id: string): Promise<boolean> {
-  const posts = await getAllPosts();
-  const initialLength = posts.length;
-  const filteredPosts = posts.filter((p) => p.id !== id);
-
-  // Check if post was actually removed
-  if (filteredPosts.length === initialLength) {
-    return false; // Post not found
-  }
-
-  await writePostsFile(filteredPosts);
-  return true; // Successfully deleted
+  // Soft delete: set deleted flag to true
+  return (await updatePost(id, { deleted: true })) !== null;
 }

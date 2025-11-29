@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPostById, updatePost, deletePost } from "@/lib/posts";
+import { getPostById, updatePost, deletePost } from "@/lib/posts-unified";
+import { requireAuth } from "@/lib/auth";
 import type { Post } from "@/lib/types";
 
 export async function GET(
@@ -24,6 +25,12 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Check authentication
+  const authError = await requireAuth();
+  if (authError) {
+    return authError;
+  }
+
   try {
     const { id } = await params;
     const body = await request.json();
@@ -100,8 +107,15 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Check authentication
+  const authError = await requireAuth();
+  if (authError) {
+    return authError;
+  }
+
   try {
     const { id } = await params;
+    // Soft delete: set deleted flag to true
     const deleted = await deletePost(id);
 
     if (!deleted) {

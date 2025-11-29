@@ -19,7 +19,7 @@ import {
   Chip,
   Stack,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import type { FileMetadata, PostType } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 import { usePageTitle } from "@/hooks/usePageTitle";
@@ -47,10 +47,11 @@ const getAllowedTags = (postType: PostType | "") => {
   return [];
 };
 
-export default function Upload() {
-  // create a piece of state called type. Initially "photo", can later become one of the PostType values. setType is the function to update it.
+function UploadForm() {
   const searchParams = useSearchParams();
   const prefillMonth = searchParams.get("month");
+
+  // create a piece of state called type. Initially "photo", can later become one of the PostType values. setType is the function to update it.
 
   const [type, setType] = useState<PostType | "">("photo");
   const [title, setTitle] = useState("");
@@ -72,7 +73,6 @@ export default function Upload() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const pageTitle = "Upload Post";
-  usePageTitle(pageTitle);
 
   const isTextType = type === "text" || type === "stat";
   const isMediaType = type === "audio" || type === "video" || type === "photo";
@@ -890,5 +890,29 @@ export default function Upload() {
         </CardContent>
       </Card>
     </Container>
+  );
+}
+
+export default function Upload() {
+  const pageTitle = "Upload Post";
+  usePageTitle(pageTitle);
+
+  return (
+    <Suspense
+      fallback={
+        <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+          <Card>
+            <CardContent>
+              <Typography variant="h4" component="h1" gutterBottom>
+                {pageTitle}
+              </Typography>
+              <Typography>Loading...</Typography>
+            </CardContent>
+          </Card>
+        </Container>
+      }
+    >
+      <UploadForm />
+    </Suspense>
   );
 }

@@ -1,37 +1,57 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-import { getPublishedPostsByMonthOrdered, savePost } from "@/lib/posts";
+import { getPublishedPostsByMonthOrdered, savePost } from "@/lib/posts-unified";
+import { requireAuth } from "@/lib/auth";
 import type { Post, FileMetadata } from "@/lib/types";
 
 export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const monthParam = searchParams.get("month");
+
+  // require month
+  if (monthParam === null) {
+    return NextResponse.json(
+      { error: "Query param 'month' is required" },
+      { status: 400 }
+    );
+  }
+
+  const monthNum = Number(monthParam);
+  if (Number.isNaN(monthNum)) {
+    return NextResponse.json(
+      { error: "Query param 'month' must be a number" },
+      { status: 400 }
+    );
+  }
+
   try {
-    const { searchParams } = new URL(request.url);
-    const monthParam = searchParams.get("month");
-
-    // require month
-    if (monthParam === null) {
-      return NextResponse.json(
-        { error: "Query param 'month' is required" },
-        { status: 400 }
-      );
-    }
-
-    const monthNum = Number(monthParam);
-    if (Number.isNaN(monthNum)) {
-      return NextResponse.json(
-        { error: "Query param 'month' must be a number" },
-        { status: 400 }
-      );
-    }
-
+    console.log(`[api/posts] GET request for month ${monthNum}`);
     const posts = await getPublishedPostsByMonthOrdered(monthNum);
+    console.log(
+      `[api/posts] Month ${monthNum}: Returning ${posts.length} published posts`
+    );
     return NextResponse.json(posts, { status: 200 });
   } catch (err) {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error(
+      `[api/posts] Error fetching posts for month ${monthNum}:`,
+      errorMessage,
+      err
+    );
+    return NextResponse.json(
+      { error: "Server error", details: errorMessage },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
+  // Check authentication
+  const authError = await requireAuth();
+  if (authError) {
+    return authError;
+  }
+
   try {
     const body = await request.json();
     console.log("Received POST request body:", JSON.stringify(body, null, 2));

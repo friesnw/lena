@@ -26,4 +26,5 @@ export interface Post {
   order: number;
   metadata?: FileMetadata; // Original file metadata (date taken, camera, location, etc.)
   tags?: string[];
+  deleted?: boolean; // Soft delete flag - when true, post is hidden from UI
 }

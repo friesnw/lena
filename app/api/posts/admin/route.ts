@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPostsByMonth, getAllPosts } from "@/lib/posts";
+import { getPostsByMonth, getAllPosts } from "@/lib/posts-unified";
+import { requireAuth } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
+  // Check authentication
+  const authError = await requireAuth();
+  if (authError) {
+    return authError;
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const monthParam = searchParams.get("month");
