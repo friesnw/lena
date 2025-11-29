@@ -1,9 +1,0 @@
-{
-  "functions": {
-    "app/api/upload/route.ts": {
-      "maxDuration": 300
-    }
-  },
-  "regions": ["iad1"]
-}
-

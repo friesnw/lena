@@ -38,13 +38,17 @@ export async function uploadToS3(
 
   try {
     await s3Client.send(command);
-    
+
     // Return the public URL
     // Format: https://bucket-name.s3.region.amazonaws.com/uploads/filename.jpg
     return `${S3_BASE_URL}/${key}`;
   } catch (error) {
     console.error("S3 upload error:", error);
-    throw new Error(`Failed to upload to S3: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `Failed to upload to S3: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
   }
 }
 
@@ -58,14 +62,34 @@ export function isS3Configured(): boolean {
   const hasRegion = !!process.env.AWS_REGION;
 
   console.log("🔍 S3 Configuration Check:");
-  console.log(`  AWS_ACCESS_KEY_ID: ${hasAccessKey ? "✓ SET" : "✗ MISSING"} ${hasAccessKey ? `(${process.env.AWS_ACCESS_KEY_ID?.substring(0, 8)}...)` : ""}`);
-  console.log(`  AWS_SECRET_ACCESS_KEY: ${hasSecretKey ? "✓ SET" : "✗ MISSING"} ${hasSecretKey ? "(hidden)" : ""}`);
-  console.log(`  AWS_S3_BUCKET_NAME: ${hasBucketName ? "✓ SET" : "✗ MISSING"} ${hasBucketName ? `(${process.env.AWS_S3_BUCKET_NAME})` : ""}`);
-  console.log(`  AWS_REGION: ${hasRegion ? "✓ SET" : "✗ MISSING"} ${hasRegion ? `(${process.env.AWS_REGION})` : ""}`);
+  console.log(
+    `  AWS_ACCESS_KEY_ID: ${hasAccessKey ? "✓ SET" : "✗ MISSING"} ${
+      hasAccessKey
+        ? `(${process.env.AWS_ACCESS_KEY_ID?.substring(0, 8)}...)`
+        : ""
+    }`
+  );
+  console.log(
+    `  AWS_SECRET_ACCESS_KEY: ${hasSecretKey ? "✓ SET" : "✗ MISSING"} ${
+      hasSecretKey ? "(hidden)" : ""
+    }`
+  );
+  console.log(
+    `  AWS_S3_BUCKET_NAME: ${hasBucketName ? "✓ SET" : "✗ MISSING"} ${
+      hasBucketName ? `(${process.env.AWS_S3_BUCKET_NAME})` : ""
+    }`
+  );
+  console.log(
+    `  AWS_REGION: ${hasRegion ? "✓ SET" : "✗ MISSING"} ${
+      hasRegion ? `(${process.env.AWS_REGION})` : ""
+    }`
+  );
 
   if (!hasAccessKey || !hasSecretKey || !hasBucketName || !hasRegion) {
     console.error("\n❌ S3 is not properly configured!");
-    console.error("💡 Make sure all AWS_* variables are in your .env.local file");
+    console.error(
+      "💡 Make sure all AWS_* variables are in your .env.local file"
+    );
     console.error("💡 Restart your dev server after adding them");
     return false;
   }
@@ -73,4 +97,3 @@ export function isS3Configured(): boolean {
   console.log("✅ S3 configuration looks good!");
   return true;
 }
-

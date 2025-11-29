@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { writeFile, mkdir } from "fs/promises";
+import { existsSync } from "fs";
+import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import sharp from "sharp";
 import exifr from "exifr";
 import { parseBuffer } from "music-metadata";
-import { uploadToS3, isS3Configured } from "@/lib/s3";
 
 // Route segment config for handling large file uploads
 export const maxDuration = 300; // 5 minutes for large video uploads
@@ -96,15 +98,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if S3 is configured
-    if (!isS3Configured()) {
-      return NextResponse.json(
-        {
-          error:
-            "S3 is not properly configured. Please check your environment variables.",
-        },
-        { status: 500 }
-      );
+    // Ensure uploads directory exists
+    const uploadsDir = path.join(process.cwd(), "public", "uploads");
+    if (!existsSync(uploadsDir)) {
+      await mkdir(uploadsDir, { recursive: true });
     }
 
     // Get file as ArrayBuffer (needed for heic-convert)
@@ -330,8 +327,8 @@ export async function POST(request: NextRequest) {
     });
 
     let uniqueFileName: string;
+    let filePath: string;
     let finalBuffer: Buffer;
-    let finalContentType: string;
 
     if (isHeic && fileType === "photo") {
       // Convert HEIC to JPEG using heic-convert
@@ -425,7 +422,7 @@ export async function POST(request: NextRequest) {
         }
 
         uniqueFileName = `${uuidv4()}.jpg`;
-        finalContentType = "image/jpeg";
+        filePath = path.join(uploadsDir, uniqueFileName);
       } catch (error) {
         console.error("HEIC conversion error:", error);
         const errorMessage =
@@ -453,32 +450,38 @@ export async function POST(request: NextRequest) {
       }
     } else {
       // Use original file
-      const fileExtension = file.name.split(".").pop() || "";
-      uniqueFileName = `${uuidv4()}.${fileExtension}`;
+      const fileExtension = path.extname(file.name);
+      uniqueFileName = `${uuidv4()}${fileExtension}`;
+      filePath = path.join(uploadsDir, uniqueFileName);
       finalBuffer = buffer;
-      finalContentType = file.type;
     }
 
-    // Upload file to S3
-    let s3Url: string;
+    // TODO:
+    // Generate derivatives:
+    // •	Original (or near-original) quality: e.g. 3000px wide JPEG.
+    // •	Medium: ~1200px.
+    // •	Thumbnail: ~300px.
+    // 4.	Store in object storage (S3 / GCS / Azure Blob):
+    // •	E.g. /photos/{id}/original.heic (if you keep the original)
+    // •	and /photos/{id}/full.jpg, /photos/{id}/1200.webp, /photos/{id}/300.jpg.
+    // 5.	Return metadata to the FE, not the raw HEIC:
+
+    // Save file
     try {
-      console.log("Uploading file to S3...", {
-        fileName: uniqueFileName,
+      console.log("Writing file to disk...", {
+        filePath,
         bufferSize: finalBuffer.length,
         fileType,
-        contentType: finalContentType,
       });
-      s3Url = await uploadToS3(finalBuffer, uniqueFileName, finalContentType);
-      console.log("File uploaded successfully to S3:", s3Url);
-    } catch (uploadError) {
-      console.error("Failed to upload file to S3:", uploadError);
+      await writeFile(filePath, finalBuffer);
+      console.log("File written successfully");
+    } catch (writeError) {
+      console.error("Failed to write file:", writeError);
       const errorMessage =
-        uploadError instanceof Error
-          ? uploadError.message
-          : String(uploadError);
+        writeError instanceof Error ? writeError.message : String(writeError);
       return NextResponse.json(
         {
-          error: "Failed to upload file to S3",
+          error: "Failed to save file",
           details:
             process.env.NODE_ENV === "development"
               ? { message: errorMessage }
@@ -488,6 +491,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Return the public path (relative to public directory)
+    const publicPath = `/uploads/${uniqueFileName}`;
+
     // Determine the final file type (JPEG if converted from HEIC)
     const finalType = isHeic && fileType === "photo" ? "image/jpeg" : file.type;
     const finalSize =
@@ -496,7 +502,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        path: s3Url, // Return full S3 URL instead of relative path
+        path: publicPath,
         filename: uniqueFileName,
         originalName: file.name,
         size: finalSize,

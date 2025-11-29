@@ -7,19 +7,23 @@ Your application has been successfully migrated to use AWS S3 for all file stora
 ## What Was Done
 
 ### 1. ✅ Updated Code Infrastructure
+
 - **Installed** `@aws-sdk/client-s3` package
 - **Created** `lib/s3.ts` - S3 upload utility that integrates with your existing `MEDIA_BASE_URL` config
 - **Updated** `app/api/upload/route.ts` - Now uploads files directly to S3 instead of local storage
 - **Updated** `next.config.ts` - Added image domain configuration for S3
 
 ### 2. ✅ Migrated All Existing Data
+
 - **Created** migration script at `scripts/migrate-posts-to-s3.ts`
 - **Updated** 80 posts in `data/posts.json` to use full S3 URLs
 - **Updated** `app/intro/page.tsx` to use S3 URL for the intro photo
 - **Created** backup at `data/posts.json.backup`
 
 ### 3. ✅ Configuration
+
 Your existing S3 bucket is being used:
+
 - **Bucket**: `letters-for-lena-media`
 - **Region**: `us-east-2`
 - **Base URL**: `https://letters-for-lena-media.s3.us-east-2.amazonaws.com`
@@ -52,16 +56,19 @@ NEXT_PUBLIC_MEDIA_BASE_URL=https://letters-for-lena-media.s3.us-east-2.amazonaws
 ## What Happens Now
 
 ### New Uploads
+
 - All new file uploads will go directly to S3
 - URLs will be automatically generated as full S3 URLs
 - No files will be stored locally
 
 ### Existing Files
+
 - All posts now reference files via full S3 URLs
 - The intro page photo uses the S3 URL
 - Album cover URLs for audio posts use S3 URLs
 
 ### Legacy Files
+
 - Files in `public/uploads/` can be safely removed (they're all in S3 now)
 - A backup of the original posts.json exists at `data/posts.json.backup`
 
@@ -79,6 +86,7 @@ NEXT_PUBLIC_MEDIA_BASE_URL=https://letters-for-lena-media.s3.us-east-2.amazonaws
 Once you've verified everything works:
 
 1. **Remove local uploads folder** (optional):
+
    ```bash
    rm -rf public/uploads/
    ```
@@ -89,6 +97,7 @@ Once you've verified everything works:
 ## Files Changed
 
 ### New Files
+
 - ✅ `lib/s3.ts` - S3 utility functions
 - ✅ `scripts/migrate-posts-to-s3.ts` - Migration script
 - ✅ `data/posts.json.backup` - Backup of original posts
@@ -96,6 +105,7 @@ Once you've verified everything works:
 - ✅ `MIGRATION_COMPLETE.md` - This file
 
 ### Modified Files
+
 - ✅ `app/api/upload/route.ts` - Uses S3 for uploads
 - ✅ `next.config.ts` - Configured for S3 images
 - ✅ `README.md` - Updated with S3 setup instructions
@@ -118,6 +128,7 @@ If you encounter any issues:
 If you need to rollback:
 
 1. Restore original posts.json:
+
    ```bash
    cp data/posts.json.backup data/posts.json
    ```
@@ -129,4 +140,3 @@ If you need to rollback:
 ---
 
 🎉 **Migration Complete!** Your app is now using S3 for all file storage and serving.
-

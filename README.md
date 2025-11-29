@@ -22,8 +22,35 @@ NEXT_PUBLIC_MEDIA_BASE_URL=https://letters-for-lena-media.s3.us-east-2.amazonaws
 2. Configure bucket permissions:
    - Enable public read access for uploaded files, or
    - Set up a CloudFront distribution for private buckets
-3. Create an IAM user with S3 upload permissions
-4. Add the credentials to your `.env.local` file
+3. **Configure CORS for direct uploads:**
+
+   - Go to your S3 bucket in AWS Console
+   - Navigate to **Permissions** > **Cross-origin resource sharing (CORS)**
+   - Add the following CORS configuration:
+
+   ```json
+   [
+     {
+       "AllowedHeaders": ["*"],
+       "AllowedMethods": ["GET", "PUT"],
+       "AllowedOrigins": ["*"],
+       "ExposeHeaders": [],
+       "MaxAgeSeconds": 3000
+     }
+   ]
+   ```
+
+   **For production**, replace `"AllowedOrigins": ["*"]` with your specific domains:
+
+   ```json
+   "AllowedOrigins": [
+     "https://your-app.vercel.app",
+     "https://your-custom-domain.com"
+   ]
+   ```
+
+4. Create an IAM user with S3 upload permissions
+5. Add the credentials to your `.env.local` file
 
 Required IAM permissions:
 
@@ -104,10 +131,13 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 ### Important Notes
 
-- **Vercel Plan Requirements:** The upload API route requires a 5-minute timeout for large video uploads. This requires a **Vercel Pro** or **Enterprise** plan. The free tier has a 10-second timeout limit.
+- **Vercel Plan Requirements:** The app now uses **direct-to-S3 uploads**, which works on **Vercel Hobby (free tier)**! Files are uploaded directly from the browser to S3, avoiding long-running serverless functions.
+- **File Size Limit:** Maximum file size is **11MB** for all uploads.
+- **HEIC Conversion:** HEIC/HEIF images are automatically converted to JPEG using a lightweight server endpoint (works on Hobby tier).
+- **Metadata Extraction:** File metadata (EXIF, audio duration, etc.) is extracted via a separate lightweight endpoint.
 - **Environment Variables:** Make sure all environment variables are set in Vercel before deploying. The app will not function properly without AWS S3 credentials.
 - **Build Settings:** Vercel will automatically detect Next.js and use the build command from `package.json` (`next build`).
-- **File Uploads:** Large file uploads (up to 15MB) are supported via the configured serverless function timeout.
+- **S3 CORS Configuration:** Make sure your S3 bucket has CORS configured (see AWS S3 Setup above) to allow direct browser uploads.
 
 ### Troubleshooting
 

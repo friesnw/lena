@@ -101,8 +101,24 @@ export default function Upload() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
+      const MAX_FILE_SIZE = 11 * 1024 * 1024; // 11MB
+
+      // Validate file size
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        setError(
+          `File size (${(selectedFile.size / (1024 * 1024)).toFixed(
+            2
+          )}MB) exceeds maximum allowed size of ${
+            MAX_FILE_SIZE / (1024 * 1024)
+          }MB`
+        );
+        e.target.value = ""; // Clear the input
+        return;
+      }
+
       setFile(selectedFile);
       setContent(""); // Clear text content when file is selected
+      setError(""); // Clear any previous errors
 
       // Create preview URL
       const previewUrl = URL.createObjectURL(selectedFile);
@@ -113,7 +129,23 @@ export default function Upload() {
   const handleAlbumCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
+      const MAX_FILE_SIZE = 11 * 1024 * 1024; // 11MB
+
+      // Validate file size
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        setError(
+          `Album cover size (${(selectedFile.size / (1024 * 1024)).toFixed(
+            2
+          )}MB) exceeds maximum allowed size of ${
+            MAX_FILE_SIZE / (1024 * 1024)
+          }MB`
+        );
+        e.target.value = ""; // Clear the input
+        return;
+      }
+
       setAlbumCoverFile(selectedFile);
+      setError(""); // Clear any previous errors
 
       // Create preview URL
       const previewUrl = URL.createObjectURL(selectedFile);
@@ -145,69 +177,236 @@ export default function Upload() {
 
       // Handle file upload for media types
       if (isMediaType && file) {
-        // Upload the file first to get the path
-        const uploadFormData = new FormData();
-        uploadFormData.append("file", file);
-        uploadFormData.append("type", type);
-
-        const uploadResponse = await fetch("/api/upload", {
-          method: "POST",
-          body: uploadFormData,
-        });
-
-        const uploadData = await uploadResponse.json();
-
-        if (!uploadResponse.ok) {
-          setError(uploadData.error || "Failed to upload file");
+        // Validate file size (11MB limit)
+        const MAX_FILE_SIZE = 11 * 1024 * 1024; // 11MB
+        if (file.size > MAX_FILE_SIZE) {
+          setError(
+            `File size exceeds maximum allowed size of ${
+              MAX_FILE_SIZE / (1024 * 1024)
+            }MB`
+          );
           setLoading(false);
           return;
         }
 
-        // Ensure we got a valid path
-        if (!uploadData.path) {
-          setError("File upload succeeded but no path was returned");
-          setLoading(false);
-          return;
+        // Check if file is HEIC/HEIF (needs server-side conversion)
+        const isHeic =
+          file.type === "image/heic" ||
+          file.type === "image/heif" ||
+          file.name.toLowerCase().endsWith(".heic") ||
+          file.name.toLowerCase().endsWith(".heif");
+
+        let uploadedPath: string;
+        let extractedMetadata: any = {};
+
+        if (isHeic && type === "photo") {
+          // HEIC files need server-side conversion
+          const convertFormData = new FormData();
+          convertFormData.append("file", file);
+
+          const convertResponse = await fetch("/api/convert-heic", {
+            method: "POST",
+            body: convertFormData,
+          });
+
+          const convertData = await convertResponse.json();
+
+          if (!convertResponse.ok) {
+            setError(convertData.error || "Failed to convert HEIC file");
+            setLoading(false);
+            return;
+          }
+
+          uploadedPath = convertData.path;
+
+          // Extract metadata from converted file (optional, can use basic file metadata)
+          extractedMetadata = {
+            dateTaken: new Date(file.lastModified).toISOString(),
+            dateCreated: new Date(file.lastModified).toISOString(),
+            dateModified: new Date(file.lastModified).toISOString(),
+          };
+        } else {
+          // Direct S3 upload for non-HEIC files
+          try {
+            // Step 1: Get presigned URL
+            const presignedResponse = await fetch("/api/upload-url", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                fileName: file.name,
+                fileType: type,
+                contentType: file.type,
+                fileSize: file.size,
+              }),
+            });
+
+            const presignedData = await presignedResponse.json();
+
+            if (!presignedResponse.ok) {
+              setError(presignedData.error || "Failed to get upload URL");
+              setLoading(false);
+              return;
+            }
+
+            // Step 2: Upload directly to S3
+            const uploadResponse = await fetch(presignedData.url, {
+              method: "PUT",
+              body: file,
+              headers: {
+                "Content-Type": file.type,
+              },
+            });
+
+            if (!uploadResponse.ok) {
+              setError("Failed to upload file to S3");
+              setLoading(false);
+              return;
+            }
+
+            // Step 3: Construct the final S3 URL
+            const mediaBaseUrl =
+              process.env.NEXT_PUBLIC_MEDIA_BASE_URL ||
+              "https://letters-for-lena-media.s3.us-east-2.amazonaws.com";
+            uploadedPath = `${mediaBaseUrl}/${presignedData.key}`;
+
+            // Step 4: Extract metadata
+            const metadataFormData = new FormData();
+            metadataFormData.append("file", file);
+            metadataFormData.append("type", type);
+
+            const metadataResponse = await fetch("/api/extract-metadata", {
+              method: "POST",
+              body: metadataFormData,
+            });
+
+            if (metadataResponse.ok) {
+              const metadataData = await metadataResponse.json();
+              if (metadataData.success && metadataData.metadata) {
+                extractedMetadata = metadataData.metadata;
+              }
+            } else {
+              // Fallback to basic file metadata if extraction fails
+              extractedMetadata = {
+                dateTaken: new Date(file.lastModified).toISOString(),
+                dateCreated: new Date(file.lastModified).toISOString(),
+                dateModified: new Date(file.lastModified).toISOString(),
+              };
+            }
+          } catch (uploadError) {
+            console.error("Upload error:", uploadError);
+            setError("Failed to upload file. Please try again.");
+            setLoading(false);
+            return;
+          }
         }
 
-        // Use the path returned from the upload API
-        finalContent = uploadData.path;
+        // Use the uploaded path
+        finalContent = uploadedPath;
 
-        // Capture metadata if available
-        if (uploadData.metadata) {
-          fileMetadata = uploadData.metadata;
-        }
+        // Capture metadata
+        fileMetadata = extractedMetadata;
 
         // Override with manually entered dateTaken if provided (videos only on upload)
         if (dateTaken && type === "video") {
           fileMetadata = {
-            ...(fileMetadata || {}),
+            ...fileMetadata,
             dateTaken: new Date(dateTaken).toISOString(),
           };
         }
 
         // Optional album cover upload for audio posts
         if (type === "audio" && albumCoverFile) {
-          const coverFormData = new FormData();
-          coverFormData.append("file", albumCoverFile);
-          coverFormData.append("type", "photo");
-
-          const coverResponse = await fetch("/api/upload", {
-            method: "POST",
-            body: coverFormData,
-          });
-
-          const coverData = await coverResponse.json();
-          if (!coverResponse.ok || !coverData.path) {
-            setError(coverData.error || "Failed to upload album cover");
+          // Validate album cover size
+          if (albumCoverFile.size > MAX_FILE_SIZE) {
+            setError(
+              `Album cover size exceeds maximum allowed size of ${
+                MAX_FILE_SIZE / (1024 * 1024)
+              }MB`
+            );
             setLoading(false);
             return;
           }
 
+          // Check if album cover is HEIC
+          const isCoverHeic =
+            albumCoverFile.type === "image/heic" ||
+            albumCoverFile.type === "image/heif" ||
+            albumCoverFile.name.toLowerCase().endsWith(".heic") ||
+            albumCoverFile.name.toLowerCase().endsWith(".heif");
+
+          let coverPath: string;
+
+          if (isCoverHeic) {
+            // Convert HEIC album cover
+            const coverConvertFormData = new FormData();
+            coverConvertFormData.append("file", albumCoverFile);
+
+            const coverConvertResponse = await fetch("/api/convert-heic", {
+              method: "POST",
+              body: coverConvertFormData,
+            });
+
+            const coverConvertData = await coverConvertResponse.json();
+
+            if (!coverConvertResponse.ok || !coverConvertData.path) {
+              setError(
+                coverConvertData.error || "Failed to convert album cover"
+              );
+              setLoading(false);
+              return;
+            }
+
+            coverPath = coverConvertData.path;
+          } else {
+            // Direct S3 upload for album cover
+            const coverPresignedResponse = await fetch("/api/upload-url", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                fileName: albumCoverFile.name,
+                fileType: "photo",
+                contentType: albumCoverFile.type,
+                fileSize: albumCoverFile.size,
+              }),
+            });
+
+            const coverPresignedData = await coverPresignedResponse.json();
+            if (!coverPresignedResponse.ok || !coverPresignedData.url) {
+              setError(
+                coverPresignedData.error ||
+                  "Failed to get album cover upload URL"
+              );
+              setLoading(false);
+              return;
+            }
+
+            const coverUploadResponse = await fetch(coverPresignedData.url, {
+              method: "PUT",
+              body: albumCoverFile,
+              headers: {
+                "Content-Type": albumCoverFile.type,
+              },
+            });
+
+            if (!coverUploadResponse.ok) {
+              setError("Failed to upload album cover");
+              setLoading(false);
+              return;
+            }
+
+            const mediaBaseUrl =
+              process.env.NEXT_PUBLIC_MEDIA_BASE_URL ||
+              "https://letters-for-lena-media.s3.us-east-2.amazonaws.com";
+            coverPath = `${mediaBaseUrl}/${coverPresignedData.key}`;
+          }
+
           fileMetadata = {
-            ...(fileMetadata || {}),
-            albumCoverUrl: coverData.path,
-            albumCoverDimensions: coverData.metadata?.dimensions,
+            ...fileMetadata,
+            albumCoverUrl: coverPath,
           };
         }
       }
@@ -412,7 +611,8 @@ export default function Upload() {
                       color="text.secondary"
                       sx={{ mb: 1 }}
                     >
-                      Selected: {file.name} ({(file.size / 1024).toFixed(2)} KB)
+                      Selected: {file.name} (
+                      {(file.size / (1024 * 1024)).toFixed(2)} MB / 11 MB max)
                     </MuiTypography>
                     {filePreviewUrl && (
                       <Box sx={{ mt: 2 }}>
@@ -544,7 +744,8 @@ export default function Upload() {
                     >
                       <MuiTypography variant="body2" color="text.secondary">
                         {albumCoverFile.name} (
-                        {(albumCoverFile.size / 1024).toFixed(2)} KB)
+                        {(albumCoverFile.size / (1024 * 1024)).toFixed(2)} MB /
+                        11 MB max)
                       </MuiTypography>
                       <Button
                         size="small"
