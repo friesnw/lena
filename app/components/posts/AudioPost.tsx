@@ -3,7 +3,7 @@
 import { Box, Chip, IconButton, Paper, Stack, Typography } from "@mui/material";
 import { PlayArrowRounded, PauseRounded } from "@mui/icons-material";
 import type { Post } from "@/lib/types";
-import { getDaysSinceOct15_2025 } from "@/lib/utils";
+import { getDaysSinceOct15_2025, getS3Url } from "@/lib/utils";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import Image from "next/image";
 
@@ -47,7 +47,7 @@ export default function AudioPost({ post, hideTitle }: AudioPostProps) {
             }}
           >
             <Image
-              src={post.metadata.albumCoverUrl}
+              src={getS3Url(post.metadata.albumCoverUrl)}
               alt={post.title || "Album cover"}
               width={140}
               height={140}
