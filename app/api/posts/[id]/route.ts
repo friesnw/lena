@@ -1,7 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
+import { unstable_cache, revalidateTag } from "next/cache";
 import { getPostById, updatePost, deletePost } from "@/lib/posts-unified";
 import { requireAuth } from "@/lib/auth";
 import type { Post } from "@/lib/types";
+
+const CACHE_TAG = "posts";
+const REVALIDATE_SECONDS = 60;
+
+// Cached version of getPostById
+async function getCachedPostById(id: string) {
+  return unstable_cache(
+    async () => {
+      return await getPostById(id);
+    },
+    [`post-${id}`],
+    {
+      tags: [CACHE_TAG, `${CACHE_TAG}-${id}`],
+      revalidate: REVALIDATE_SECONDS,
+    }
+  )();
+}
 
 export async function GET(
   request: NextRequest,
@@ -9,13 +27,20 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const post = await getPostById(id);
+    const post = await getCachedPostById(id);
 
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
-    return NextResponse.json(post, { status: 200 });
+    return NextResponse.json(post, {
+      status: 200,
+      headers: {
+        "Cache-Control": `public, s-maxage=${REVALIDATE_SECONDS}, stale-while-revalidate=${
+          REVALIDATE_SECONDS * 2
+        }`,
+      },
+    });
   } catch (err) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
@@ -94,6 +119,13 @@ export async function PATCH(
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    // Revalidate cache
+    revalidateTag(CACHE_TAG, {});
+    revalidateTag(`${CACHE_TAG}-${id}`, {});
+    if (updatedPost.month !== undefined) {
+      revalidateTag(`${CACHE_TAG}-month-${updatedPost.month}`, {});
+    }
+
     return NextResponse.json(updatedPost, { status: 200 });
   } catch (err) {
     return NextResponse.json(
@@ -121,6 +153,10 @@ export async function DELETE(
     if (!deleted) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
+
+    // Revalidate cache
+    revalidateTag(CACHE_TAG, {});
+    revalidateTag(`${CACHE_TAG}-${id}`, {});
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err) {

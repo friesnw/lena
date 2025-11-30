@@ -1,8 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
+import { unstable_cache, revalidateTag } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
 import { getPublishedPostsByMonthOrdered, savePost } from "@/lib/posts-unified";
 import { requireAuth } from "@/lib/auth";
 import type { Post, FileMetadata } from "@/lib/types";
+
+// Cache configuration
+const CACHE_TAG = "posts";
+const REVALIDATE_SECONDS = 60; // Revalidate every 60 seconds
+
+// Cached version of getPublishedPostsByMonthOrdered
+async function getCachedPublishedPostsByMonth(month: number) {
+  return unstable_cache(
+    async () => {
+      return await getPublishedPostsByMonthOrdered(month);
+    },
+    [`published-posts-month-${month}`],
+    {
+      tags: [CACHE_TAG, `${CACHE_TAG}-month-${month}`],
+      revalidate: REVALIDATE_SECONDS,
+    }
+  )();
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -26,11 +45,20 @@ export async function GET(request: NextRequest) {
 
   try {
     console.log(`[api/posts] GET request for month ${monthNum}`);
-    const posts = await getPublishedPostsByMonthOrdered(monthNum);
+    const posts = await getCachedPublishedPostsByMonth(monthNum);
     console.log(
       `[api/posts] Month ${monthNum}: Returning ${posts.length} published posts`
     );
-    return NextResponse.json(posts, { status: 200 });
+
+    // Add cache headers for client-side caching
+    return NextResponse.json(posts, {
+      status: 200,
+      headers: {
+        "Cache-Control": `public, s-maxage=${REVALIDATE_SECONDS}, stale-while-revalidate=${
+          REVALIDATE_SECONDS * 2
+        }`,
+      },
+    });
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     console.error(
@@ -76,7 +104,7 @@ export async function POST(request: NextRequest) {
       published?: boolean;
       order?: number;
       metadata?: FileMetadata;
-      tags?: string[]; // Add this
+      tags?: string[];
     };
 
     // basic validation
@@ -139,6 +167,11 @@ export async function POST(request: NextRequest) {
     };
 
     const saved = await savePost(newPost);
+
+    // Revalidate cache for this month
+    revalidateTag(CACHE_TAG, {});
+    revalidateTag(`${CACHE_TAG}-month-${month}`, {});
+
     return NextResponse.json(saved, { status: 201 });
   } catch (err) {
     return NextResponse.json(

@@ -112,8 +112,17 @@ export default function AdminMonthPage({
     return { carouselPosts: carousel, regularPosts: regular };
   }, [posts]);
 
-  const handlePostClick = (postId: string) => {
-    router.push(`/admin/posts/${postId}`);
+  const handlePostClick = (postId: string, event?: React.MouseEvent) => {
+    const url = `/admin/posts/${postId}`;
+
+    // Check for modifier keys (Command on Mac, Ctrl on Windows/Linux)
+    if (event && (event.metaKey || event.ctrlKey)) {
+      // Open in new tab
+      window.open(url, "_blank");
+    } else {
+      // Normal navigation
+      router.push(url);
+    }
   };
 
   // Get sorted posts by order for finding adjacent posts
@@ -134,8 +143,9 @@ export default function AdminMonthPage({
     if (!currentPost) return;
 
     // Calculate new order (increment/decrement by 1)
-    const newOrder = direction === "up" ? currentPost.order - 1 : currentPost.order + 1;
-    
+    const newOrder =
+      direction === "up" ? currentPost.order - 1 : currentPost.order + 1;
+
     // Don't allow negative orders
     if (newOrder < 0) return;
 
@@ -162,7 +172,9 @@ export default function AdminMonthPage({
 
         if (response1.ok && response2.ok) {
           // Refresh posts
-          const refreshResponse = await fetch(`/api/posts/admin?month=${month}`);
+          const refreshResponse = await fetch(
+            `/api/posts/admin?month=${month}`
+          );
           if (refreshResponse.ok) {
             const refreshedPosts = await refreshResponse.json();
             setPosts(refreshedPosts);
@@ -180,7 +192,9 @@ export default function AdminMonthPage({
 
         if (response.ok) {
           // Refresh posts
-          const refreshResponse = await fetch(`/api/posts/admin?month=${month}`);
+          const refreshResponse = await fetch(
+            `/api/posts/admin?month=${month}`
+          );
           if (refreshResponse.ok) {
             const refreshedPosts = await refreshResponse.json();
             setPosts(refreshedPosts);
@@ -210,11 +224,16 @@ export default function AdminMonthPage({
             boxShadow: 4,
           },
         }}
-        onClick={() => handlePostClick(post.id)}
+        onClick={(e) => handlePostClick(post.id, e)}
       >
         <CardContent>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="center"
+              sx={{ mb: 1 }}
+            >
               <Chip
                 label={post.type}
                 size="small"
@@ -255,76 +274,76 @@ export default function AdminMonthPage({
             </Stack>
           </Box>
 
-        <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: "medium" }}>
-          {post.title}
-        </Typography>
-        {(post.type === "photo" || post.type === "video") && post.content && (
-          <Box
-            sx={{
-              position: "relative",
-              width: "100%",
-              maxWidth: 320,
-              aspectRatio: "4 / 3",
-              borderRadius: 1,
-              overflow: "hidden",
-              mb: 1.5,
-              backgroundColor: "rgba(0,0,0,0.04)",
-            }}
-          >
-            {post.type === "photo" ? (
-              <Image
-                src={post.content}
-                alt={post.caption || post.title || "Photo preview"}
-                fill
-                sizes="320px"
-                style={{
-                  objectFit: "cover",
-                }}
-                unoptimized
-              />
-            ) : (
-              <Box
-                component="video"
-                controls={false}
-                autoPlay
-                muted
-                loop
-                playsInline
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              >
-                <source src={post.content} />
-                Your browser does not support the video element.
-              </Box>
-            )}
-          </Box>
-        )}
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-          {post.type === "text" || post.type === "stat"
-            ? post.content.substring(0, 100) +
-              (post.content.length > 100 ? "..." : "")
-            : post.content}
-        </Typography>
-        {post.caption && (
-          <Typography variant="caption" color="text.secondary">
-            Caption: {post.caption}
+          <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: "medium" }}>
+            {post.title}
           </Typography>
-        )}
-        <Typography
-          variant="caption"
-          color="text.secondary"
-          display="block"
-          sx={{ mt: 1 }}
-        >
-          Created: {new Date(post.createdAt).toLocaleString()}
-        </Typography>
-      </CardContent>
-    </Card>
+          {(post.type === "photo" || post.type === "video") && post.content && (
+            <Box
+              sx={{
+                position: "relative",
+                width: "100%",
+                maxWidth: 320,
+                aspectRatio: "4 / 3",
+                borderRadius: 1,
+                overflow: "hidden",
+                mb: 1.5,
+                backgroundColor: "rgba(0,0,0,0.04)",
+              }}
+            >
+              {post.type === "photo" ? (
+                <Image
+                  src={post.content}
+                  alt={post.caption || post.title || "Photo preview"}
+                  fill
+                  sizes="320px"
+                  style={{
+                    objectFit: "cover",
+                  }}
+                  unoptimized
+                />
+              ) : (
+                <Box
+                  component="video"
+                  controls={false}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  sx={{
+                    position: "absolute",
+                    inset: 0,
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                >
+                  <source src={post.content} />
+                  Your browser does not support the video element.
+                </Box>
+              )}
+            </Box>
+          )}
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            {post.type === "text" || post.type === "stat"
+              ? post.content.substring(0, 100) +
+                (post.content.length > 100 ? "..." : "")
+              : post.content}
+          </Typography>
+          {post.caption && (
+            <Typography variant="caption" color="text.secondary">
+              Caption: {post.caption}
+            </Typography>
+          )}
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            display="block"
+            sx={{ mt: 1 }}
+          >
+            Created: {new Date(post.createdAt).toLocaleString()}
+          </Typography>
+        </CardContent>
+      </Card>
     );
   };
 
