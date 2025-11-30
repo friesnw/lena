@@ -7,6 +7,34 @@ import {
 import { Post } from "./types";
 
 const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME || "letters-for-lena-media";
+const INDEX_KEY = "posts/index.json";
+
+// Index cache (in-memory)
+interface IndexEntry {
+  id: string;
+  month: number;
+  published: boolean;
+  order: number;
+  type: Post["type"];
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  deleted?: boolean;
+  tags?: string[];
+  s3Key: string;
+  [key: string]: any; // Allow other metadata fields
+}
+
+interface PostsIndex {
+  version: string;
+  lastUpdated: string;
+  totalPosts: number;
+  posts: IndexEntry[];
+}
+
+let indexCache: PostsIndex | null = null;
+let indexCacheTime: number = 0;
+const INDEX_CACHE_TTL = 60000; // 60 seconds cache
 
 // Lazy initialization of S3 client (so env vars can be loaded first)
 let s3Client: S3Client | null = null;
@@ -26,12 +54,6 @@ function getS3Client(): S3Client {
       console.error(`[posts-s3] ${errorMsg}`);
       throw new Error(errorMsg);
     }
-
-    console.log(
-      `[posts-s3] Creating S3 client with region: ${
-        process.env.AWS_REGION || "us-east-2"
-      }, bucket: ${BUCKET_NAME}`
-    );
 
     s3Client = new S3Client({
       region: (process.env.AWS_REGION || "us-east-2").trim(),
@@ -60,12 +82,118 @@ function getPostS3Key(post: Post): string {
 }
 
 /**
- * Get a single post from S3 by ID
+ * Read the index file from S3 (with caching)
+ */
+async function getIndex(): Promise<PostsIndex | null> {
+  const now = Date.now();
+
+  // Return cached index if still valid
+  if (indexCache && now - indexCacheTime < INDEX_CACHE_TTL) {
+    return indexCache;
+  }
+
+  try {
+    const getCommand = new GetObjectCommand({
+      Bucket: BUCKET_NAME,
+      Key: INDEX_KEY,
+    });
+
+    const response = await getS3Client().send(getCommand);
+    const bodyString = await response.Body?.transformToString();
+
+    if (!bodyString) {
+      console.warn("[posts-s3] Index file is empty");
+      return null;
+    }
+
+    const index = JSON.parse(bodyString) as PostsIndex;
+
+    // Cache the index
+    indexCache = index;
+    indexCacheTime = now;
+
+    return index;
+  } catch (error) {
+    // If index doesn't exist, that's okay - we'll fall back to listing
+    if ((error as any).name === "NoSuchKey") {
+      console.warn("[posts-s3] Index file not found, will use fallback method");
+      return null;
+    }
+    console.error("[posts-s3] Error reading index:", error);
+    return null;
+  }
+}
+
+/**
+ * Update the index file in S3
+ */
+async function updateIndex(updatedIndex: PostsIndex): Promise<void> {
+  try {
+    const jsonString = JSON.stringify(updatedIndex, null, 2);
+
+    const putCommand = new PutObjectCommand({
+      Bucket: BUCKET_NAME,
+      Key: INDEX_KEY,
+      Body: jsonString,
+      ContentType: "application/json",
+    });
+
+    await getS3Client().send(putCommand);
+
+    // Update cache
+    indexCache = updatedIndex;
+    indexCacheTime = Date.now();
+  } catch (error) {
+    console.error("[posts-s3] Error updating index:", error);
+    throw error;
+  }
+}
+
+/**
+ * Extract metadata from a post for the index
+ */
+function extractPostMetadata(post: Post): IndexEntry {
+  const { content, ...metadata } = post;
+  return {
+    ...metadata,
+    s3Key: getPostS3Key(post),
+  } as IndexEntry;
+}
+
+/**
+ * Get a single post from S3 by ID (using index for fast lookup)
  */
 async function getPostFromS3(id: string): Promise<Post | null> {
   try {
-    // We need to search all posts to find the one with matching ID
-    // List all posts in the posts/ prefix
+    // Try to use index first
+    const index = await getIndex();
+
+    if (index) {
+      const indexEntry = index.posts.find((p) => p.id === id);
+      if (!indexEntry) {
+        return null; // Post not found
+      }
+
+      // Download the specific post file
+      const getCommand = new GetObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: indexEntry.s3Key,
+      });
+
+      const response = await getS3Client().send(getCommand);
+      const bodyString = await response.Body?.transformToString();
+
+      if (!bodyString) {
+        return null;
+      }
+
+      return JSON.parse(bodyString) as Post;
+    }
+
+    // Fallback: search all posts (slow, but works if index doesn't exist)
+    console.warn(
+      "[posts-s3] Index not available, using fallback method for getPostById"
+    );
     const listCommand = new ListObjectsV2Command({
       Bucket: BUCKET_NAME,
       Prefix: "posts/",
@@ -77,12 +205,15 @@ async function getPostFromS3(id: string): Promise<Post | null> {
       return null;
     }
 
-    // Search through all post files to find the one with matching ID
+    // Search through post files
     for (const object of listResponse.Contents) {
-      if (!object.Key) continue;
-
-      // Only check JSON files
-      if (!object.Key.endsWith(".json")) continue;
+      if (
+        !object.Key ||
+        !object.Key.endsWith(".json") ||
+        object.Key === INDEX_KEY
+      ) {
+        continue;
+      }
 
       try {
         const getCommand = new GetObjectCommand({
@@ -101,21 +232,20 @@ async function getPostFromS3(id: string): Promise<Post | null> {
           return post;
         }
       } catch (err) {
-        // Skip invalid JSON files
-        console.warn(`Error reading post file ${object.Key}:`, err);
+        console.warn(`[posts-s3] Error reading post file ${object.Key}:`, err);
         continue;
       }
     }
 
     return null;
   } catch (error) {
-    console.error("Error getting post from S3:", error);
+    console.error("[posts-s3] Error getting post from S3:", error);
     return null;
   }
 }
 
 /**
- * List all posts from S3, optionally filtered
+ * List posts from index (fast) or fallback to downloading all (slow)
  */
 async function listPostsFromS3(options?: {
   month?: number;
@@ -123,47 +253,75 @@ async function listPostsFromS3(options?: {
   includeDeleted?: boolean;
 }): Promise<Post[]> {
   try {
-    console.log(`[posts-s3] Starting listPostsFromS3 with options:`, options);
-    console.log(`[posts-s3] Bucket: ${BUCKET_NAME}, Prefix: posts/`);
+    const index = await getIndex();
 
+    if (index) {
+      // Fast path: use index
+      let entries = index.posts;
+
+      // Apply filters
+      if (!options?.includeDeleted) {
+        entries = entries.filter((p) => !p.deleted);
+      }
+
+      if (options?.month !== undefined) {
+        entries = entries.filter((p) => p.month === options.month);
+      }
+
+      if (options?.published !== undefined) {
+        entries = entries.filter((p) => p.published === options.published);
+      }
+
+      // If we only need metadata, return entries as-is
+      // But since we need full posts, download them in parallel
+      const postPromises = entries.map(async (entry) => {
+        try {
+          const getCommand = new GetObjectCommand({
+            Bucket: BUCKET_NAME,
+            Key: entry.s3Key,
+          });
+
+          const response = await getS3Client().send(getCommand);
+          const bodyString = await response.Body?.transformToString();
+
+          if (!bodyString) return null;
+
+          return JSON.parse(bodyString) as Post;
+        } catch (err) {
+          console.warn(`[posts-s3] Error reading post ${entry.s3Key}:`, err);
+          return null;
+        }
+      });
+
+      const posts = (await Promise.all(postPromises)).filter(
+        (post): post is Post => post !== null
+      );
+
+      return posts;
+    }
+
+    // Fallback: download all posts (slow, but works if index doesn't exist)
+    console.warn(
+      "[posts-s3] Index not available, using fallback method (slow)"
+    );
     const listCommand = new ListObjectsV2Command({
       Bucket: BUCKET_NAME,
       Prefix: "posts/",
     });
 
-    console.log(`[posts-s3] Sending ListObjectsV2Command...`);
-
-    // Add timeout to prevent infinite hanging
-    const s3ClientInstance = getS3Client();
-    const listResponsePromise = s3ClientInstance.send(listCommand);
-    const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(
-        () => reject(new Error("S3 request timeout after 30 seconds")),
-        30000
-      )
-    );
-
-    const listResponse = await Promise.race([
-      listResponsePromise,
-      timeoutPromise,
-    ]);
-
-    console.log(`[posts-s3] ListObjectsV2Command completed`);
+    const listResponse = await getS3Client().send(listCommand);
 
     if (!listResponse.Contents || listResponse.Contents.length === 0) {
-      console.log("[posts-s3] No posts found in S3");
       return [];
     }
 
-    console.log(
-      `[posts-s3] Found ${listResponse.Contents.length} post files in S3, starting to read...`
+    const postFiles = listResponse.Contents.filter(
+      (obj) => obj.Key && obj.Key.endsWith(".json") && obj.Key !== INDEX_KEY
     );
 
-    const posts: Post[] = [];
-
-    // Read all post files
-    for (const object of listResponse.Contents) {
-      if (!object.Key || !object.Key.endsWith(".json")) continue;
+    // Download all posts in parallel
+    const postPromises = postFiles.map(async (object) => {
+      if (!object.Key) return null;
 
       try {
         const getCommand = new GetObjectCommand({
@@ -174,70 +332,52 @@ async function listPostsFromS3(options?: {
         const response = await getS3Client().send(getCommand);
         const bodyString = await response.Body?.transformToString();
 
-        if (!bodyString) continue;
+        if (!bodyString) return null;
 
-        const post = JSON.parse(bodyString) as Post;
-        posts.push(post);
+        return JSON.parse(bodyString) as Post;
       } catch (err) {
-        // Skip invalid JSON files
         console.warn(`[posts-s3] Error reading post file ${object.Key}:`, err);
-        continue;
+        return null;
       }
-    }
+    });
 
-    console.log(`[posts-s3] Successfully parsed ${posts.length} posts from S3`);
+    const posts = (await Promise.all(postPromises)).filter(
+      (post): post is Post => post !== null
+    );
 
     // Apply filters
     let filtered = posts;
 
-    // Filter out deleted posts by default (unless explicitly included)
     if (!options?.includeDeleted) {
-      const beforeDeleted = filtered.length;
       filtered = filtered.filter((post) => !post.deleted);
-      if (beforeDeleted !== filtered.length) {
-        console.log(
-          `[posts-s3] Filtered out ${
-            beforeDeleted - filtered.length
-          } deleted posts`
-        );
-      }
     }
 
-    // Filter by month if specified
     if (options?.month !== undefined) {
-      const beforeMonth = filtered.length;
       filtered = filtered.filter((post) => post.month === options.month);
-      console.log(
-        `[posts-s3] Filtered to month ${options.month}: ${filtered.length} posts (from ${beforeMonth})`
-      );
     }
 
-    // Filter by published status if specified
     if (options?.published !== undefined) {
-      const beforePublished = filtered.length;
       filtered = filtered.filter(
         (post) => post.published === options.published
-      );
-      console.log(
-        `[posts-s3] Filtered to published=${options.published}: ${filtered.length} posts (from ${beforePublished})`
       );
     }
 
     return filtered;
   } catch (error) {
-    console.error("Error listing posts from S3:", error);
+    console.error("[posts-s3] Error listing posts from S3:", error);
     return [];
   }
 }
 
 /**
- * Save a post to S3
+ * Save a post to S3 and update the index
  */
 async function savePostToS3(post: Post): Promise<Post> {
   try {
     const key = getPostS3Key(post);
     const jsonString = JSON.stringify(post, null, 2);
 
+    // Save the post file
     const command = new PutObjectCommand({
       Bucket: BUCKET_NAME,
       Key: key,
@@ -246,9 +386,30 @@ async function savePostToS3(post: Post): Promise<Post> {
     });
 
     await getS3Client().send(command);
+
+    // Update the index
+    const index = await getIndex();
+    if (index) {
+      // Check if post already exists in index
+      const existingIndex = index.posts.findIndex((p) => p.id === post.id);
+      const metadata = extractPostMetadata(post);
+
+      if (existingIndex >= 0) {
+        // Update existing entry
+        index.posts[existingIndex] = metadata;
+      } else {
+        // Add new entry
+        index.posts.push(metadata);
+        index.totalPosts = index.posts.length;
+      }
+
+      index.lastUpdated = new Date().toISOString();
+      await updateIndex(index);
+    }
+
     return post;
   } catch (error) {
-    console.error("Error saving post to S3:", error);
+    console.error("[posts-s3] Error saving post to S3:", error);
     throw new Error(
       `Failed to save post to S3: ${
         error instanceof Error ? error.message : String(error)
