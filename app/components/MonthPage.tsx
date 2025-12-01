@@ -19,7 +19,7 @@ function hasCarouselTag(post: Post): boolean {
   return post.tags?.some((tag) => tag.startsWith("Carousel ")) ?? false;
 }
 
-// Helper function to get carousel number from tag
+// Helper function to get carousel number from tags
 function getCarouselNumber(post: Post): number | null {
   const carouselTag = post.tags?.find((tag) => tag.startsWith("Carousel "));
   if (!carouselTag) return null;
