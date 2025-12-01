@@ -1,6 +1,14 @@
 "use client";
 
-import { Box, Chip, IconButton, Paper, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Chip,
+  IconButton,
+  Paper,
+  Stack,
+  Typography,
+  Link,
+} from "@mui/material";
 import { PlayArrowRounded, PauseRounded } from "@mui/icons-material";
 import type { Post } from "@/lib/types";
 import { getDaysSinceOct15_2025, getS3Url } from "@/lib/utils";
@@ -10,9 +18,14 @@ import Image from "next/image";
 interface AudioPostProps {
   post: Post;
   hideTitle: boolean;
+  viewPostUrl?: string;
 }
 
-export default function AudioPost({ post, hideTitle }: AudioPostProps) {
+export default function AudioPost({
+  post,
+  hideTitle,
+  viewPostUrl,
+}: AudioPostProps) {
   const { audioRef, isPlaying, togglePlay } = useAudioPlayer();
   const daysSince = getDaysSinceOct15_2025(
     post.metadata?.dateTaken || post.createdAt
@@ -120,6 +133,13 @@ export default function AudioPost({ post, hideTitle }: AudioPostProps) {
             <Chip key={tag} label={tag} size="small" variant="outlined" />
           ))}
         </Stack>
+        {viewPostUrl && (
+          <Box sx={{ mt: 1 }}>
+            <Link href={viewPostUrl} underline="hover">
+              View Post
+            </Link>
+          </Box>
+        )}
       </Stack>
     </Paper>
   );

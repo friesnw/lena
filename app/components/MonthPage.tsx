@@ -64,6 +64,9 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
       4: [],
       5: [],
       6: [],
+      7: [],
+      8: [],
+      9: [],
     };
     const regular: Post[] = [];
 
@@ -73,7 +76,7 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
         (post.type === "photo" || post.type === "video")
       ) {
         const carouselNum = getCarouselNumber(post);
-        if (carouselNum && carouselNum >= 1 && carouselNum <= 6) {
+        if (carouselNum && carouselNum >= 1 && carouselNum <= 9) {
           carousel[carouselNum].push(post);
         }
       } else {
@@ -92,7 +95,7 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
 
   // Render posts with carousels at appropriate intervals
   const renderPostsWithCarousels = () => {
-    const carouselThresholds = [10, 20, 30, 40, 50, 60];
+    const carouselThresholds = [10, 20, 30, 40, 50, 60, 70, 80, 90];
     const result: React.ReactElement[] = [];
     let regularIndex = 0;
 

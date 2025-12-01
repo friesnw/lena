@@ -1,29 +1,19 @@
 "use client";
 
 import {
-  Container,
   Typography,
   CircularProgress,
   Alert,
   Box,
-  Card,
-  CardContent,
   Button,
-  Chip,
   Stack,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  IconButton,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { useEffect, useState, useMemo } from "react";
-import type { ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import type { Post } from "@/lib/types";
-import Image from "next/image";
+import PostDisplay from "./PostDisplay";
+import PostCarousel from "./PostCarousel";
+import { getMonthRangeText } from "@/lib/utils";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
 interface AdminMonthPageProps {
@@ -86,6 +76,9 @@ export default function AdminMonthPage({
       4: [],
       5: [],
       6: [],
+      7: [],
+      8: [],
+      9: [],
     };
     const regular: Post[] = [];
 
@@ -95,7 +88,7 @@ export default function AdminMonthPage({
         (post.type === "photo" || post.type === "video")
       ) {
         const carouselNum = getCarouselNumber(post);
-        if (carouselNum && carouselNum >= 1 && carouselNum <= 6) {
+        if (carouselNum && carouselNum >= 1 && carouselNum <= 9) {
           carousel[carouselNum].push(post);
         }
       } else {
@@ -112,298 +105,58 @@ export default function AdminMonthPage({
     return { carouselPosts: carousel, regularPosts: regular };
   }, [posts]);
 
-  const handlePostClick = (postId: string, event?: React.MouseEvent) => {
-    const url = `/admin/posts/${postId}`;
+  const getViewPostUrl = (postId: string) => `/admin/posts/${postId}`;
 
-    // Check for modifier keys (Command on Mac, Ctrl on Windows/Linux)
-    if (event && (event.metaKey || event.ctrlKey)) {
-      // Open in new tab
-      window.open(url, "_blank");
-    } else {
-      // Normal navigation
-      router.push(url);
-    }
-  };
-
-  // Get sorted posts by order for finding adjacent posts
-  const sortedPostsByOrder = useMemo(() => {
-    return [...posts].sort((a, b) => {
-      if (a.order !== b.order) {
-        return a.order - b.order;
-      }
-      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-    });
-  }, [posts]);
-
-  const handleOrderChange = async (
-    postId: string,
-    direction: "up" | "down"
-  ) => {
-    const currentPost = posts.find((p) => p.id === postId);
-    if (!currentPost) return;
-
-    // Calculate new order (increment/decrement by 1)
-    const newOrder =
-      direction === "up" ? currentPost.order - 1 : currentPost.order + 1;
-
-    // Don't allow negative orders
-    if (newOrder < 0) return;
-
-    // Check if another post has this order value
-    const conflictingPost = posts.find(
-      (p) => p.id !== postId && p.order === newOrder
-    );
-
-    try {
-      if (conflictingPost) {
-        // Swap orders with the conflicting post
-        const [response1, response2] = await Promise.all([
-          fetch(`/api/posts/${postId}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ order: newOrder }),
-          }),
-          fetch(`/api/posts/${conflictingPost.id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ order: currentPost.order }),
-          }),
-        ]);
-
-        if (response1.ok && response2.ok) {
-          // Refresh posts
-          const refreshResponse = await fetch(
-            `/api/posts/admin?month=${month}`
-          );
-          if (refreshResponse.ok) {
-            const refreshedPosts = await refreshResponse.json();
-            setPosts(refreshedPosts);
-          }
-        } else {
-          setError("Failed to update post order");
-        }
-      } else {
-        // No conflict, just update this post's order
-        const response = await fetch(`/api/posts/${postId}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ order: newOrder }),
-        });
-
-        if (response.ok) {
-          // Refresh posts
-          const refreshResponse = await fetch(
-            `/api/posts/admin?month=${month}`
-          );
-          if (refreshResponse.ok) {
-            const refreshedPosts = await refreshResponse.json();
-            setPosts(refreshedPosts);
-          }
-        } else {
-          setError("Failed to update post order");
-        }
-      }
-    } catch (err) {
-      setError("Something went wrong while updating order");
-    }
-  };
-
-  const renderPostCard = (post: Post) => {
-    // Can move up if order > 0
-    const canMoveUp = post.order > 0;
-    // Can move down - always allowed (order can increase)
-    const canMoveDown = true;
-
-    return (
-      <Card
-        key={post.id}
-        sx={{
-          mb: 2,
-          cursor: "pointer",
-          "&:hover": {
-            boxShadow: 4,
-          },
-        }}
-        onClick={(e) => handlePostClick(post.id, e)}
-      >
-        <CardContent>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Stack
-              direction="row"
-              spacing={2}
-              alignItems="center"
-              sx={{ mb: 1 }}
-            >
-              <Chip
-                label={post.type}
-                size="small"
-                color={post.published ? "success" : "default"}
-              />
-              {post.published ? (
-                <Chip label="Published" size="small" color="success" />
-              ) : (
-                <Chip label="Draft" size="small" />
-              )}
-            </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography color="text.secondary" sx={{ mr: 1 }}>
-                Order: {post.order}
-              </Typography>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOrderChange(post.id, "up");
-                }}
-                disabled={!canMoveUp}
-                sx={{ color: canMoveUp ? "primary.main" : "action.disabled" }}
-              >
-                <ArrowUpwardIcon />
-              </IconButton>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOrderChange(post.id, "down");
-                }}
-                disabled={!canMoveDown}
-                sx={{ color: canMoveDown ? "primary.main" : "action.disabled" }}
-              >
-                <ArrowDownwardIcon />
-              </IconButton>
-            </Stack>
-          </Box>
-
-          <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: "medium" }}>
-            {post.title}
-          </Typography>
-          {(post.type === "photo" || post.type === "video") && post.content && (
-            <Box
-              sx={{
-                position: "relative",
-                width: "100%",
-                maxWidth: 320,
-                aspectRatio: "4 / 3",
-                borderRadius: 1,
-                overflow: "hidden",
-                mb: 1.5,
-                backgroundColor: "rgba(0,0,0,0.04)",
-              }}
-            >
-              {post.type === "photo" ? (
-                <Image
-                  src={post.content}
-                  alt={post.caption || post.title || "Photo preview"}
-                  fill
-                  sizes="320px"
-                  style={{
-                    objectFit: "cover",
-                  }}
-                  unoptimized
-                />
-              ) : (
-                <Box
-                  component="video"
-                  controls={false}
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  sx={{
-                    position: "absolute",
-                    inset: 0,
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                >
-                  <source src={post.content} />
-                  Your browser does not support the video element.
-                </Box>
-              )}
-            </Box>
-          )}
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            {post.type === "text" || post.type === "stat"
-              ? post.content.substring(0, 100) +
-                (post.content.length > 100 ? "..." : "")
-              : post.content}
-          </Typography>
-          {post.caption && (
-            <Typography variant="caption" color="text.secondary">
-              Caption: {post.caption}
-            </Typography>
-          )}
-          <Typography
-            variant="caption"
-            color="text.secondary"
-            display="block"
-            sx={{ mt: 1 }}
-          >
-            Created: {new Date(post.createdAt).toLocaleString()}
-          </Typography>
-        </CardContent>
-      </Card>
-    );
-  };
-
-  const renderCarouselAccordion = (carouselNum: number) => {
-    const postsForCarousel = carouselPosts[carouselNum];
-    if (!postsForCarousel || postsForCarousel.length === 0) {
-      return null;
-    }
-
-    return (
-      <Accordion key={`carousel-${carouselNum}`} sx={{ mb: 2 }}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls={`carousel-${carouselNum}-content`}
-          id={`carousel-${carouselNum}-header`}
-        >
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Typography variant="h6">Carousel {carouselNum}</Typography>
-            <Chip
-              label={`${postsForCarousel.length} post${
-                postsForCarousel.length !== 1 ? "s" : ""
-              }`}
-              size="small"
-              color="primary"
-              variant="outlined"
-            />
-          </Stack>
-        </AccordionSummary>
-        <AccordionDetails>
-          {postsForCarousel.map((post) => renderPostCard(post))}
-        </AccordionDetails>
-      </Accordion>
-    );
-  };
-
-  const renderContentInDisplayOrder = () => {
-    const carouselThresholds = [10, 20, 30, 40, 50, 60];
-    const result: ReactElement[] = [];
+  // Render posts with carousels at appropriate intervals
+  const renderPostsWithCarousels = () => {
+    const carouselThresholds = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+    const result: React.ReactElement[] = [];
     let regularIndex = 0;
 
     for (let i = 0; i < carouselThresholds.length; i++) {
       const threshold = carouselThresholds[i];
       const carouselNum = i + 1;
 
+      // Render regular posts up to this threshold
       while (
         regularIndex < regularPosts.length &&
         regularPosts[regularIndex].order < threshold
       ) {
-        result.push(renderPostCard(regularPosts[regularIndex]));
+        result.push(
+          <PostDisplay
+            key={regularPosts[regularIndex].id}
+            post={regularPosts[regularIndex]}
+            showOrder={true}
+            viewPostUrl={getViewPostUrl(regularPosts[regularIndex].id)}
+          />
+        );
         regularIndex++;
       }
 
-      const carousel = renderCarouselAccordion(carouselNum);
-      if (carousel) {
-        result.push(carousel);
+      // Render carousel if it has posts
+      if (carouselPosts[carouselNum].length > 0) {
+        result.push(
+          <PostCarousel
+            key={`carousel-${carouselNum}`}
+            posts={carouselPosts[carouselNum]}
+            title={`Carousel ${carouselNum}`}
+            showOrder={true}
+            getViewPostUrl={getViewPostUrl}
+          />
+        );
       }
     }
 
+    // Render remaining regular posts
     while (regularIndex < regularPosts.length) {
-      result.push(renderPostCard(regularPosts[regularIndex]));
+      result.push(
+        <PostDisplay
+          key={regularPosts[regularIndex].id}
+          post={regularPosts[regularIndex]}
+          showOrder={true}
+          viewPostUrl={getViewPostUrl(regularPosts[regularIndex].id)}
+        />
+      );
       regularIndex++;
     }
 
@@ -411,50 +164,72 @@ export default function AdminMonthPage({
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
+    <Box
+      sx={{
+        width: "100%",
+        pl: { md: "320px" }, // Account for sidebar on desktop
+        mt: 4,
+        mb: 4,
+      }}
+    >
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
+          maxWidth: "600px",
+          mx: { xs: "auto", md: "auto" }, // Center on both mobile and desktop
+          px: 2,
         }}
       >
-        <Typography variant="h4" component="h1">
-          {pageTitle}
-        </Typography>
-        <Stack direction="row" spacing={2}>
-          <Button href={`/month/${month}`} variant="outlined">
-            View Published
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => router.push(`/upload?month=${month}`)}
-          >
-            New Post
-          </Button>
-        </Stack>
-      </Box>
-
-      {loading && (
-        <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
-          <CircularProgress />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+            flexWrap: "wrap",
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Typography variant="h1" component="h1" sx={{ mb: 1 }}>
+              {pageTitle}
+            </Typography>
+            <Typography variant="h6" fontSize="1.25rem" color="text.secondary">
+              {getMonthRangeText(month)}
+            </Typography>
+          </Box>
+          <Stack direction="row" spacing={2} sx={{ flexShrink: 0 }}>
+            <Button href={`/month/${month}`} variant="outlined">
+              View Published
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => router.push(`/upload?month=${month}`)}
+            >
+              New Post
+            </Button>
+          </Stack>
         </Box>
-      )}
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
+        {loading && (
+          <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+            <CircularProgress />
+          </Box>
+        )}
 
-      {!loading && !error && posts.length === 0 && (
-        <Typography variant="body1" color="text.secondary">
-          No posts yet for this month.
-        </Typography>
-      )}
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
 
-      {!loading && !error && <>{renderContentInDisplayOrder()}</>}
-    </Container>
+        {!loading && !error && posts.length === 0 && (
+          <Typography variant="body1" color="text.secondary">
+            No posts yet for this month.
+          </Typography>
+        )}
+
+        {!loading && !error && posts.length > 0 && renderPostsWithCarousels()}
+      </Box>
+    </Box>
   );
 }

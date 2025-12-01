@@ -5,49 +5,44 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
 import { ReactNode } from "react";
 
-const palette = {
-  primary: { light: "#6c7989", main: "#465362", dark: "#232b35" },
-  secondary: { light: "#b6c9c7", main: "#82A3A1", dark: "#56706f" },
-  neutral: {
-    50: "#FFFFFF",
-    100: "#FFFFFF",
-    200: "#FFFAF3",
-    400: "#FEF8ED",
-    700: "#575365",
-    900: "#161424",
-  },
-  accent: {
-    darkGreen: "#9FC490",
-    lightGreen: "#C0DFA1",
-    blush: "#F27E6B",
-    blushLight: "#ffc9c1",
-    blueLight: "#aec6cf69",
-    greenLight: "#b2d8b266",
-  },
-};
-
 const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: palette.accent.blush,
-      light: palette.primary.light,
-      dark: palette.primary.main,
+      main: "#F27E6B", // accent.blush
+      light: "#6c7989",
+      dark: "#465362",
     },
     secondary: {
-      main: palette.secondary.main,
-      light: palette.secondary.light,
-      dark: palette.secondary.dark,
+      main: "#82A3A1",
+      light: "#b6c9c7",
+      dark: "#AB775C",
     },
     background: {
-      default: palette.neutral[200],
-      paper: palette.neutral[100],
-      card: palette.neutral[200],
-      surface: palette.neutral[400],
+      default: "#FFFAF3", // neutral[200]
+      paper: "#FFFFFF", // neutral[100]
+      card: "#FFFAF3", // neutral[200]
+      surface: "#FEF8ED", // neutral[400]
     },
     text: {
-      primary: palette.neutral[900],
-      secondary: palette.neutral[700],
+      primary: "#161424", // neutral[900]
+      secondary: "#575365", // neutral[700]
+    },
+    neutral: {
+      50: "#FFFFFF",
+      100: "#FFFFFF",
+      200: "#FFFAF3",
+      400: "#FEF8ED",
+      700: "#575365",
+      900: "#161424",
+    },
+    accent: {
+      darkGreen: "#9FC490",
+      lightGreen: "#C0DFA1",
+      blush: "#F27E6B",
+      blushLight: "#ffc9c1",
+      blueLight: "#aec6cf69",
+      greenLight: "#b2d8b266",
     },
   },
   typography: {
@@ -107,11 +102,19 @@ const theme = createTheme({
   },
   components: {
     MuiButton: {
+      styleOverrides: {
+        containedPrimary: {
+          color: "#fff",
+          "&:hover": {
+            backgroundColor: "#D76A58",
+          },
+        },
+      },
       variants: [
         {
           props: { variant: "primary" },
-          style: {
-            backgroundColor: palette.accent.blush,
+          style: ({ theme }) => ({
+            backgroundColor: theme.palette.accent?.blush || "#F27E6B",
             color: "#fff",
             padding: "10px 24px",
             fontFamily: "var(--font-lora), serif",
@@ -121,10 +124,10 @@ const theme = createTheme({
             borderRadius: "8px",
             boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
             "&:hover": {
-              backgroundColor: "#1565c0",
+              backgroundColor: "#D76A58",
               boxShadow: "0 4px 8px rgba(0,0,0,0.3)",
             },
-          },
+          }),
         },
         {
           props: { variant: "secondary" },

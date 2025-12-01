@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { Box, IconButton, Typography, Card, CardContent } from "@mui/material";
+import { Box, IconButton, Typography, Card, CardContent, Link } from "@mui/material";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import type { Post } from "@/lib/types";
 import Image from "next/image";
@@ -10,9 +10,11 @@ import { getDaysSinceOct15_2025 } from "@/lib/utils";
 interface PostCarouselProps {
   posts: Post[];
   title?: string;
+  showOrder?: boolean;
+  getViewPostUrl?: (postId: string) => string;
 }
 
-export default function PostCarousel({ posts, title }: PostCarouselProps) {
+export default function PostCarousel({ posts, title, showOrder = false, getViewPostUrl }: PostCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
 
@@ -211,12 +213,19 @@ export default function PostCarousel({ posts, title }: PostCarouselProps) {
                       mt: 2,
                     }}
                   >
-                    {/* Day X on the left */}
-                    {daysSince !== null && (
-                      <Typography variant="h6" fontWeight="medium">
-                        Day {daysSince}
-                      </Typography>
-                    )}
+                    {/* Day X and Order on the left */}
+                    <Box>
+                      {daysSince !== null && (
+                        <Typography variant="h6" fontWeight="medium">
+                          Day {daysSince}
+                        </Typography>
+                      )}
+                      {showOrder && (
+                        <Typography variant="caption" color="text.secondary">
+                          Order: {post.order}
+                        </Typography>
+                      )}
+                    </Box>
 
                     {/* Title/Caption on the right */}
                     {(!hideTitle && post.title) || post.caption ? (
@@ -241,6 +250,13 @@ export default function PostCarousel({ posts, title }: PostCarouselProps) {
                       </Box>
                     ) : null}
                   </Box>
+                  {getViewPostUrl && (
+                    <Box sx={{ mt: 2 }}>
+                      <Link href={getViewPostUrl(post.id)} underline="hover">
+                        View Post
+                      </Link>
+                    </Box>
+                  )}
                 </CardContent>
               </Card>
             );

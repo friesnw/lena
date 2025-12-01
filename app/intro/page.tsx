@@ -34,40 +34,10 @@ export default function IntroPage() {
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: 8 }}>
-      <Typography variant="h2" component="h1" gutterBottom>
-        {pageTitle}
-      </Typography>
-
-      <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.6 }}>
-        Hi Lena! It’s your dad.
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4, lineHeight: 1.6 }}>
-        Welcome to your scrapbook. I’m not sure if you’re reading this, or if
-        someone is reading it to you, but either way we’re glad you’re here.
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4, lineHeight: 1.6 }}>
-        This is a collection of memories and feelings about you and your family
-        during the first year of your life.
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4, lineHeight: 1.6 }}>
-        It was made over the course of many of your nap times, usually with you
-        sleeping on my chest or in my arms in very sweet ways.
-      </Typography>
-
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button
-          variant="contained"
-          size="large"
-          color="primary"
-          onClick={handleEnter}
-        >
-          Enter
-        </Button>
-      </Box>
-      <Card sx={{ borderRadius: 4, boxShadow: 6 }}>
-        <CardContent sx={{ p: { xs: 3, md: 5 } }}>
-          <Box sx={{ mb: 4 }}>
+    <Container maxWidth="sm" sx={{ py: 8 }}>
+      <Card sx={{ mb: 3, transform: "rotate(-3deg)" }}>
+        <CardContent>
+          <Box>
             <Box
               sx={{
                 position: "relative",
@@ -75,6 +45,7 @@ export default function IntroPage() {
                 maxWidth: "800px",
                 height: "auto",
                 margin: "0 auto",
+                mb: 2,
                 borderRadius: 1,
                 overflow: "hidden",
                 backgroundColor: "rgba(0, 0, 0, 0.04)",
@@ -87,34 +58,36 @@ export default function IntroPage() {
                 height={600}
                 style={{
                   width: "100%",
-                  height: "auto",
-                  objectFit: "contain",
+                  height: "100%",
+                  objectFit: "cover",
+                  maxHeight: "600px",
                 }}
                 unoptimized
                 priority
               />
             </Box>
+            {/* Day X and Title/Caption below image */}
             <Box
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "flex-start",
                 mt: 2,
-                mb: 1,
               }}
             >
+              {/* Day X on the left */}
               {introPhotoDay !== null && (
                 <Typography variant="h6" fontWeight="medium">
                   Day {introPhotoDay}
                 </Typography>
               )}
+
+              {/* Title/Caption on the right */}
               <Box sx={{ textAlign: "right", maxWidth: "70%" }}>
                 <Typography
                   variant="body2"
                   component="h3"
-                  sx={{
-                    fontWeight: "medium",
-                  }}
+                  sx={{ fontWeight: "medium" }}
                 >
                   {introPhoto.title}
                 </Typography>
@@ -123,6 +96,34 @@ export default function IntroPage() {
           </Box>
         </CardContent>
       </Card>
+      <Typography variant="h2" component="h1" gutterBottom>
+        {pageTitle}
+      </Typography>
+      <Typography variant="body1" sx={{ mb: 3, lineHeight: 1.6 }}>
+        Hi Lena! It's your dad.
+      </Typography>
+      <Typography variant="body1" sx={{ mb: 4, lineHeight: 1.6 }}>
+        Welcome to your scrapbook. I'm not sure if you're reading this, or if
+        someone is reading it to you, but either way we're glad you're here.
+      </Typography>
+      <Typography variant="body1" sx={{ mb: 4, lineHeight: 1.6 }}>
+        This is a collection of memories and feelings about you and your family
+        during the first year of your life.
+      </Typography>
+      <Typography variant="body1" sx={{ mb: 4, lineHeight: 1.6 }}>
+        It was made over the course of many of your nap times, usually with you
+        sleeping on my chest or in my arms in very sweet ways.
+      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          variant="contained"
+          size="large"
+          color="primary"
+          onClick={handleEnter}
+        >
+          Enter
+        </Button>
+      </Box>
     </Container>
   );
 }

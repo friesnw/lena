@@ -33,6 +33,9 @@ const MEDIA_TAG_OPTIONS = [
   "Carousel 4",
   "Carousel 5",
   "Carousel 6",
+  "Carousel 7",
+  "Carousel 8",
+  "Carousel 9",
 ];
 const MEDIA_AND_HIDE_TAGS = [...MEDIA_TAG_OPTIONS, HIDE_TITLE_TAG];
 const TEXT_TAG_OPTIONS = [HIDE_TITLE_TAG];

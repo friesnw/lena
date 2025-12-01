@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Card, CardContent, Typography, Box, Chip } from "@mui/material";
+import { Card, CardContent, Typography, Box, Chip, Link } from "@mui/material";
 import type { Post } from "@/lib/types";
 import Image from "next/image";
 import { getDaysSinceOct15_2025 } from "@/lib/utils";
@@ -9,9 +9,15 @@ import AudioPost from "./posts/AudioPost";
 
 interface PostDisplayProps {
   post: Post;
+  showOrder?: boolean;
+  viewPostUrl?: string;
 }
 
-export default function PostDisplay({ post }: PostDisplayProps) {
+export default function PostDisplay({
+  post,
+  showOrder = false,
+  viewPostUrl,
+}: PostDisplayProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const hideTitle = post.tags?.includes("Hide Title") ?? false;
 
@@ -119,12 +125,19 @@ export default function PostDisplay({ post }: PostDisplayProps) {
                 mt: 2,
               }}
             >
-              {/* Day X on the left */}
-              {daysSince !== null && (
-                <Typography variant="h6" fontWeight="medium">
-                  Day {daysSince}
-                </Typography>
-              )}
+              {/* Day X and Order on the left */}
+              <Box>
+                {daysSince !== null && (
+                  <Typography variant="h6" fontWeight="medium">
+                    Day {daysSince}
+                  </Typography>
+                )}
+                {showOrder && (
+                  <Typography variant="caption" color="text.secondary">
+                    Order: {post.order}
+                  </Typography>
+                )}
+              </Box>
 
               {/* Title/Caption on the right */}
               {(!hideTitle && post.title) || post.caption ? (
@@ -146,6 +159,13 @@ export default function PostDisplay({ post }: PostDisplayProps) {
                 </Box>
               ) : null}
             </Box>
+            {viewPostUrl && (
+              <Box sx={{ mt: 2 }}>
+                <Link href={viewPostUrl} underline="hover">
+                  View Post
+                </Link>
+              </Box>
+            )}
           </Box>
         );
 
@@ -172,18 +192,41 @@ export default function PostDisplay({ post }: PostDisplayProps) {
   if (post.type === "text") {
     return (
       <Box sx={{ mb: 3 }}>
-        {!hideTitle && post.title && (
-          <Typography variant="h4" component="h2" gutterBottom>
-            {post.title}
-          </Typography>
-        )}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 1,
+          }}
+        >
+          {!hideTitle && post.title && (
+            <Typography variant="h4" component="h2">
+              {post.title}
+            </Typography>
+          )}
+          {showOrder && (
+            <Typography variant="caption" color="text.secondary">
+              Order: {post.order}
+            </Typography>
+          )}
+        </Box>
         {renderPostContent()}
+        {viewPostUrl && (
+          <Box sx={{ mt: 2 }}>
+            <Link href={viewPostUrl} underline="hover">
+              View Post
+            </Link>
+          </Box>
+        )}
       </Box>
     );
   }
 
   if (post.type === "audio") {
-    return <AudioPost post={post} hideTitle={hideTitle} />;
+    return (
+      <AudioPost post={post} hideTitle={hideTitle} viewPostUrl={viewPostUrl} />
+    );
   }
 
   return (
@@ -200,7 +243,7 @@ export default function PostDisplay({ post }: PostDisplayProps) {
               sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}
             >
               <Chip label={post.type} size="small" />
-              {post.order !== undefined && (
+              {showOrder && (
                 <Typography variant="caption" color="text.secondary">
                   Order: {post.order}
                 </Typography>
@@ -210,6 +253,13 @@ export default function PostDisplay({ post }: PostDisplayProps) {
           </>
         ) : (
           renderPostContent()
+        )}
+        {viewPostUrl && (
+          <Box sx={{ mt: 2 }}>
+            <Link href={viewPostUrl} underline="hover">
+              View Post
+            </Link>
+          </Box>
         )}
       </CardContent>
     </Card>

@@ -14,13 +14,17 @@ declare module "@mui/material/styles" {
       50: string;
       100: string;
       200: string;
+      400: string;
       700: string;
       900: string;
     };
     accent?: {
-      red: string;
-      green: string;
-      blue: string;
+      darkGreen: string;
+      lightGreen: string;
+      blush: string;
+      blushLight: string;
+      blueLight: string;
+      greenLight: string;
     };
   }
 
@@ -29,8 +33,17 @@ declare module "@mui/material/styles" {
       50: string;
       100: string;
       200: string;
+      400: string;
       700: string;
       900: string;
+    };
+    accent?: {
+      darkGreen: string;
+      lightGreen: string;
+      blush: string;
+      blushLight: string;
+      blueLight: string;
+      greenLight: string;
     };
   }
 
