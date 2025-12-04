@@ -107,7 +107,8 @@ export default function PostDisplay({
                   preload="metadata"
                   sx={{
                     width: "100%",
-                    height: "800px",
+                    maxHeight: "600px",
+                    height: "auto",
                     objectFit: "cover",
                   }}
                 >
@@ -125,16 +126,11 @@ export default function PostDisplay({
                 mt: 2,
               }}
             >
-              {/* Day X and Order on the left */}
+              {/* Day X on the left */}
               <Box>
                 {daysSince !== null && (
                   <Typography variant="h6" fontWeight="medium">
                     Day {daysSince}
-                  </Typography>
-                )}
-                {showOrder && (
-                  <Typography variant="caption" color="text.secondary">
-                    Order: {post.order}
                   </Typography>
                 )}
               </Box>
@@ -159,11 +155,26 @@ export default function PostDisplay({
                 </Box>
               ) : null}
             </Box>
-            {viewPostUrl && (
-              <Box sx={{ mt: 2 }}>
-                <Link href={viewPostUrl} underline="hover">
-                  View Post
-                </Link>
+            {(showOrder || viewPostUrl) && (
+              <Box
+                sx={{
+                  mt: 2,
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  gap: 2,
+                }}
+              >
+                {showOrder && (
+                  <Typography variant="body1" color="text.secondary">
+                    Order: {post.order}
+                  </Typography>
+                )}
+                {viewPostUrl && (
+                  <Link href={viewPostUrl} underline="hover">
+                    View Post
+                  </Link>
+                )}
               </Box>
             )}
           </Box>
@@ -192,31 +203,32 @@ export default function PostDisplay({
   if (post.type === "text") {
     return (
       <Box sx={{ mb: 3 }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 1,
-          }}
-        >
-          {!hideTitle && post.title && (
-            <Typography variant="h4" component="h2">
-              {post.title}
-            </Typography>
-          )}
-          {showOrder && (
-            <Typography variant="caption" color="text.secondary">
-              Order: {post.order}
-            </Typography>
-          )}
-        </Box>
+        {!hideTitle && post.title && (
+          <Typography variant="h4" component="h2" sx={{ mb: 1 }}>
+            {post.title}
+          </Typography>
+        )}
         {renderPostContent()}
-        {viewPostUrl && (
-          <Box sx={{ mt: 2 }}>
-            <Link href={viewPostUrl} underline="hover">
-              View Post
-            </Link>
+        {(showOrder || viewPostUrl) && (
+          <Box
+            sx={{
+              mt: 2,
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            {showOrder && (
+              <Typography variant="body1" color="text.secondary">
+                Order: {post.order}
+              </Typography>
+            )}
+            {viewPostUrl && (
+              <Link href={viewPostUrl} underline="hover">
+                View Post
+              </Link>
+            )}
           </Box>
         )}
       </Box>
@@ -239,28 +251,38 @@ export default function PostDisplay({
                 {post.title}
               </Typography>
             )}
-            <Box
-              sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}
-            >
+            <Box sx={{ mb: 2 }}>
               <Chip label={post.type} size="small" />
-              {showOrder && (
-                <Typography variant="caption" color="text.secondary">
-                  Order: {post.order}
-                </Typography>
-              )}
             </Box>
             {renderPostContent()}
           </>
         ) : (
           renderPostContent()
         )}
-        {viewPostUrl && (
-          <Box sx={{ mt: 2 }}>
-            <Link href={viewPostUrl} underline="hover">
-              View Post
-            </Link>
-          </Box>
-        )}
+        {(showOrder || viewPostUrl) &&
+          post.type !== "photo" &&
+          post.type !== "video" && (
+            <Box
+              sx={{
+                mt: 2,
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                gap: 2,
+              }}
+            >
+              {showOrder && (
+                <Typography variant="body1" color="text.secondary">
+                  Order: {post.order}
+                </Typography>
+              )}
+              {viewPostUrl && (
+                <Link href={viewPostUrl} underline="hover">
+                  View Post
+                </Link>
+              )}
+            </Box>
+          )}
       </CardContent>
     </Card>
   );

@@ -33,12 +33,17 @@ export async function GET(
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    // Check if post has dateTaken in metadata - if so, avoid caching
+    const hasDateTaken = post.metadata?.dateTaken !== undefined;
+
     return NextResponse.json(post, {
       status: 200,
       headers: {
-        "Cache-Control": `public, s-maxage=${REVALIDATE_SECONDS}, stale-while-revalidate=${
-          REVALIDATE_SECONDS * 2
-        }`,
+        "Cache-Control": hasDateTaken
+          ? "no-cache, no-store, must-revalidate"
+          : `public, s-maxage=${REVALIDATE_SECONDS}, stale-while-revalidate=${
+              REVALIDATE_SECONDS * 2
+            }`,
       },
     });
   } catch (err) {
@@ -124,6 +129,9 @@ export async function PATCH(
     revalidateTag(`${CACHE_TAG}-${id}`, {});
     if (updatedPost.month !== undefined) {
       revalidateTag(`${CACHE_TAG}-month-${updatedPost.month}`, {});
+      // Also revalidate admin cache tags
+      revalidateTag("posts-admin", {});
+      revalidateTag(`posts-admin-month-${updatedPost.month}`, {});
     }
 
     return NextResponse.json(updatedPost, { status: 200 });
@@ -147,16 +155,29 @@ export async function DELETE(
 
   try {
     const { id } = await params;
+    // Fetch post first to get month for cache invalidation
+    const postToDelete = await getPostById(id);
+    
+    if (!postToDelete) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
+
     // Soft delete: set deleted flag to true
     const deleted = await deletePost(id);
 
     if (!deleted) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      return NextResponse.json({ error: "Failed to delete post" }, { status: 500 });
     }
 
     // Revalidate cache
     revalidateTag(CACHE_TAG, {});
     revalidateTag(`${CACHE_TAG}-${id}`, {});
+    if (postToDelete.month !== undefined) {
+      revalidateTag(`${CACHE_TAG}-month-${postToDelete.month}`, {});
+      // Also revalidate admin cache tags
+      revalidateTag("posts-admin", {});
+      revalidateTag(`posts-admin-month-${postToDelete.month}`, {});
+    }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err) {

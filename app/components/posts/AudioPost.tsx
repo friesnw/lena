@@ -15,21 +15,34 @@ import { getDaysSinceOct15_2025, getS3Url } from "@/lib/utils";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import Image from "next/image";
 
+// Helper function to get carousel number from tag
+function getCarouselNumber(post: Post): number | null {
+  const carouselTag = post.tags?.find((tag) =>
+    tag.toLowerCase().startsWith("carousel ")
+  );
+  if (!carouselTag) return null;
+  const match = carouselTag.match(/carousel (\d+)/i);
+  return match ? parseInt(match[1], 10) : null;
+}
+
 interface AudioPostProps {
   post: Post;
   hideTitle: boolean;
   viewPostUrl?: string;
+  showOrder?: boolean;
 }
 
 export default function AudioPost({
   post,
   hideTitle,
   viewPostUrl,
+  showOrder = false,
 }: AudioPostProps) {
   const { audioRef, isPlaying, togglePlay } = useAudioPlayer();
   const daysSince = getDaysSinceOct15_2025(
     post.metadata?.dateTaken || post.createdAt
   );
+  const carouselNum = getCarouselNumber(post);
 
   return (
     <Paper
@@ -133,13 +146,31 @@ export default function AudioPost({
             <Chip key={tag} label={tag} size="small" variant="outlined" />
           ))}
         </Stack>
-        {viewPostUrl && (
-          <Box sx={{ mt: 1 }}>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 2,
+            alignItems: "center",
+            flexWrap: "wrap",
+            justifyContent: "flex-end",
+          }}
+        >
+          {carouselNum && (
+            <Typography variant="caption" color="text.secondary">
+              Carousel: {carouselNum}
+            </Typography>
+          )}
+          {showOrder && (
+            <Typography variant="body1" color="text.secondary">
+              Order: {post.order}
+            </Typography>
+          )}
+          {viewPostUrl && (
             <Link href={viewPostUrl} underline="hover">
               View Post
             </Link>
-          </Box>
-        )}
+          )}
+        </Box>
       </Stack>
     </Paper>
   );

@@ -50,13 +50,20 @@ export async function GET(request: NextRequest) {
       `[api/posts] Month ${monthNum}: Returning ${posts.length} published posts`
     );
 
-    // Add cache headers for client-side caching
+    // Check if any post has dateTaken in metadata - if so, avoid caching
+    const hasDateTaken = posts.some(
+      (post) => post.metadata?.dateTaken !== undefined
+    );
+
+    // Add cache headers - no cache if posts have dateTaken to avoid stale capture dates
     return NextResponse.json(posts, {
       status: 200,
       headers: {
-        "Cache-Control": `public, s-maxage=${REVALIDATE_SECONDS}, stale-while-revalidate=${
-          REVALIDATE_SECONDS * 2
-        }`,
+        "Cache-Control": hasDateTaken
+          ? "no-cache, no-store, must-revalidate"
+          : `public, s-maxage=${REVALIDATE_SECONDS}, stale-while-revalidate=${
+              REVALIDATE_SECONDS * 2
+            }`,
       },
     });
   } catch (err) {
@@ -171,6 +178,9 @@ export async function POST(request: NextRequest) {
     // Revalidate cache for this month
     revalidateTag(CACHE_TAG, {});
     revalidateTag(`${CACHE_TAG}-month-${month}`, {});
+    // Also revalidate admin cache tags
+    revalidateTag("posts-admin", {});
+    revalidateTag(`posts-admin-month-${month}`, {});
 
     return NextResponse.json(saved, { status: 201 });
   } catch (err) {

@@ -16,14 +16,18 @@ interface MonthPageProps {
 
 // Helper utility function to check if a post has a carousel tag
 function hasCarouselTag(post: Post): boolean {
-  return post.tags?.some((tag) => tag.startsWith("Carousel ")) ?? false;
+  return (
+    post.tags?.some((tag) => tag.toLowerCase().startsWith("carousel ")) ?? false
+  );
 }
 
 // Helper function to get carousel number from tags
 function getCarouselNumber(post: Post): number | null {
-  const carouselTag = post.tags?.find((tag) => tag.startsWith("Carousel "));
+  const carouselTag = post.tags?.find((tag) =>
+    tag.toLowerCase().startsWith("carousel ")
+  );
   if (!carouselTag) return null;
-  const match = carouselTag.match(/Carousel (\d+)/);
+  const match = carouselTag.match(/carousel (\d+)/i);
   return match ? parseInt(match[1], 10) : null;
 }
 
@@ -89,6 +93,9 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
       const num = parseInt(key, 10);
       carousel[num].sort((a, b) => a.order - b.order);
     });
+
+    // Sort regular posts by order
+    regular.sort((a, b) => a.order - b.order);
 
     return { carouselPosts: carousel, regularPosts: regular };
   }, [posts]);

@@ -313,9 +313,11 @@ function UploadForm() {
 
         // Override with manually entered dateTaken if provided (videos only on upload)
         if (dateTaken && type === "video") {
+          // Treat date as date-only (no time), create UTC midnight to avoid timezone shifts
+          // dateTaken is in YYYY-MM-DD format from the date input
           fileMetadata = {
             ...fileMetadata,
-            dateTaken: new Date(dateTaken).toISOString(),
+            dateTaken: `${dateTaken}T00:00:00.000Z`,
           };
         }
 

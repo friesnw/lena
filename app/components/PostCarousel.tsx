@@ -1,11 +1,28 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { Box, IconButton, Typography, Card, CardContent, Link } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Typography,
+  Card,
+  CardContent,
+  Link,
+} from "@mui/material";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import type { Post } from "@/lib/types";
 import Image from "next/image";
 import { getDaysSinceOct15_2025 } from "@/lib/utils";
+
+// Helper function to get carousel number from tag
+function getCarouselNumber(post: Post): number | null {
+  const carouselTag = post.tags?.find((tag) =>
+    tag.toLowerCase().startsWith("carousel ")
+  );
+  if (!carouselTag) return null;
+  const match = carouselTag.match(/carousel (\d+)/i);
+  return match ? parseInt(match[1], 10) : null;
+}
 
 interface PostCarouselProps {
   posts: Post[];
@@ -14,7 +31,12 @@ interface PostCarouselProps {
   getViewPostUrl?: (postId: string) => string;
 }
 
-export default function PostCarousel({ posts, title, showOrder = false, getViewPostUrl }: PostCarouselProps) {
+export default function PostCarousel({
+  posts,
+  title,
+  showOrder = false,
+  getViewPostUrl,
+}: PostCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
 
@@ -129,6 +151,7 @@ export default function PostCarousel({ posts, title, showOrder = false, getViewP
             const daysSince = getDaysSinceOct15_2025(
               post.metadata?.dateTaken || post.createdAt
             );
+            const carouselNum = getCarouselNumber(post);
             return (
               <Card
                 key={post.id}
@@ -213,50 +236,69 @@ export default function PostCarousel({ posts, title, showOrder = false, getViewP
                       mt: 2,
                     }}
                   >
-                    {/* Day X and Order on the left */}
-                    <Box>
-                      {daysSince !== null && (
-                        <Typography variant="h6" fontWeight="medium">
-                          Day {daysSince}
-                        </Typography>
-                      )}
-                      {showOrder && (
-                        <Typography variant="caption" color="text.secondary">
-                          Order: {post.order}
-                        </Typography>
-                      )}
-                    </Box>
+                    {/* Day X on the left */}
+                    {daysSince !== null && (
+                      <Typography variant="h6" fontWeight="medium">
+                        Day {daysSince}
+                      </Typography>
+                    )}
 
-                    {/* Title/Caption on the right */}
-                    {(!hideTitle && post.title) || post.caption ? (
-                      <Box sx={{ textAlign: "right", maxWidth: "70%" }}>
-                        {!hideTitle && post.title && (
-                          <Typography
-                            variant="body2"
-                            component="h3"
-                            sx={{
-                              mb: post.caption ? 0.5 : 0,
-                              fontWeight: "medium",
-                            }}
-                          >
-                            {post.title}
+                    {/* Title/Caption, Order, Carousel, and View Post on the right */}
+                    <Box
+                      sx={{
+                        textAlign: "right",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "flex-end",
+                        gap: 0.5,
+                      }}
+                    >
+                      {(!hideTitle && post.title) || post.caption ? (
+                        <Box sx={{ maxWidth: "70%" }}>
+                          {!hideTitle && post.title && (
+                            <Typography
+                              variant="body1"
+                              component="h3"
+                              sx={{
+                                mb: post.caption ? 0.5 : 0,
+                                fontWeight: "medium",
+                              }}
+                            >
+                              {post.title}
+                            </Typography>
+                          )}
+                          {post.caption && (
+                            <Typography variant="body2" color="text.secondary">
+                              {post.caption}
+                            </Typography>
+                          )}
+                        </Box>
+                      ) : null}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 2,
+                          alignItems: "center",
+                          flexWrap: "wrap",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        {showOrder && (
+                          <Typography variant="body1" color="text.secondary">
+                            Order: {post.order}
                           </Typography>
                         )}
-                        {post.caption && (
-                          <Typography variant="body2" color="text.secondary">
-                            {post.caption}
-                          </Typography>
+                        {getViewPostUrl && (
+                          <Link
+                            href={getViewPostUrl(post.id)}
+                            underline="hover"
+                          >
+                            View Post
+                          </Link>
                         )}
                       </Box>
-                    ) : null}
-                  </Box>
-                  {getViewPostUrl && (
-                    <Box sx={{ mt: 2 }}>
-                      <Link href={getViewPostUrl(post.id)} underline="hover">
-                        View Post
-                      </Link>
                     </Box>
-                  )}
+                  </Box>
                 </CardContent>
               </Card>
             );

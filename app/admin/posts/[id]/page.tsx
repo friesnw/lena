@@ -117,14 +117,11 @@ export default function EditPost() {
           );
           // Load dateTaken if available, convert to date format
           if (data.metadata?.dateTaken) {
-            // Convert ISO string to date format (YYYY-MM-DD)
-            const date = new Date(data.metadata.dateTaken);
-            const localDate = new Date(
-              date.getTime() - date.getTimezoneOffset() * 60000
-            )
-              .toISOString()
-              .slice(0, 10);
-            setDateTaken(localDate);
+            // Extract just the date part (YYYY-MM-DD) from ISO string
+            // This avoids timezone conversion issues
+            const dateStr = data.metadata.dateTaken;
+            const dateOnly = dateStr.slice(0, 10);
+            setDateTaken(dateOnly);
           }
         } else {
           setError(data.error || "Failed to load post");
@@ -384,9 +381,11 @@ export default function EditPost() {
 
       // Override with manually entered dateTaken if provided
       if (dateTaken && (type === "photo" || type === "video")) {
+        // Treat date as date-only (no time), create UTC midnight to avoid timezone shifts
+        // dateTaken is in YYYY-MM-DD format from the date input
         metadataToSave = {
           ...(metadataToSave || {}),
-          dateTaken: new Date(dateTaken).toISOString(),
+          dateTaken: `${dateTaken}T00:00:00.000Z`,
         };
       }
 
@@ -446,9 +445,10 @@ export default function EditPost() {
           "album-cover-input"
         ) as HTMLInputElement;
         if (coverInput) coverInput.value = "";
+        // Refresh the page to show updated content
         setTimeout(() => {
-          router.push(`/admin/${month}`);
-        }, 1500);
+          router.refresh();
+        }, 1000);
       } else {
         setError(data.error || "Failed to update post");
       }

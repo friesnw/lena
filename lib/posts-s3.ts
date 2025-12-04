@@ -387,25 +387,38 @@ async function savePostToS3(post: Post): Promise<Post> {
 
     await getS3Client().send(command);
 
+    // Invalidate index cache before reading to ensure fresh data
+    indexCache = null;
+    indexCacheTime = 0;
+
     // Update the index
-    const index = await getIndex();
-    if (index) {
-      // Check if post already exists in index
-      const existingIndex = index.posts.findIndex((p) => p.id === post.id);
-      const metadata = extractPostMetadata(post);
+    let index = await getIndex();
 
-      if (existingIndex >= 0) {
-        // Update existing entry
-        index.posts[existingIndex] = metadata;
-      } else {
-        // Add new entry
-        index.posts.push(metadata);
-        index.totalPosts = index.posts.length;
-      }
-
-      index.lastUpdated = new Date().toISOString();
-      await updateIndex(index);
+    // If index doesn't exist, create a new one
+    if (!index) {
+      index = {
+        version: "1.0",
+        lastUpdated: new Date().toISOString(),
+        totalPosts: 0,
+        posts: [],
+      };
     }
+
+    // Check if post already exists in index
+    const existingIndex = index.posts.findIndex((p) => p.id === post.id);
+    const metadata = extractPostMetadata(post);
+
+    if (existingIndex >= 0) {
+      // Update existing entry
+      index.posts[existingIndex] = metadata;
+    } else {
+      // Add new entry
+      index.posts.push(metadata);
+      index.totalPosts = index.posts.length;
+    }
+
+    index.lastUpdated = new Date().toISOString();
+    await updateIndex(index);
 
     return post;
   } catch (error) {
