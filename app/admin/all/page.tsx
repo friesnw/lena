@@ -30,7 +30,14 @@ export default function AdminAllPosts() {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/posts/admin?month=all");
+        // Add cache-busting timestamp to ensure fresh data
+        const timestamp = Date.now();
+        const response = await fetch(`/api/posts/admin?month=all&_t=${timestamp}`, {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        });
         const data = await response.json();
 
         if (response.ok) {

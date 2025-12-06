@@ -137,7 +137,7 @@ export default function PostDisplay({
 
               {/* Title/Caption on the right */}
               {(!hideTitle && post.title) || post.caption ? (
-                <Box sx={{ textAlign: "right", maxWidth: "70%" }}>
+                <Box sx={{ textAlign: "right", maxWidth: "85%" }}>
                   {!hideTitle && post.title && (
                     <Typography
                       variant="body2"

@@ -8,7 +8,7 @@ import {
   Button,
   Stack,
 } from "@mui/material";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import type { Post } from "@/lib/types";
 import PostDisplay from "./PostDisplay";
@@ -24,16 +24,26 @@ interface AdminMonthPageProps {
 // Helper utility function to check if a post has a carousel tag
 function hasCarouselTag(post: Post): boolean {
   return (
-    post.tags?.some((tag) => tag.toLowerCase().startsWith("carousel ")) ?? false
+    post.tags?.some(
+      (tag) =>
+        tag.toLowerCase().startsWith("carousel ") ||
+        tag.toLowerCase() === "bonus funnies"
+    ) ?? false
   );
 }
 
 // Helper function to get carousel number from tag
 function getCarouselNumber(post: Post): number | null {
-  const carouselTag = post.tags?.find((tag) =>
-    tag.toLowerCase().startsWith("carousel ")
+  const carouselTag = post.tags?.find(
+    (tag) =>
+      tag.toLowerCase().startsWith("carousel ") ||
+      tag.toLowerCase() === "bonus funnies"
   );
   if (!carouselTag) return null;
+  // Special case for "bonus funnies"
+  if (carouselTag.toLowerCase() === "bonus funnies") {
+    return 9;
+  }
   const match = carouselTag.match(/carousel (\d+)/i);
   return match ? parseInt(match[1], 10) : null;
 }
@@ -46,6 +56,7 @@ export default function AdminMonthPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const router = useRouter();
+  const lastFetchTimeRef = useRef<number>(0);
   const pageTitle = `Admin: ${monthName}`;
   usePageTitle(pageTitle);
 
@@ -53,7 +64,17 @@ export default function AdminMonthPage({
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/posts/admin?month=${month}`);
+        // Add cache-busting timestamp to ensure fresh data
+        const timestamp = Date.now();
+        const response = await fetch(
+          `/api/posts/admin?month=${month}&_t=${timestamp}`,
+          {
+            cache: "no-store",
+            headers: {
+              "Cache-Control": "no-cache",
+            },
+          }
+        );
         const data = await response.json();
 
         if (response.ok) {
@@ -69,9 +90,52 @@ export default function AdminMonthPage({
     };
 
     fetchPosts();
+    lastFetchTimeRef.current = Date.now();
+
+    // Refetch when page becomes visible after being hidden for a while
+    // This helps catch updates made in other tabs/windows
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        const timeSinceLastFetch = Date.now() - lastFetchTimeRef.current;
+        // Only refetch if it's been more than 5 seconds since last fetch
+        // This prevents excessive refetching while still catching updates
+        if (timeSinceLastFetch > 5000) {
+          lastFetchTimeRef.current = Date.now();
+          fetchPosts();
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, [month]);
 
-  // Separate posts into carousel posts and regular posts
+  // Separate posts into published and unpublished
+  const { publishedPosts, unpublishedPosts } = useMemo(() => {
+    const published: Post[] = [];
+    const unpublished: Post[] = [];
+
+    posts.forEach((post) => {
+      if (post.published) {
+        published.push(post);
+      } else {
+        unpublished.push(post);
+      }
+    });
+
+    // Sort unpublished posts by createdAt (newest first) since we disregard order
+    unpublished.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    return { publishedPosts: published, unpublishedPosts: unpublished };
+  }, [posts]);
+
+  // Separate published posts into carousel posts and regular posts
   const { carouselPosts, regularPosts } = useMemo(() => {
     const carousel: Record<number, Post[]> = {
       1: [],
@@ -86,7 +150,7 @@ export default function AdminMonthPage({
     };
     const regular: Post[] = [];
 
-    posts.forEach((post) => {
+    publishedPosts.forEach((post) => {
       if (
         hasCarouselTag(post) &&
         (post.type === "photo" || post.type === "video")
@@ -110,7 +174,7 @@ export default function AdminMonthPage({
     regular.sort((a, b) => a.order - b.order);
 
     return { carouselPosts: carousel, regularPosts: regular };
-  }, [posts]);
+  }, [publishedPosts]);
 
   const getViewPostUrl = (postId: string) => `/admin/posts/${postId}`;
 
@@ -142,11 +206,12 @@ export default function AdminMonthPage({
 
       // Render carousel if it has posts
       if (carouselPosts[carouselNum].length > 0) {
+        const carouselTitle = carouselNum === 9 ? "Bonus Funnies" : undefined;
         result.push(
           <PostCarousel
             key={`carousel-${carouselNum}`}
             posts={carouselPosts[carouselNum]}
-            title={`Carousel ${carouselNum}`}
+            title={carouselTitle}
             showOrder={true}
             getViewPostUrl={getViewPostUrl}
           />
@@ -235,7 +300,30 @@ export default function AdminMonthPage({
           </Typography>
         )}
 
-        {!loading && !error && posts.length > 0 && renderPostsWithCarousels()}
+        {!loading && !error && posts.length > 0 && (
+          <>
+            {renderPostsWithCarousels()}
+            {unpublishedPosts.length > 0 && (
+              <Box sx={{ mt: 6 }}>
+                <Typography
+                  variant="h2"
+                  component="h2"
+                  sx={{ mb: 3, fontSize: "1.5rem", fontWeight: 600 }}
+                >
+                  Unpublished
+                </Typography>
+                {unpublishedPosts.map((post) => (
+                  <PostDisplay
+                    key={post.id}
+                    post={post}
+                    showOrder={true}
+                    viewPostUrl={getViewPostUrl(post.id)}
+                  />
+                ))}
+              </Box>
+            )}
+          </>
+        )}
       </Box>
     </Box>
   );

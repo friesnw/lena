@@ -35,7 +35,7 @@ const MEDIA_TAG_OPTIONS = [
   "Carousel 6",
   "Carousel 7",
   "Carousel 8",
-  "Carousel 9",
+  "bonus funnies",
 ];
 const MEDIA_AND_HIDE_TAGS = [...MEDIA_TAG_OPTIONS, HIDE_TITLE_TAG];
 const TEXT_TAG_OPTIONS = [HIDE_TITLE_TAG];
@@ -457,6 +457,7 @@ function UploadForm() {
       // Submit to API
       const response = await fetch("/api/posts", {
         method: "POST",
+        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
         },

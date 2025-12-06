@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { unstable_cache, revalidateTag } from "next/cache";
+import { unstable_cache, revalidateTag, revalidatePath } from "next/cache";
 import { getPostById, updatePost, deletePost } from "@/lib/posts-unified";
 import { requireAuth } from "@/lib/auth";
 import type { Post } from "@/lib/types";
@@ -127,11 +127,15 @@ export async function PATCH(
     // Revalidate cache
     revalidateTag(CACHE_TAG, {});
     revalidateTag(`${CACHE_TAG}-${id}`, {});
+    revalidatePath(`/admin/posts/${id}`, "page");
     if (updatedPost.month !== undefined) {
       revalidateTag(`${CACHE_TAG}-month-${updatedPost.month}`, {});
       // Also revalidate admin cache tags
       revalidateTag("posts-admin", {});
       revalidateTag(`posts-admin-month-${updatedPost.month}`, {});
+      revalidatePath(`/admin/${updatedPost.month}`, "page");
+      revalidatePath(`/month/${updatedPost.month}`, "page");
+      revalidatePath("/", "page");
     }
 
     return NextResponse.json(updatedPost, { status: 200 });
@@ -172,11 +176,15 @@ export async function DELETE(
     // Revalidate cache
     revalidateTag(CACHE_TAG, {});
     revalidateTag(`${CACHE_TAG}-${id}`, {});
+    revalidatePath(`/admin/posts/${id}`, "page");
     if (postToDelete.month !== undefined) {
       revalidateTag(`${CACHE_TAG}-month-${postToDelete.month}`, {});
       // Also revalidate admin cache tags
       revalidateTag("posts-admin", {});
       revalidateTag(`posts-admin-month-${postToDelete.month}`, {});
+      revalidatePath(`/admin/${postToDelete.month}`, "page");
+      revalidatePath(`/month/${postToDelete.month}`, "page");
+      revalidatePath("/", "page");
     }
 
     return NextResponse.json({ success: true }, { status: 200 });

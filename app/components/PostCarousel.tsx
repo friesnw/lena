@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   IconButton,
@@ -16,10 +16,16 @@ import { getDaysSinceOct15_2025 } from "@/lib/utils";
 
 // Helper function to get carousel number from tag
 function getCarouselNumber(post: Post): number | null {
-  const carouselTag = post.tags?.find((tag) =>
-    tag.toLowerCase().startsWith("carousel ")
+  const carouselTag = post.tags?.find(
+    (tag) =>
+      tag.toLowerCase().startsWith("carousel ") ||
+      tag.toLowerCase() === "bonus funnies"
   );
   if (!carouselTag) return null;
+  // Special case for "bonus funnies"
+  if (carouselTag.toLowerCase() === "bonus funnies") {
+    return 9;
+  }
   const match = carouselTag.match(/carousel (\d+)/i);
   return match ? parseInt(match[1], 10) : null;
 }
@@ -39,6 +45,8 @@ export default function PostCarousel({
 }: PostCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
+  const [isAtStart, setIsAtStart] = useState(true);
+  const [isAtEnd, setIsAtEnd] = useState(false);
 
   // Sort posts by order field in ascending order
   const sortedPosts = useMemo(() => {
@@ -76,6 +84,72 @@ export default function PostCarousel({
     };
   }, [sortedPosts]);
 
+  // Track scroll position to show/hide arrows
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container || sortedPosts.length <= 1) {
+      setIsAtStart(true);
+      setIsAtEnd(false);
+      return;
+    }
+
+    // Set initial state immediately - we start at the beginning
+    setIsAtStart(true);
+    setIsAtEnd(false);
+
+    const updateScrollState = () => {
+      const scrollLeft = container.scrollLeft;
+      const scrollWidth = container.scrollWidth;
+      const clientWidth = container.clientWidth;
+
+      // Use a very small threshold (1px) to account for sub-pixel rendering
+      // If scrollLeft is 0 or essentially 0, we're at the start
+      const atStart = scrollLeft < 1;
+
+      // Check if we're at the end
+      const maxScroll = Math.max(0, scrollWidth - clientWidth);
+      const atEnd = scrollLeft >= maxScroll - 1;
+
+      setIsAtStart(atStart);
+      setIsAtEnd(atEnd);
+    };
+
+    // Ensure we start at the beginning and check state
+    const initializeScroll = () => {
+      // Force scroll to start
+      container.scrollLeft = 0;
+      // Immediately check state after forcing scroll
+      updateScrollState();
+    };
+
+    // Initialize immediately
+    initializeScroll();
+
+    // Use requestAnimationFrame to ensure layout is complete
+    requestAnimationFrame(() => {
+      initializeScroll();
+      // Double RAF to ensure everything is laid out
+      requestAnimationFrame(() => {
+        initializeScroll();
+      });
+    });
+
+    // Also check after a short delay to catch any late layout changes
+    setTimeout(initializeScroll, 100);
+    setTimeout(initializeScroll, 300);
+
+    // Listen to scroll events
+    container.addEventListener("scroll", updateScrollState, { passive: true });
+
+    // Also check on resize
+    window.addEventListener("resize", updateScrollState);
+
+    return () => {
+      container.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [sortedPosts]);
+
   const setVideoRef = (id: string) => (el: HTMLVideoElement | null) => {
     if (!el) {
       videoRefs.current.delete(id);
@@ -107,10 +181,35 @@ export default function PostCarousel({
         behavior: "smooth",
       });
     }
+
+    // Update scroll state after scrolling completes
+    setTimeout(() => {
+      const scrollLeft = container.scrollLeft;
+      const scrollWidth = container.scrollWidth;
+      const clientWidth = container.clientWidth;
+      const threshold = 10;
+
+      setIsAtStart(scrollLeft <= threshold);
+      setIsAtEnd(scrollLeft >= scrollWidth - clientWidth - threshold);
+    }, 300); // Wait for smooth scroll to complete
   };
 
   return (
     <Box sx={{ mb: 3 }}>
+      {/* Carousel Title - only display if it's "Bonus Funnies" */}
+      {title && title.toLowerCase() === "bonus funnies" && (
+        <Typography
+          variant="h2"
+          component="h2"
+          sx={{
+            mb: 2,
+            fontSize: "1.75rem",
+            fontWeight: 400,
+          }}
+        >
+          {title}
+        </Typography>
+      )}
       {/* Scroll Container */}
       <Box
         sx={{
@@ -254,7 +353,7 @@ export default function PostCarousel({
                       }}
                     >
                       {(!hideTitle && post.title) || post.caption ? (
-                        <Box sx={{ maxWidth: "70%" }}>
+                        <Box sx={{ maxWidth: "85%" }}>
                           {!hideTitle && post.title && (
                             <Typography
                               variant="body1"
@@ -305,8 +404,27 @@ export default function PostCarousel({
           })}
         </Box>
 
-        {/* Next Button */}
-        {sortedPosts.length > 1 && (
+        {/* Left Arrow Button */}
+        {sortedPosts.length > 1 && !isAtStart && (
+          <IconButton
+            onClick={() => handleScroll("left")}
+            sx={{
+              position: "absolute",
+              left: 0,
+              top: "50%",
+              transform: "translateY(-50%)",
+              zIndex: 2,
+              backgroundColor: "rgba(255, 255, 255, 0.9)",
+              boxShadow: 2,
+              "&:hover": { backgroundColor: "rgba(255, 255, 255, 1)" },
+            }}
+          >
+            <ChevronLeft />
+          </IconButton>
+        )}
+
+        {/* Right Arrow Button */}
+        {sortedPosts.length > 1 && !isAtEnd && (
           <IconButton
             onClick={() => handleScroll("right")}
             sx={{

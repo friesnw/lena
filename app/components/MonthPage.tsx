@@ -1,7 +1,7 @@
 "use client";
 
 import { Typography, CircularProgress, Alert, Box } from "@mui/material";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import type { Post } from "@/lib/types";
 import PostDisplay from "./PostDisplay";
 import PostCarousel from "./PostCarousel";
@@ -17,16 +17,26 @@ interface MonthPageProps {
 // Helper utility function to check if a post has a carousel tag
 function hasCarouselTag(post: Post): boolean {
   return (
-    post.tags?.some((tag) => tag.toLowerCase().startsWith("carousel ")) ?? false
+    post.tags?.some(
+      (tag) =>
+        tag.toLowerCase().startsWith("carousel ") ||
+        tag.toLowerCase() === "bonus funnies"
+    ) ?? false
   );
 }
 
 // Helper function to get carousel number from tags
 function getCarouselNumber(post: Post): number | null {
-  const carouselTag = post.tags?.find((tag) =>
-    tag.toLowerCase().startsWith("carousel ")
+  const carouselTag = post.tags?.find(
+    (tag) =>
+      tag.toLowerCase().startsWith("carousel ") ||
+      tag.toLowerCase() === "bonus funnies"
   );
   if (!carouselTag) return null;
+  // Special case for "bonus funnies"
+  if (carouselTag.toLowerCase() === "bonus funnies") {
+    return 9;
+  }
   const match = carouselTag.match(/carousel (\d+)/i);
   return match ? parseInt(match[1], 10) : null;
 }
@@ -35,13 +45,24 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const lastFetchTimeRef = useRef<number>(0);
   usePageTitle(monthName);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/posts?month=${month}`);
+        // Add cache-busting timestamp to ensure fresh data
+        const timestamp = Date.now();
+        const response = await fetch(
+          `/api/posts?month=${month}&_t=${timestamp}`,
+          {
+            cache: "no-store",
+            headers: {
+              "Cache-Control": "no-cache",
+            },
+          }
+        );
         const data = await response.json();
 
         if (response.ok) {
@@ -57,6 +78,27 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
     };
 
     fetchPosts();
+    lastFetchTimeRef.current = Date.now();
+
+    // Refetch when page becomes visible after being hidden for a while
+    // This helps catch updates made in other tabs/windows
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        const timeSinceLastFetch = Date.now() - lastFetchTimeRef.current;
+        // Only refetch if it's been more than 5 seconds since last fetch
+        // This prevents excessive refetching while still catching updates
+        if (timeSinceLastFetch > 5000) {
+          lastFetchTimeRef.current = Date.now();
+          fetchPosts();
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, [month]);
 
   // Separate posts into carousel posts and regular posts
@@ -126,11 +168,12 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
 
       // Render carousel if it has posts
       if (carouselPosts[carouselNum].length > 0) {
+        const carouselTitle = carouselNum === 9 ? "Bonus Funnies" : undefined;
         result.push(
           <PostCarousel
             key={`carousel-${carouselNum}`}
             posts={carouselPosts[carouselNum]}
-            title={`Carousel ${carouselNum}`}
+            title={carouselTitle}
           />
         );
       }

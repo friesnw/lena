@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { unstable_cache, revalidateTag } from "next/cache";
+import { unstable_cache, revalidateTag, revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
 import { getPublishedPostsByMonthOrdered, savePost } from "@/lib/posts-unified";
 import { requireAuth } from "@/lib/auth";
@@ -181,6 +181,12 @@ export async function POST(request: NextRequest) {
     // Also revalidate admin cache tags
     revalidateTag("posts-admin", {});
     revalidateTag(`posts-admin-month-${month}`, {});
+    // Revalidate page paths
+    revalidatePath(`/month/${month}`, "page");
+    revalidatePath(`/admin/${month}`, "page");
+    revalidatePath("/", "page");
+    // Also revalidate admin/all page
+    revalidatePath("/admin/all", "page");
 
     return NextResponse.json(saved, { status: 201 });
   } catch (err) {

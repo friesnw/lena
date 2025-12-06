@@ -78,7 +78,17 @@ export default function Home() {
     let isMounted = true;
 
     const fetchPostsForMonth = async (month: number) => {
-      const response = await fetch(`/api/posts?month=${month}`);
+      // Add cache-busting timestamp to ensure fresh data
+      const timestamp = Date.now();
+      const response = await fetch(
+        `/api/posts?month=${month}&_t=${timestamp}`,
+        {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        }
+      );
       if (!response.ok) {
         throw new Error(`Failed to load posts for month ${month}`);
       }

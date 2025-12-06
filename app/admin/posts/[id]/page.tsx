@@ -35,7 +35,7 @@ const MEDIA_TAG_OPTIONS = [
   "Carousel 6",
   "Carousel 7",
   "Carousel 8",
-  "Carousel 9",
+  "bonus funnies",
 ];
 const MEDIA_AND_HIDE_TAGS = [...MEDIA_TAG_OPTIONS, HIDE_TITLE_TAG];
 const TEXT_TAG_OPTIONS = [HIDE_TITLE_TAG];
@@ -98,7 +98,14 @@ export default function EditPost() {
     const fetchPost = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/posts/${postId}`);
+        // Add cache-busting timestamp to ensure fresh data
+        const timestamp = Date.now();
+        const response = await fetch(`/api/posts/${postId}?_t=${timestamp}`, {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        });
         const data = await response.json();
 
         if (response.ok) {
@@ -111,9 +118,9 @@ export default function EditPost() {
           setPublished(data.published);
           setOrder(data.order);
           setTags(
-            (data.tags || []).filter((tag: string) =>
-              getAllowedTags(data.type).includes(tag)
-            )
+            (data.tags || [])
+              .map((tag: string) => tag.trim())
+              .filter((tag: string) => getAllowedTags(data.type).includes(tag))
           );
           // Load dateTaken if available, convert to date format
           if (data.metadata?.dateTaken) {
@@ -391,6 +398,7 @@ export default function EditPost() {
 
       const response = await fetch(`/api/posts/${postId}`, {
         method: "PATCH",
+        cache: "no-store",
         headers: {
           "Content-Type": "application/json",
         },
@@ -402,7 +410,7 @@ export default function EditPost() {
           caption: caption.trim() || undefined,
           published,
           order,
-          tags,
+          tags: tags.map((tag) => tag.trim()),
           metadata: metadataToSave,
         }),
       });
@@ -421,9 +429,9 @@ export default function EditPost() {
         setPublished(data.published);
         setOrder(data.order);
         setTags(
-          (data.tags || []).filter((tag: string) =>
-            getAllowedTags(data.type).includes(tag)
-          )
+          (data.tags || [])
+            .map((tag: string) => tag.trim())
+            .filter((tag: string) => getAllowedTags(data.type).includes(tag))
         );
         // Clean up preview URLs
         if (mediaFilePreviewUrl) {
@@ -445,10 +453,8 @@ export default function EditPost() {
           "album-cover-input"
         ) as HTMLInputElement;
         if (coverInput) coverInput.value = "";
-        // Refresh the page to show updated content
-        setTimeout(() => {
-          router.refresh();
-        }, 1000);
+        // Invalidate Next.js router cache and refresh to ensure all pages see updated data
+        router.refresh();
       } else {
         setError(data.error || "Failed to update post");
       }
@@ -467,6 +473,7 @@ export default function EditPost() {
     try {
       const response = await fetch(`/api/posts/${postId}`, {
         method: "DELETE",
+        cache: "no-store",
       });
 
       if (response.ok) {
@@ -891,21 +898,28 @@ export default function EditPost() {
                   Tags
                 </Typography>
                 <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 1 }}>
-                  {tagOptions.map((tag) => (
-                    <Chip
-                      key={tag}
-                      label={tag}
-                      onClick={() => {
-                        if (tags.includes(tag)) {
-                          setTags(tags.filter((t) => t !== tag));
-                        } else {
-                          setTags([...tags, tag]);
-                        }
-                      }}
-                      color={tags.includes(tag) ? "primary" : "default"}
-                      sx={{ cursor: "pointer" }}
-                    />
-                  ))}
+                  {tagOptions.map((tag) => {
+                    const isSelected = tags.some(
+                      (t) => t.trim() === tag.trim()
+                    );
+                    return (
+                      <Chip
+                        key={tag}
+                        label={tag}
+                        onClick={() => {
+                          if (isSelected) {
+                            setTags(
+                              tags.filter((t) => t.trim() !== tag.trim())
+                            );
+                          } else {
+                            setTags([...tags, tag]);
+                          }
+                        }}
+                        color={isSelected ? "primary" : "default"}
+                        sx={{ cursor: "pointer" }}
+                      />
+                    );
+                  })}
                 </Box>
                 {tags.length > 0 && (
                   <Typography variant="caption" color="text.secondary">
@@ -951,7 +965,10 @@ export default function EditPost() {
               <Button
                 type="button"
                 variant="outlined"
-                onClick={() => router.push(`/admin/${month}`)}
+                onClick={() => {
+                  router.refresh();
+                  router.push(`/admin/${month}`);
+                }}
               >
                 Cancel
               </Button>
