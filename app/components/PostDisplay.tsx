@@ -6,6 +6,7 @@ import type { Post } from "@/lib/types";
 import Image from "next/image";
 import { getDaysSinceOct15_2025 } from "@/lib/utils";
 import AudioPost from "./posts/AudioPost";
+import { postDimensions } from "./postDimensions";
 
 interface PostDisplayProps {
   post: Post;
@@ -74,13 +75,10 @@ export default function PostDisplay({
               sx={{
                 position: "relative",
                 width: "100%",
-                maxWidth: "800px",
                 height: "auto",
                 margin: "0 auto",
-                mb: 2,
-                borderRadius: 1,
                 overflow: "hidden",
-                backgroundColor: "rgba(0, 0, 0, 0.04)",
+                ...postDimensions.regularPost.imageContainer,
               }}
             >
               {post.type === "photo" ? (
@@ -123,7 +121,7 @@ export default function PostDisplay({
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "flex-start",
-                mt: 2,
+                ...postDimensions.spacing.dayTitleSpacing,
               }}
             >
               {/* Day X on the left */}
@@ -137,7 +135,12 @@ export default function PostDisplay({
 
               {/* Title/Caption on the right */}
               {(!hideTitle && post.title) || post.caption ? (
-                <Box sx={{ textAlign: "right", maxWidth: "85%" }}>
+                <Box
+                  sx={{
+                    textAlign: "right",
+                    maxWidth: postDimensions.spacing.textMaxWidth,
+                  }}
+                >
                   {!hideTitle && post.title && (
                     <Typography
                       variant="body2"
@@ -242,7 +245,7 @@ export default function PostDisplay({
   }
 
   return (
-    <Card sx={{ mb: 3 }}>
+    <Card sx={postDimensions.regularPost.card}>
       <CardContent>
         {post.type !== "photo" && post.type !== "video" ? (
           <>

@@ -13,6 +13,7 @@ import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import type { Post } from "@/lib/types";
 import Image from "next/image";
 import { getDaysSinceOct15_2025 } from "@/lib/utils";
+import { postDimensions } from "./postDimensions";
 
 // Helper function to get carousel number from tag
 function getCarouselNumber(post: Post): number | null {
@@ -195,17 +196,13 @@ export default function PostCarousel({
   };
 
   return (
-    <Box sx={{ mb: 3 }}>
+    <Box sx={postDimensions.carousel.container}>
       {/* Carousel Title - only display if it's "Bonus Funnies" */}
       {title && title.toLowerCase() === "bonus funnies" && (
         <Typography
           variant="h2"
           component="h2"
-          sx={{
-            mb: 2,
-            fontSize: "1.75rem",
-            fontWeight: 400,
-          }}
+          sx={postDimensions.carousel.title}
         >
           {title}
         </Typography>
@@ -224,11 +221,10 @@ export default function PostCarousel({
             display: "flex",
             overflowX: "auto",
             overflowY: "hidden",
-            gap: 1, // Reduced gap for almost full width
-            px: sortedPosts.length > 1 ? 2 : 1, // Minimal padding for almost full width
-            py: 2,
             scrollSnapType: "x mandatory",
             scrollBehavior: "smooth",
+            ...postDimensions.carousel.scrollContainer,
+            px: sortedPosts.length > 1 ? 2 : 1, // Minimal padding for almost full width
             "&::-webkit-scrollbar": {
               height: 8,
             },
@@ -255,22 +251,15 @@ export default function PostCarousel({
               <Card
                 key={post.id}
                 sx={{
-                  minWidth: (theme) => {
-                    // Calculate width: almost full container with minimal padding and gap
-                    const padding = sortedPosts.length > 1 ? 32 : 16; // Minimal padding for almost full width
-                    const gap = 8; // Minimal gap: 8px
-                    return `calc(100% - ${padding}px - ${gap}px)`;
-                  },
-                  maxWidth: (theme) => {
-                    const padding = sortedPosts.length > 1 ? 32 : 16;
-                    const gap = 8;
-                    return `calc(100% - ${padding}px - ${gap}px)`;
-                  },
-                  width: (theme) => {
-                    const padding = sortedPosts.length > 1 ? 32 : 16;
-                    const gap = 8;
-                    return `calc(100% - ${padding}px - ${gap}px)`;
-                  },
+                  minWidth: postDimensions.carousel.cardWidth(
+                    sortedPosts.length > 1
+                  ),
+                  maxWidth: postDimensions.carousel.cardWidth(
+                    sortedPosts.length > 1
+                  ),
+                  width: postDimensions.carousel.cardWidth(
+                    sortedPosts.length > 1
+                  ),
                   flexShrink: 0,
                   scrollSnapAlign: "start",
                 }}
@@ -282,14 +271,11 @@ export default function PostCarousel({
                       sx={{
                         position: "relative",
                         width: "100%",
-                        height: { xs: "350px", sm: "450px", md: "550px" },
-                        mb: 2,
                         overflow: "hidden",
-                        borderRadius: 1,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        backgroundColor: "rgba(0, 0, 0, 0.05)",
+                        ...postDimensions.carousel.imageContainer,
                       }}
                     >
                       {post.type === "photo" ? (
@@ -332,7 +318,7 @@ export default function PostCarousel({
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "flex-start",
-                      mt: 2,
+                      ...postDimensions.spacing.dayTitleSpacing,
                     }}
                   >
                     {/* Day X on the left */}
@@ -353,7 +339,9 @@ export default function PostCarousel({
                       }}
                     >
                       {(!hideTitle && post.title) || post.caption ? (
-                        <Box sx={{ maxWidth: "85%" }}>
+                        <Box
+                          sx={{ maxWidth: postDimensions.spacing.textMaxWidth }}
+                        >
                           {!hideTitle && post.title && (
                             <Typography
                               variant="body1"

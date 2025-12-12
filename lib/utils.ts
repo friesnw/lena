@@ -31,10 +31,10 @@ export function getMonthRangeText(month: number): string {
 
 // Helper function to calculate days since October 15, 2025
 export function getDaysSinceOct15_2025(dateString: string): number {
-  const startDate = new Date("2025-10-16T00:00:00");
+  const startDate = new Date("2025-10-15T00:00:00Z");
   const captureDate = new Date(dateString);
   const diffTime = captureDate.getTime() - startDate.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   return diffDays;
 }
 

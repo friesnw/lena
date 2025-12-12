@@ -37,7 +37,7 @@ async function readPostsFile(): Promise<Post[]> {
         if (fixed[i] === "[") openCount++;
         if (fixed[i] === "]") {
           openCount--;
-          if (openCount === 0 && fixed.trim().startsWith("[")) {
+          if (openCount === 0) {
             lastValidBracket = i;
           }
         }

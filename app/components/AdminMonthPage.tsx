@@ -23,28 +23,36 @@ interface AdminMonthPageProps {
 
 // Helper utility function to check if a post has a carousel tag
 function hasCarouselTag(post: Post): boolean {
-  return (
-    post.tags?.some(
-      (tag) =>
-        tag.toLowerCase().startsWith("carousel ") ||
-        tag.toLowerCase() === "bonus funnies"
-    ) ?? false
-  );
+  if (!post.tags || post.tags.length === 0) return false;
+  return post.tags.some((tag) => {
+    const normalizedTag = tag.toLowerCase().trim();
+    return (
+      normalizedTag.startsWith("carousel ") || normalizedTag === "bonus funnies"
+    );
+  });
 }
 
 // Helper function to get carousel number from tag
 function getCarouselNumber(post: Post): number | null {
-  const carouselTag = post.tags?.find(
-    (tag) =>
-      tag.toLowerCase().startsWith("carousel ") ||
-      tag.toLowerCase() === "bonus funnies"
-  );
+  if (!post.tags || post.tags.length === 0) return null;
+
+  const carouselTag = post.tags.find((tag) => {
+    const normalizedTag = tag.toLowerCase().trim();
+    return (
+      normalizedTag.startsWith("carousel ") || normalizedTag === "bonus funnies"
+    );
+  });
+
   if (!carouselTag) return null;
+
+  const normalizedTag = carouselTag.toLowerCase().trim();
+
   // Special case for "bonus funnies"
-  if (carouselTag.toLowerCase() === "bonus funnies") {
+  if (normalizedTag === "bonus funnies") {
     return 9;
   }
-  const match = carouselTag.match(/carousel (\d+)/i);
+
+  const match = normalizedTag.match(/carousel\s+(\d+)/i);
   return match ? parseInt(match[1], 10) : null;
 }
 
@@ -151,13 +159,24 @@ export default function AdminMonthPage({
     const regular: Post[] = [];
 
     publishedPosts.forEach((post) => {
-      if (
-        hasCarouselTag(post) &&
-        (post.type === "photo" || post.type === "video")
-      ) {
+      // Check for bonus funnies tag first (more specific check)
+      const hasBonusFunnies =
+        post.tags?.some(
+          (tag) => tag.toLowerCase().trim() === "bonus funnies"
+        ) ?? false;
+
+      const hasCarousel = hasCarouselTag(post);
+      const isPhotoOrVideo = post.type === "photo" || post.type === "video";
+
+      // If it has bonus funnies tag and is photo/video, always add to carousel 9
+      if (hasBonusFunnies && isPhotoOrVideo) {
+        carousel[9].push(post);
+      } else if (hasCarousel && isPhotoOrVideo) {
         const carouselNum = getCarouselNumber(post);
         if (carouselNum && carouselNum >= 1 && carouselNum <= 9) {
           carousel[carouselNum].push(post);
+        } else {
+          regular.push(post);
         }
       } else {
         regular.push(post);
@@ -172,6 +191,14 @@ export default function AdminMonthPage({
 
     // Sort regular posts by order
     regular.sort((a, b) => a.order - b.order);
+
+    // Debug: Log carousel 9 posts to help diagnose bonus funnies issue
+    if (carousel[9].length > 0) {
+      console.log(
+        `[AdminMonthPage] Found ${carousel[9].length} bonus funnies posts:`,
+        carousel[9].map((p) => ({ id: p.id, title: p.title, tags: p.tags }))
+      );
+    }
 
     return { carouselPosts: carousel, regularPosts: regular };
   }, [publishedPosts]);

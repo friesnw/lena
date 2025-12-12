@@ -1,10 +1,12 @@
 "use client";
 
-import { Typography, CircularProgress, Alert, Box } from "@mui/material";
+import { Typography, Alert, Box } from "@mui/material";
 import { useEffect, useState, useMemo, useRef } from "react";
 import type { Post } from "@/lib/types";
 import PostDisplay from "./PostDisplay";
 import PostCarousel from "./PostCarousel";
+import PostDisplaySkeleton from "./PostDisplaySkeleton";
+import PostCarouselSkeleton from "./PostCarouselSkeleton";
 
 import { getMonthRangeText } from "@/lib/utils";
 import { usePageTitle } from "@/hooks/usePageTitle";
@@ -16,28 +18,36 @@ interface MonthPageProps {
 
 // Helper utility function to check if a post has a carousel tag
 function hasCarouselTag(post: Post): boolean {
-  return (
-    post.tags?.some(
-      (tag) =>
-        tag.toLowerCase().startsWith("carousel ") ||
-        tag.toLowerCase() === "bonus funnies"
-    ) ?? false
-  );
+  if (!post.tags || post.tags.length === 0) return false;
+  return post.tags.some((tag) => {
+    const normalizedTag = tag.toLowerCase().trim();
+    return (
+      normalizedTag.startsWith("carousel ") || normalizedTag === "bonus funnies"
+    );
+  });
 }
 
 // Helper function to get carousel number from tags
 function getCarouselNumber(post: Post): number | null {
-  const carouselTag = post.tags?.find(
-    (tag) =>
-      tag.toLowerCase().startsWith("carousel ") ||
-      tag.toLowerCase() === "bonus funnies"
-  );
+  if (!post.tags || post.tags.length === 0) return null;
+
+  const carouselTag = post.tags.find((tag) => {
+    const normalizedTag = tag.toLowerCase().trim();
+    return (
+      normalizedTag.startsWith("carousel ") || normalizedTag === "bonus funnies"
+    );
+  });
+
   if (!carouselTag) return null;
+
+  const normalizedTag = carouselTag.toLowerCase().trim();
+
   // Special case for "bonus funnies"
-  if (carouselTag.toLowerCase() === "bonus funnies") {
+  if (normalizedTag === "bonus funnies") {
     return 9;
   }
-  const match = carouselTag.match(/carousel (\d+)/i);
+
+  const match = normalizedTag.match(/carousel\s+(\d+)/i);
   return match ? parseInt(match[1], 10) : null;
 }
 
@@ -45,8 +55,49 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const lastFetchTimeRef = useRef<number>(0);
   usePageTitle(monthName);
+
+  // Simple scroll restoration - only save/restore on page load/unload
+  useEffect(() => {
+    const scrollKey = `scroll-position-month-${month}`;
+
+    // Restore scroll position after page loads
+    const restoreScroll = () => {
+      const saved = sessionStorage.getItem(scrollKey);
+      if (saved) {
+        const scrollY = parseInt(saved, 10);
+        if (scrollY > 0) {
+          // Wait for content to be rendered
+          setTimeout(() => {
+            window.scrollTo(0, scrollY);
+          }, 100);
+        }
+      }
+    };
+
+    // Save scroll position before page unloads
+    const saveScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      if (scrollY > 0) {
+        sessionStorage.setItem(scrollKey, scrollY.toString());
+      }
+    };
+
+    // Restore after content loads
+    if (!loading && posts.length > 0) {
+      restoreScroll();
+    }
+
+    // Save on unload
+    window.addEventListener("beforeunload", saveScroll);
+    window.addEventListener("pagehide", saveScroll);
+
+    return () => {
+      saveScroll();
+      window.removeEventListener("beforeunload", saveScroll);
+      window.removeEventListener("pagehide", saveScroll);
+    };
+  }, [month, loading, posts.length]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -78,27 +129,6 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
     };
 
     fetchPosts();
-    lastFetchTimeRef.current = Date.now();
-
-    // Refetch when page becomes visible after being hidden for a while
-    // This helps catch updates made in other tabs/windows
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        const timeSinceLastFetch = Date.now() - lastFetchTimeRef.current;
-        // Only refetch if it's been more than 5 seconds since last fetch
-        // This prevents excessive refetching while still catching updates
-        if (timeSinceLastFetch > 5000) {
-          lastFetchTimeRef.current = Date.now();
-          fetchPosts();
-        }
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
   }, [month]);
 
   // Separate posts into carousel posts and regular posts
@@ -117,15 +147,55 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
     const regular: Post[] = [];
 
     posts.forEach((post) => {
-      if (
-        hasCarouselTag(post) &&
-        (post.type === "photo" || post.type === "video")
-      ) {
+      // Check for bonus funnies tag first (more specific check)
+      const hasBonusFunnies =
+        post.tags?.some(
+          (tag) => tag.toLowerCase().trim() === "bonus funnies"
+        ) ?? false;
+
+      const hasCarousel = hasCarouselTag(post);
+      const isPhotoOrVideo = post.type === "photo" || post.type === "video";
+
+      // If it has bonus funnies tag and is photo/video, always add to carousel 9
+      if (hasBonusFunnies && isPhotoOrVideo) {
+        carousel[9].push(post);
+      } else if (hasCarousel && isPhotoOrVideo) {
         const carouselNum = getCarouselNumber(post);
         if (carouselNum && carouselNum >= 1 && carouselNum <= 9) {
           carousel[carouselNum].push(post);
+        } else {
+          // Debug: Log posts that have carousel tag but invalid carousel number
+          console.log(`[MonthPage] Post has carousel tag but invalid number:`, {
+            id: post.id,
+            title: post.title,
+            tags: post.tags,
+            carouselNum,
+          });
+          regular.push(post);
         }
       } else {
+        // Debug: Log posts that should be in carousel but aren't
+        if (
+          hasBonusFunnies ||
+          post.tags?.some(
+            (tag) =>
+              tag.toLowerCase().includes("bonus") ||
+              tag.toLowerCase().includes("funnies")
+          )
+        ) {
+          console.log(
+            `[MonthPage] Post with bonus/funnies tag not in carousel:`,
+            {
+              id: post.id,
+              title: post.title,
+              tags: post.tags,
+              type: post.type,
+              hasCarousel,
+              isPhotoOrVideo,
+              hasBonusFunnies,
+            }
+          );
+        }
         regular.push(post);
       }
     });
@@ -138,6 +208,45 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
 
     // Sort regular posts by order
     regular.sort((a, b) => a.order - b.order);
+
+    // Debug: Log carousel 9 posts to help diagnose bonus funnies issue
+    console.log(`[MonthPage] Carousel breakdown:`, {
+      totalPosts: posts.length,
+      carousel9Count: carousel[9].length,
+      regularCount: regular.length,
+      allCarouselCounts: Object.keys(carousel).reduce((acc, key) => {
+        acc[key] = carousel[parseInt(key, 10)].length;
+        return acc;
+      }, {} as Record<string, number>),
+    });
+
+    if (carousel[9].length > 0) {
+      console.log(
+        `[MonthPage] Found ${carousel[9].length} bonus funnies posts:`,
+        carousel[9].map((p) => ({
+          id: p.id,
+          title: p.title,
+          tags: p.tags,
+          order: p.order,
+        }))
+      );
+    } else {
+      // Check if any posts have bonus funnies tag
+      const bonusFunniesPosts = posts.filter((p) =>
+        p.tags?.some((tag) => tag.toLowerCase() === "bonus funnies")
+      );
+      if (bonusFunniesPosts.length > 0) {
+        console.log(
+          `[MonthPage] Found ${bonusFunniesPosts.length} posts with "bonus funnies" tag but not in carousel:`,
+          bonusFunniesPosts.map((p) => ({
+            id: p.id,
+            title: p.title,
+            tags: p.tags,
+            type: p.type,
+          }))
+        );
+      }
+    }
 
     return { carouselPosts: carousel, regularPosts: regular };
   }, [posts]);
@@ -193,6 +302,28 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
     return result;
   };
 
+  // Render skeleton placeholders that match the expected layout
+  const renderSkeletons = () => {
+    const skeletons: React.ReactElement[] = [];
+
+    // Add a few regular post skeletons
+    for (let i = 0; i < 3; i++) {
+      skeletons.push(<PostDisplaySkeleton key={`skeleton-post-${i}`} />);
+    }
+
+    // Add a carousel skeleton (with 3 posts to show it's scrollable)
+    skeletons.push(
+      <PostCarouselSkeleton key="skeleton-carousel" postCount={3} />
+    );
+
+    // Add a few more regular post skeletons
+    for (let i = 3; i < 6; i++) {
+      skeletons.push(<PostDisplaySkeleton key={`skeleton-post-${i}`} />);
+    }
+
+    return skeletons;
+  };
+
   return (
     <Box
       sx={{
@@ -222,11 +353,8 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
           {getMonthRangeText(month)}
         </Typography>
 
-        {loading && (
-          <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
-            <CircularProgress />
-          </Box>
-        )}
+        {/* Only show skeletons if we don't have any posts (including cached) */}
+        {loading && posts.length === 0 && renderSkeletons()}
 
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>

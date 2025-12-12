@@ -161,7 +161,7 @@ export async function DELETE(
     const { id } = await params;
     // Fetch post first to get month for cache invalidation
     const postToDelete = await getPostById(id);
-    
+
     if (!postToDelete) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
@@ -170,7 +170,10 @@ export async function DELETE(
     const deleted = await deletePost(id);
 
     if (!deleted) {
-      return NextResponse.json({ error: "Failed to delete post" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Failed to delete post" },
+        { status: 500 }
+      );
     }
 
     // Revalidate cache

@@ -32,12 +32,15 @@ export default function AdminAllPosts() {
         setLoading(true);
         // Add cache-busting timestamp to ensure fresh data
         const timestamp = Date.now();
-        const response = await fetch(`/api/posts/admin?month=all&_t=${timestamp}`, {
-          cache: "no-store",
-          headers: {
-            "Cache-Control": "no-cache",
-          },
-        });
+        const response = await fetch(
+          `/api/posts/admin?month=all&_t=${timestamp}`,
+          {
+            cache: "no-store",
+            headers: {
+              "Cache-Control": "no-cache",
+            },
+          }
+        );
         const data = await response.json();
 
         if (response.ok) {
@@ -169,7 +172,11 @@ export default function AdminAllPosts() {
                     >
                       {post.title}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mb: 1 }}
+                    >
                       {post.type === "text" || post.type === "stat"
                         ? post.content.substring(0, 100) +
                           (post.content.length > 100 ? "..." : "")
