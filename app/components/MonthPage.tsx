@@ -21,9 +21,7 @@ function hasCarouselTag(post: Post): boolean {
   if (!post.tags || post.tags.length === 0) return false;
   return post.tags.some((tag) => {
     const normalizedTag = tag.toLowerCase().trim();
-    return (
-      normalizedTag.startsWith("carousel ") || normalizedTag === "bonus funnies"
-    );
+    return normalizedTag.startsWith("carousel ");
   });
 }
 
@@ -33,20 +31,12 @@ function getCarouselNumber(post: Post): number | null {
 
   const carouselTag = post.tags.find((tag) => {
     const normalizedTag = tag.toLowerCase().trim();
-    return (
-      normalizedTag.startsWith("carousel ") || normalizedTag === "bonus funnies"
-    );
+    return normalizedTag.startsWith("carousel ");
   });
 
   if (!carouselTag) return null;
 
   const normalizedTag = carouselTag.toLowerCase().trim();
-
-  // Special case for "bonus funnies"
-  if (normalizedTag === "bonus funnies") {
-    return 9;
-  }
-
   const match = normalizedTag.match(/carousel\s+(\d+)/i);
   return match ? parseInt(match[1], 10) : null;
 }
@@ -131,8 +121,8 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
     fetchPosts();
   }, [month]);
 
-  // Separate posts into carousel posts and regular posts
-  const { carouselPosts, regularPosts } = useMemo(() => {
+  // Separate posts into carousel posts, bonus funnies, and regular posts
+  const { carouselPosts, bonusFunniesPosts, regularPosts } = useMemo(() => {
     const carousel: Record<number, Post[]> = {
       1: [],
       2: [],
@@ -144,10 +134,11 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
       8: [],
       9: [],
     };
+    const bonusFunnies: Post[] = [];
     const regular: Post[] = [];
 
     posts.forEach((post) => {
-      // Check for bonus funnies tag first (more specific check)
+      // Check for bonus funnies tag first (separate from numbered carousels)
       const hasBonusFunnies =
         post.tags?.some(
           (tag) => tag.toLowerCase().trim() === "bonus funnies"
@@ -156,9 +147,9 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
       const hasCarousel = hasCarouselTag(post);
       const isPhotoOrVideo = post.type === "photo" || post.type === "video";
 
-      // If it has bonus funnies tag and is photo/video, always add to carousel 9
+      // Bonus funnies goes to its own separate carousel at the end
       if (hasBonusFunnies && isPhotoOrVideo) {
-        carousel[9].push(post);
+        bonusFunnies.push(post);
       } else if (hasCarousel && isPhotoOrVideo) {
         const carouselNum = getCarouselNumber(post);
         if (carouselNum && carouselNum >= 1 && carouselNum <= 9) {
@@ -174,28 +165,6 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
           regular.push(post);
         }
       } else {
-        // Debug: Log posts that should be in carousel but aren't
-        if (
-          hasBonusFunnies ||
-          post.tags?.some(
-            (tag) =>
-              tag.toLowerCase().includes("bonus") ||
-              tag.toLowerCase().includes("funnies")
-          )
-        ) {
-          console.log(
-            `[MonthPage] Post with bonus/funnies tag not in carousel:`,
-            {
-              id: post.id,
-              title: post.title,
-              tags: post.tags,
-              type: post.type,
-              hasCarousel,
-              isPhotoOrVideo,
-              hasBonusFunnies,
-            }
-          );
-        }
         regular.push(post);
       }
     });
@@ -206,13 +175,17 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
       carousel[num].sort((a, b) => a.order - b.order);
     });
 
+    // Sort bonus funnies by order
+    bonusFunnies.sort((a, b) => a.order - b.order);
+
     // Sort regular posts by order
     regular.sort((a, b) => a.order - b.order);
 
-    // Debug: Log carousel 9 posts to help diagnose bonus funnies issue
+    // Debug: Log carousel breakdown
     console.log(`[MonthPage] Carousel breakdown:`, {
       totalPosts: posts.length,
       carousel9Count: carousel[9].length,
+      bonusFunniesCount: bonusFunnies.length,
       regularCount: regular.length,
       allCarouselCounts: Object.keys(carousel).reduce((acc, key) => {
         acc[key] = carousel[parseInt(key, 10)].length;
@@ -222,7 +195,7 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
 
     if (carousel[9].length > 0) {
       console.log(
-        `[MonthPage] Found ${carousel[9].length} bonus funnies posts:`,
+        `[MonthPage] Found ${carousel[9].length} carousel 9 posts:`,
         carousel[9].map((p) => ({
           id: p.id,
           title: p.title,
@@ -230,25 +203,13 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
           order: p.order,
         }))
       );
-    } else {
-      // Check if any posts have bonus funnies tag
-      const bonusFunniesPosts = posts.filter((p) =>
-        p.tags?.some((tag) => tag.toLowerCase() === "bonus funnies")
-      );
-      if (bonusFunniesPosts.length > 0) {
-        console.log(
-          `[MonthPage] Found ${bonusFunniesPosts.length} posts with "bonus funnies" tag but not in carousel:`,
-          bonusFunniesPosts.map((p) => ({
-            id: p.id,
-            title: p.title,
-            tags: p.tags,
-            type: p.type,
-          }))
-        );
-      }
     }
 
-    return { carouselPosts: carousel, regularPosts: regular };
+    return {
+      carouselPosts: carousel,
+      bonusFunniesPosts: bonusFunnies,
+      regularPosts: regular,
+    };
   }, [posts]);
 
   // Render posts with carousels at appropriate intervals
@@ -277,12 +238,10 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
 
       // Render carousel if it has posts
       if (carouselPosts[carouselNum].length > 0) {
-        const carouselTitle = carouselNum === 9 ? "Bonus Funnies" : undefined;
         result.push(
           <PostCarousel
             key={`carousel-${carouselNum}`}
             posts={carouselPosts[carouselNum]}
-            title={carouselTitle}
           />
         );
       }
@@ -297,6 +256,17 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
         />
       );
       regularIndex++;
+    }
+
+    // Render bonus funnies carousel at the end
+    if (bonusFunniesPosts.length > 0) {
+      result.push(
+        <PostCarousel
+          key="bonus-funnies"
+          posts={bonusFunniesPosts}
+          title="Bonus Funnies"
+        />
+      );
     }
 
     return result;

@@ -26,9 +26,7 @@ function hasCarouselTag(post: Post): boolean {
   if (!post.tags || post.tags.length === 0) return false;
   return post.tags.some((tag) => {
     const normalizedTag = tag.toLowerCase().trim();
-    return (
-      normalizedTag.startsWith("carousel ") || normalizedTag === "bonus funnies"
-    );
+    return normalizedTag.startsWith("carousel ");
   });
 }
 
@@ -38,20 +36,12 @@ function getCarouselNumber(post: Post): number | null {
 
   const carouselTag = post.tags.find((tag) => {
     const normalizedTag = tag.toLowerCase().trim();
-    return (
-      normalizedTag.startsWith("carousel ") || normalizedTag === "bonus funnies"
-    );
+    return normalizedTag.startsWith("carousel ");
   });
 
   if (!carouselTag) return null;
 
   const normalizedTag = carouselTag.toLowerCase().trim();
-
-  // Special case for "bonus funnies"
-  if (normalizedTag === "bonus funnies") {
-    return 9;
-  }
-
   const match = normalizedTag.match(/carousel\s+(\d+)/i);
   return match ? parseInt(match[1], 10) : null;
 }
@@ -62,31 +52,32 @@ export default function AdminMonthPage({
 }: AdminMonthPageProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
   const lastFetchTimeRef = useRef<number>(0);
+  const hasLoadedOnceRef = useRef<boolean>(false);
   const pageTitle = `Admin: ${monthName}`;
   usePageTitle(pageTitle);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        setLoading(true);
-        // Add cache-busting timestamp to ensure fresh data
-        const timestamp = Date.now();
-        const response = await fetch(
-          `/api/posts/admin?month=${month}&_t=${timestamp}`,
-          {
-            cache: "no-store",
-            headers: {
-              "Cache-Control": "no-cache",
-            },
-          }
-        );
+        // Only show the big loading state on the first load.
+        // On subsequent refetches (e.g., tab refocus), keep posts rendered and show a small refresh indicator.
+        if (!hasLoadedOnceRef.current && posts.length === 0) {
+          setLoading(true);
+        } else {
+          setRefreshing(true);
+        }
+
+        const response = await fetch(`/api/posts/admin?month=${month}`);
         const data = await response.json();
 
         if (response.ok) {
           setPosts(data);
+          hasLoadedOnceRef.current = true;
+          setError("");
         } else {
           setError(data.error || "Failed to load posts");
         }
@@ -94,6 +85,7 @@ export default function AdminMonthPage({
         setError("Something went wrong. Please try again.");
       } finally {
         setLoading(false);
+        setRefreshing(false);
       }
     };
 
@@ -143,8 +135,8 @@ export default function AdminMonthPage({
     return { publishedPosts: published, unpublishedPosts: unpublished };
   }, [posts]);
 
-  // Separate published posts into carousel posts and regular posts
-  const { carouselPosts, regularPosts } = useMemo(() => {
+  // Separate published posts into carousel posts, bonus funnies, and regular posts
+  const { carouselPosts, bonusFunniesPosts, regularPosts } = useMemo(() => {
     const carousel: Record<number, Post[]> = {
       1: [],
       2: [],
@@ -156,10 +148,11 @@ export default function AdminMonthPage({
       8: [],
       9: [],
     };
+    const bonusFunnies: Post[] = [];
     const regular: Post[] = [];
 
     publishedPosts.forEach((post) => {
-      // Check for bonus funnies tag first (more specific check)
+      // Check for bonus funnies tag first (separate from numbered carousels)
       const hasBonusFunnies =
         post.tags?.some(
           (tag) => tag.toLowerCase().trim() === "bonus funnies"
@@ -168,9 +161,9 @@ export default function AdminMonthPage({
       const hasCarousel = hasCarouselTag(post);
       const isPhotoOrVideo = post.type === "photo" || post.type === "video";
 
-      // If it has bonus funnies tag and is photo/video, always add to carousel 9
+      // Bonus funnies goes to its own separate carousel at the end
       if (hasBonusFunnies && isPhotoOrVideo) {
-        carousel[9].push(post);
+        bonusFunnies.push(post);
       } else if (hasCarousel && isPhotoOrVideo) {
         const carouselNum = getCarouselNumber(post);
         if (carouselNum && carouselNum >= 1 && carouselNum <= 9) {
@@ -189,18 +182,25 @@ export default function AdminMonthPage({
       carousel[num].sort((a, b) => a.order - b.order);
     });
 
+    // Sort bonus funnies by order
+    bonusFunnies.sort((a, b) => a.order - b.order);
+
     // Sort regular posts by order
     regular.sort((a, b) => a.order - b.order);
 
-    // Debug: Log carousel 9 posts to help diagnose bonus funnies issue
+    // Debug: Log carousel 9 posts
     if (carousel[9].length > 0) {
       console.log(
-        `[AdminMonthPage] Found ${carousel[9].length} bonus funnies posts:`,
+        `[AdminMonthPage] Found ${carousel[9].length} carousel 9 posts:`,
         carousel[9].map((p) => ({ id: p.id, title: p.title, tags: p.tags }))
       );
     }
 
-    return { carouselPosts: carousel, regularPosts: regular };
+    return {
+      carouselPosts: carousel,
+      bonusFunniesPosts: bonusFunnies,
+      regularPosts: regular,
+    };
   }, [publishedPosts]);
 
   const getViewPostUrl = (postId: string) => `/admin/posts/${postId}`;
@@ -233,12 +233,10 @@ export default function AdminMonthPage({
 
       // Render carousel if it has posts
       if (carouselPosts[carouselNum].length > 0) {
-        const carouselTitle = carouselNum === 9 ? "Bonus Funnies" : undefined;
         result.push(
           <PostCarousel
             key={`carousel-${carouselNum}`}
             posts={carouselPosts[carouselNum]}
-            title={carouselTitle}
             showOrder={true}
             getViewPostUrl={getViewPostUrl}
           />
@@ -257,6 +255,19 @@ export default function AdminMonthPage({
         />
       );
       regularIndex++;
+    }
+
+    // Render bonus funnies carousel at the end
+    if (bonusFunniesPosts.length > 0) {
+      result.push(
+        <PostCarousel
+          key="bonus-funnies"
+          posts={bonusFunniesPosts}
+          title="Bonus Funnies"
+          showOrder={true}
+          getViewPostUrl={getViewPostUrl}
+        />
+      );
     }
 
     return result;
@@ -296,7 +307,12 @@ export default function AdminMonthPage({
               {getMonthRangeText(month)}
             </Typography>
           </Box>
-          <Stack direction="row" spacing={2} sx={{ flexShrink: 0 }}>
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{ flexShrink: 0, alignItems: "center" }}
+          >
+            {refreshing && <CircularProgress size={18} />}
             <Button href={`/month/${month}`} variant="outlined">
               View Published
             </Button>
@@ -309,7 +325,7 @@ export default function AdminMonthPage({
           </Stack>
         </Box>
 
-        {loading && (
+        {loading && posts.length === 0 && (
           <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
             <CircularProgress />
           </Box>
@@ -327,7 +343,7 @@ export default function AdminMonthPage({
           </Typography>
         )}
 
-        {!loading && !error && posts.length > 0 && (
+        {!error && posts.length > 0 && (
           <>
             {renderPostsWithCarousels()}
             {unpublishedPosts.length > 0 && (
