@@ -71,7 +71,7 @@ const theme = createTheme({
     h4: {
       fontFamily: "var(--font-lora), serif",
       fontWeight: 400,
-      fontSize: "1.5rem",
+      fontSize: "1.625rem",
       lineHeight: 1.4,
     },
     h5: {
@@ -90,7 +90,7 @@ const theme = createTheme({
     body1: {
       fontFamily: "var(--font-eczar), sans-serif",
       fontWeight: 400,
-      fontSize: "1rem",
+      fontSize: "1.125rem",
       lineHeight: 1.6,
     },
     caption: {

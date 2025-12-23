@@ -70,6 +70,7 @@ export default function AudioPost({
               overflow: "hidden",
               flexShrink: 0,
               alignSelf: "center",
+              position: "relative",
             }}
           >
             <Image
@@ -80,6 +81,33 @@ export default function AudioPost({
               style={{ objectFit: "cover", width: "100%", height: "100%" }}
               unoptimized
             />
+            {/* Overlaid play button for mobile */}
+            <IconButton
+              onClick={togglePlay}
+              aria-label={isPlaying ? "Pause audio" : "Play audio"}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: 72,
+                height: 72,
+                borderRadius: "50%",
+                background: (theme) => theme.palette.primary.main,
+                color: "white",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+                display: { xs: "flex", md: "none" },
+                "&:hover": {
+                  background: "#D76A58",
+                },
+              }}
+            >
+              {isPlaying ? (
+                <PauseRounded fontSize="large" />
+              ) : (
+                <PlayArrowRounded fontSize="large" />
+              )}
+            </IconButton>
           </Box>
         )}
 
@@ -108,6 +136,7 @@ export default function AudioPost({
               </Typography>
             )}
           </Box>
+          {/* Separate play button for desktop */}
           <IconButton
             onClick={togglePlay}
             aria-label={isPlaying ? "Pause audio" : "Play audio"}
@@ -119,6 +148,7 @@ export default function AudioPost({
               background: (theme) => theme.palette.primary.main,
               color: "white",
               boxShadow: isPlaying ? 4 : 2,
+              display: { xs: "none", md: "flex" },
               "&:hover": {
                 background: "#D76A58",
               },

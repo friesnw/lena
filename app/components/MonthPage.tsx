@@ -1,7 +1,8 @@
 "use client";
 
-import { Typography, Alert, Box } from "@mui/material";
-import { useEffect, useState, useMemo, useRef } from "react";
+import { Typography, Alert, Box, Button } from "@mui/material";
+import { useEffect, useState, useMemo } from "react";
+import Link from "next/link";
 import type { Post } from "@/lib/types";
 import PostDisplay from "./PostDisplay";
 import PostCarousel from "./PostCarousel";
@@ -10,6 +11,7 @@ import PostCarouselSkeleton from "./PostCarouselSkeleton";
 
 import { getMonthRangeText } from "@/lib/utils";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { monthNavigation } from "@/lib/monthNavigation";
 
 interface MonthPageProps {
   month: number;
@@ -41,11 +43,36 @@ function getCarouselNumber(post: Post): number | null {
   return match ? parseInt(match[1], 10) : null;
 }
 
+// Helper function to get month name from number
+function getMonthName(monthNum: number): string {
+  const monthNames = [
+    "Month 0",
+    "Month 1",
+    "Month 2",
+    "Month 3",
+    "Month 4",
+    "Month 5",
+    "Month Six",
+    "Month 7",
+    "Month 8",
+    "Month 9",
+    "Month 10",
+    "Month 11",
+    "Month 12",
+  ];
+  return monthNames[monthNum] || `Month ${monthNum}`;
+}
+
 export default function MonthPage({ month, monthName }: MonthPageProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   usePageTitle(monthName);
+
+  // Check if next month exists in navigation
+  const hasNextMonth = useMemo(() => {
+    return monthNavigation.some((item) => item.month === month + 1);
+  }, [month]);
 
   // Simple scroll restoration - only save/restore on page load/unload
   useEffect(() => {
@@ -339,6 +366,43 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
         )}
 
         {!loading && !error && posts.length > 0 && renderPostsWithCarousels()}
+
+        {/* Month Navigation */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: 2,
+            mt: 4,
+            mb: 2,
+          }}
+        >
+          {month > 0 ? (
+            <Button
+              component={Link}
+              href={`/month/${month - 1}`}
+              variant="primary"
+              sx={{ flex: 1 }}
+            >
+              ← {getMonthName(month - 1)}
+            </Button>
+          ) : (
+            <Box sx={{ flex: 1 }} /> // Spacer when no previous month
+          )}
+
+          {hasNextMonth ? (
+            <Button
+              component={Link}
+              href={`/month/${month + 1}`}
+              variant="primary"
+              sx={{ flex: 1 }}
+            >
+              {getMonthName(month + 1)} →
+            </Button>
+          ) : (
+            <Box sx={{ flex: 1 }} /> // Spacer when no next month
+          )}
+        </Box>
       </Box>
     </Box>
   );

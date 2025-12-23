@@ -345,6 +345,7 @@ export default function PostCarousel({
                           {!hideTitle && post.title && (
                             <Typography
                               variant="body1"
+                              fontSize=".875rem"
                               component="h3"
                               sx={{
                                 mb: post.caption ? 0.5 : 0,

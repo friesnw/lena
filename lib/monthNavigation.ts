@@ -26,7 +26,7 @@ export const monthNavigation: readonly MonthNavigationItem[] = [
   {
     month: 2,
     title: "Month 2",
-    description: "To be determined",
+    description: "Pobre Lena",
     icon: "explore",
     iconBgColor: "#aec6cf69",
   },
