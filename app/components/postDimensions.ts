@@ -14,11 +14,11 @@ export const postDimensions = {
       mb: 3,
     },
   },
-  
+
   // PostCarousel dimensions
   carousel: {
     imageContainer: {
-      height: { xs: "350px", sm: "450px", md: "550px" },
+      height: { xs: "375px", sm: "450px", md: "550px" },
       mb: 2,
       borderRadius: 1,
       backgroundColor: "rgba(0, 0, 0, 0.05)",
@@ -36,12 +36,12 @@ export const postDimensions = {
       py: 2,
     },
     cardWidth: (hasMultiplePosts: boolean) => {
-      const padding = hasMultiplePosts ? 32 : 16;
-      const gap = 8;
+      const padding = hasMultiplePosts ? 16 : 8;
+      const gap = 0;
       return `calc(100% - ${padding}px - ${gap}px)`;
     },
   },
-  
+
   // Common spacing
   spacing: {
     dayTitleSpacing: {
@@ -50,4 +50,3 @@ export const postDimensions = {
     textMaxWidth: "85%",
   },
 } as const;
-

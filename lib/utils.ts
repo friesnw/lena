@@ -23,8 +23,12 @@ export function getMonthRangeText(month: number): string {
   const startMonth = 9 + month; // September (9) + month number
   const endMonth = 10 + month; // October (10) + month number
 
-  const startMonthName = monthNames[startMonth - 1]; // Convert to 0-indexed
-  const endMonthName = monthNames[endMonth - 1];
+  // Handle wrapping around the year (month 13 = January, month 14 = February, etc.)
+  const startMonthIndex = (startMonth - 1) % 12;
+  const endMonthIndex = (endMonth - 1) % 12;
+
+  const startMonthName = monthNames[startMonthIndex];
+  const endMonthName = monthNames[endMonthIndex];
 
   return `${startMonthName} - ${endMonthName}`;
 }

@@ -34,16 +34,24 @@ function hasCarouselTag(post: Post): boolean {
 function getCarouselNumber(post: Post): number | null {
   if (!post.tags || post.tags.length === 0) return null;
 
-  const carouselTag = post.tags.find((tag) => {
+  // Find all carousel tags and extract numbers, return the highest valid one
+  // This handles cases where a post might have multiple carousel tags
+  let maxCarouselNum: number | null = null;
+  for (const tag of post.tags) {
     const normalizedTag = tag.toLowerCase().trim();
-    return normalizedTag.startsWith("carousel ");
-  });
-
-  if (!carouselTag) return null;
-
-  const normalizedTag = carouselTag.toLowerCase().trim();
-  const match = normalizedTag.match(/carousel\s+(\d+)/i);
-  return match ? parseInt(match[1], 10) : null;
+    // Match the full pattern: "carousel" followed by whitespace and digits
+    const match = normalizedTag.match(/^carousel\s+(\d+)$/i);
+    if (match) {
+      const num = parseInt(match[1], 10);
+      if (num >= 1 && num <= 11) {
+        // Keep the highest carousel number found
+        if (maxCarouselNum === null || num > maxCarouselNum) {
+          maxCarouselNum = num;
+        }
+      }
+    }
+  }
+  return maxCarouselNum;
 }
 
 export default function AdminMonthPage({
@@ -147,6 +155,8 @@ export default function AdminMonthPage({
       7: [],
       8: [],
       9: [],
+      10: [],
+      11: [],
     };
     const bonusFunnies: Post[] = [];
     const regular: Post[] = [];
@@ -166,7 +176,7 @@ export default function AdminMonthPage({
         bonusFunnies.push(post);
       } else if (hasCarousel && isPhotoOrVideo) {
         const carouselNum = getCarouselNumber(post);
-        if (carouselNum && carouselNum >= 1 && carouselNum <= 9) {
+        if (carouselNum && carouselNum >= 1 && carouselNum <= 11) {
           carousel[carouselNum].push(post);
         } else {
           regular.push(post);
@@ -207,7 +217,7 @@ export default function AdminMonthPage({
 
   // Render posts with carousels at appropriate intervals
   const renderPostsWithCarousels = () => {
-    const carouselThresholds = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+    const carouselThresholds = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110];
     const result: React.ReactElement[] = [];
     let regularIndex = 0;
 

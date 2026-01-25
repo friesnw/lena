@@ -36,6 +36,8 @@ const MEDIA_TAG_OPTIONS = [
   "Carousel 7",
   "Carousel 8",
   "Carousel 9",
+  "Carousel 10",
+  "Carousel 11",
   "bonus funnies",
 ];
 const MEDIA_AND_HIDE_TAGS = [...MEDIA_TAG_OPTIONS, HIDE_TITLE_TAG];
