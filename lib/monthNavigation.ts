@@ -10,11 +10,18 @@ export interface MonthNavigationItem {
 
 export const monthNavigation: readonly MonthNavigationItem[] = [
   {
-    month: 0,
-    title: "Month 0",
-    description: "How you got here",
-    icon: "auto_stories",
-    iconBgColor: "#e6bccd70",
+    month: 3,
+    title: "Month 3",
+    description: "New Friends",
+    icon: "person_add",
+    iconBgColor: "#aec6cf69",
+  },
+  {
+    month: 2,
+    title: "Month 2",
+    description: "Pobre Lena",
+    icon: "explore",
+    iconBgColor: "#aec6cf69",
   },
   {
     month: 1,
@@ -24,10 +31,10 @@ export const monthNavigation: readonly MonthNavigationItem[] = [
     iconBgColor: "#b2d8b266",
   },
   {
-    month: 2,
-    title: "Month 2",
-    description: "Pobre Lena",
-    icon: "explore",
-    iconBgColor: "#aec6cf69",
+    month: 0,
+    title: "Month 0",
+    description: "How you got here",
+    icon: "auto_stories",
+    iconBgColor: "#e6bccd70",
   },
 ] as const;
