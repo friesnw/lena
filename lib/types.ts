@@ -17,7 +17,7 @@ export interface Post {
   type: PostType;
   title: string;
   month: number;
-  content: string;
+  content?: string;
   caption?: string;
   createdAt: string;
   updatedAt: string;

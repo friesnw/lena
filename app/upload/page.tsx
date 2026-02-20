@@ -432,12 +432,6 @@ function UploadForm() {
         return;
       }
 
-      if (isTextType && !content.trim()) {
-        setError("Please enter content");
-        setLoading(false);
-        return;
-      }
-
       if (isMediaType && !file) {
         setError("Please select a file");
         setLoading(false);

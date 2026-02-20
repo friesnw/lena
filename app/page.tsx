@@ -493,7 +493,7 @@ function CollageSlot({ post, loading, sx }: CollageSlotProps) {
         <>
           {post.type === "photo" ? (
             <Image
-              src={post.content}
+              src={post.content!}
               alt={post.caption || post.title || "Collage image"}
               fill
               sizes="(max-width: 900px) 100vw, 50vw"

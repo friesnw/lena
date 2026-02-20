@@ -178,8 +178,9 @@ export default function AdminAllPosts() {
                       sx={{ mb: 1 }}
                     >
                       {post.type === "text" || post.type === "stat"
-                        ? post.content.substring(0, 100) +
-                          (post.content.length > 100 ? "..." : "")
+                        ? post.content
+                          ? post.content.substring(0, 100) + (post.content.length > 100 ? "..." : "")
+                          : ""
                         : post.content}
                     </Typography>
                     {post.caption && (

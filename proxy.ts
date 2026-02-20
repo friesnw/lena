@@ -13,7 +13,30 @@ function isPublicPath(pathname: string) {
 }
 
 export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
+
+  // Handle ?pw= login shortcut
+  const pw = searchParams.get("pw");
+  if (pw) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.searchParams.delete("pw");
+
+    if (pw === process.env.PASSWORD) {
+      const response = NextResponse.redirect(redirectUrl);
+      response.cookies.set("authenticated", "true", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        path: "/",
+      });
+      return response;
+    }
+
+    // Wrong password — strip ?pw= and fall through
+    return NextResponse.redirect(redirectUrl);
+  }
+
   const isPublic = isPublicPath(pathname);
   const authenticated =
     request.cookies.get("authenticated")?.value === "true";

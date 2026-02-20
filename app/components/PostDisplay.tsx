@@ -83,7 +83,7 @@ export default function PostDisplay({
             >
               {post.type === "photo" ? (
                 <Image
-                  src={post.content}
+                  src={post.content!}
                   alt={post.caption || "Photo"}
                   width={800}
                   height={600}

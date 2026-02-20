@@ -280,7 +280,7 @@ export default function PostCarousel({
                     >
                       {post.type === "photo" ? (
                         <Image
-                          src={post.content}
+                          src={post.content!}
                           alt={post.caption || post.title || "Photo"}
                           fill
                           style={{

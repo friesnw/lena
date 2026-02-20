@@ -136,12 +136,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!content || typeof content !== "string" || !content.trim()) {
-      return NextResponse.json(
-        { error: "Missing or empty 'content' field" },
-        { status: 400 }
-      );
-    }
     if (!["text", "audio", "video", "photo", "stat"].includes(type as string)) {
       return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
