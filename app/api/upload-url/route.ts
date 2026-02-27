@@ -15,8 +15,12 @@ const s3Client = new S3Client({
 
 const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME || "letters-for-lena-media";
 
-// Maximum file size: 11MB
-const MAX_FILE_SIZE = 11 * 1024 * 1024;
+// Maximum file sizes by type
+const MAX_FILE_SIZES: Record<string, number> = {
+  photo: 11 * 1024 * 1024,   // 11MB
+  audio: 50 * 1024 * 1024,   // 50MB
+  video: 500 * 1024 * 1024,  // 500MB
+};
 
 // Allowed MIME types
 const ALLOWED_MIME_TYPES = {
@@ -62,12 +66,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file size
-    if (fileSize && fileSize > MAX_FILE_SIZE) {
+    const maxSize = MAX_FILE_SIZES[fileType as keyof typeof MAX_FILE_SIZES] ?? MAX_FILE_SIZES.photo;
+    if (fileSize && fileSize > maxSize) {
       return NextResponse.json(
         {
-          error: `File size exceeds maximum allowed size of ${
-            MAX_FILE_SIZE / (1024 * 1024)
-          }MB`,
+          error: `File size exceeds maximum allowed size of ${maxSize / (1024 * 1024)}MB`,
         },
         { status: 400 }
       );
@@ -112,14 +115,15 @@ export async function POST(request: NextRequest) {
     const uniqueFileName = `${uuidv4()}.${fileExtension}`;
     const key = `uploads/${uniqueFileName}`;
 
-    // Create presigned PUT URL (valid for 5 minutes)
+    // Create presigned PUT URL (video gets 1 hour, others get 5 minutes)
     const command = new PutObjectCommand({
       Bucket: BUCKET_NAME,
       Key: key,
       ContentType: contentType || "application/octet-stream",
     });
 
-    const url = await getSignedUrl(s3Client, command, { expiresIn: 300 });
+    const expiresIn = fileType === "video" ? 3600 : 300;
+    const url = await getSignedUrl(s3Client, command, { expiresIn });
 
     return NextResponse.json(
       {
