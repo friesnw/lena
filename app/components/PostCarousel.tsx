@@ -36,6 +36,7 @@ interface PostCarouselProps {
   title?: string;
   showOrder?: boolean;
   getViewPostUrl?: (postId: string) => string;
+  wide?: boolean;
 }
 
 export default function PostCarousel({
@@ -43,6 +44,7 @@ export default function PostCarousel({
   title,
   showOrder = false,
   getViewPostUrl,
+  wide = false,
 }: PostCarouselProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
@@ -275,7 +277,9 @@ export default function PostCarousel({
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        ...postDimensions.carousel.imageContainer,
+                        ...(wide
+                          ? { aspectRatio: "5/4", mb: 2, borderRadius: 1, backgroundColor: "rgba(0,0,0,0.05)" }
+                          : postDimensions.carousel.imageContainer),
                       }}
                     >
                       {post.type === "photo" ? (

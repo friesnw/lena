@@ -99,6 +99,8 @@ function UploadForm() {
       ? TEXT_TAG_OPTIONS
       : type === "photo" || type === "video"
       ? [...MEDIA_AND_HIDE_TAGS, ...carouselTagOptions]
+      : type === "carousel"
+      ? ["wide"]
       : [];
   const shouldShowTags = tagOptions.length > 0;
 
@@ -567,6 +569,8 @@ function UploadForm() {
                       ? TEXT_TAG_OPTIONS
                       : nextType === "photo" || nextType === "video"
                       ? [...MEDIA_AND_HIDE_TAGS, ...carouselTagOptions]
+                      : nextType === "carousel"
+                      ? ["wide"]
                       : [];
                   setTags((prev) => prev.filter((tag) => nextAllowed.includes(tag)));
                   const fileInput = document.getElementById(

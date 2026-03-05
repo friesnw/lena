@@ -265,6 +265,7 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
             key={`carousel-def-${event.def.id}`}
             posts={carouselDefPosts[event.index]}
             title={event.def.title}
+            wide={event.def.tags?.includes("wide") ?? false}
           />
         );
       } else {

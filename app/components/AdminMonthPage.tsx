@@ -249,13 +249,20 @@ export default function AdminMonthPage({
 
       if (event.type === "custom") {
         result.push(
-          <PostCarousel
-            key={`carousel-def-${event.def.id}`}
-            posts={carouselDefPosts[event.index]}
-            title={event.def.title}
-            showOrder={true}
-            getViewPostUrl={getViewPostUrl}
-          />
+          <Box key={`carousel-def-${event.def.id}`}>
+            <PostCarousel
+              posts={carouselDefPosts[event.index]}
+              title={event.def.title}
+              wide={event.def.tags?.includes("wide") ?? false}
+              showOrder={true}
+              getViewPostUrl={getViewPostUrl}
+            />
+            <Box sx={{ mt: -2, mb: 2, pl: 1 }}>
+              <Button size="small" variant="text" href={getViewPostUrl(event.def.id)}>
+                Edit carousel
+              </Button>
+            </Box>
+          </Box>
         );
       } else {
         result.push(
