@@ -95,7 +95,7 @@ export async function PATCH(
     }
 
     // Validate type if provided
-    if (type && !["text", "audio", "video", "photo", "stat"].includes(type)) {
+    if (type && !["text", "audio", "video", "photo", "stat", "carousel"].includes(type)) {
       return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
 
