@@ -143,36 +143,37 @@ export default function AdminMonthPage({
     return { publishedPosts: published, unpublishedPosts: unpublished };
   }, [posts]);
 
-  // Separate published posts into carousel posts, bonus funnies, and regular posts
-  const { carouselPosts, bonusFunniesPosts, regularPosts } = useMemo(() => {
+  // Separate published posts into carousel posts, bonus funnies, custom carousels, and regular posts
+  const { carouselPosts, bonusFunniesPosts, regularPosts, carouselDefs, carouselDefPosts } = useMemo(() => {
     const carousel: Record<number, Post[]> = {
-      1: [],
-      2: [],
-      3: [],
-      4: [],
-      5: [],
-      6: [],
-      7: [],
-      8: [],
-      9: [],
-      10: [],
-      11: [],
+      1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [],
     };
     const bonusFunnies: Post[] = [];
     const regular: Post[] = [];
 
-    publishedPosts.forEach((post) => {
-      // Check for bonus funnies tag first (separate from numbered carousels)
-      const hasBonusFunnies =
-        post.tags?.some(
-          (tag) => tag.toLowerCase().trim() === "bonus funnies"
-        ) ?? false;
+    // Carousel-type posts define custom carousel slots
+    const defs = publishedPosts
+      .filter((p) => p.type === "carousel")
+      .sort((a, b) => a.order - b.order);
+    const defPosts: Post[][] = defs.map(() => []);
 
+    publishedPosts.forEach((post) => {
+      if (post.type === "carousel") return;
+
+      const hasBonusFunnies =
+        post.tags?.some((tag) => tag.toLowerCase().trim() === "bonus funnies") ?? false;
       const hasCarousel = hasCarouselTag(post);
       const isPhotoOrVideo = post.type === "photo" || post.type === "video";
 
-      // Bonus funnies goes to its own separate carousel at the end
-      if (hasBonusFunnies && isPhotoOrVideo) {
+      const defIndex = defs.findIndex((def) =>
+        post.tags?.some(
+          (tag) => tag.toLowerCase().trim() === def.title.toLowerCase().trim()
+        )
+      );
+
+      if (defIndex !== -1 && isPhotoOrVideo) {
+        defPosts[defIndex].push(post);
+      } else if (hasBonusFunnies && isPhotoOrVideo) {
         bonusFunnies.push(post);
       } else if (hasCarousel && isPhotoOrVideo) {
         const carouselNum = getCarouselNumber(post);
@@ -186,19 +187,14 @@ export default function AdminMonthPage({
       }
     });
 
-    // Sort carousel posts by order
     Object.keys(carousel).forEach((key) => {
       const num = parseInt(key, 10);
       carousel[num].sort((a, b) => a.order - b.order);
     });
-
-    // Sort bonus funnies by order
+    defPosts.forEach((arr) => arr.sort((a, b) => a.order - b.order));
     bonusFunnies.sort((a, b) => a.order - b.order);
-
-    // Sort regular posts by order
     regular.sort((a, b) => a.order - b.order);
 
-    // Debug: Log carousel 9 posts
     if (carousel[9].length > 0) {
       console.log(
         `[AdminMonthPage] Found ${carousel[9].length} carousel 9 posts:`,
@@ -210,6 +206,8 @@ export default function AdminMonthPage({
       carouselPosts: carousel,
       bonusFunniesPosts: bonusFunnies,
       regularPosts: regular,
+      carouselDefs: defs,
+      carouselDefPosts: defPosts,
     };
   }, [publishedPosts]);
 
@@ -221,14 +219,22 @@ export default function AdminMonthPage({
     const result: React.ReactElement[] = [];
     let regularIndex = 0;
 
-    for (let i = 0; i < carouselThresholds.length; i++) {
-      const threshold = carouselThresholds[i];
-      const carouselNum = i + 1;
+    const numberedEvents = carouselThresholds
+      .map((threshold, i) => ({ threshold, type: "numbered" as const, num: i + 1 }))
+      .filter((e) => carouselPosts[e.num].length > 0);
 
-      // Render regular posts up to this threshold
+    const customEvents = carouselDefs
+      .map((def, i) => ({ threshold: def.order, type: "custom" as const, index: i, def }))
+      .filter((e) => carouselDefPosts[e.index].length > 0);
+
+    const allEvents = [...numberedEvents, ...customEvents].sort(
+      (a, b) => a.threshold - b.threshold
+    );
+
+    for (const event of allEvents) {
       while (
         regularIndex < regularPosts.length &&
-        regularPosts[regularIndex].order < threshold
+        regularPosts[regularIndex].order < event.threshold
       ) {
         result.push(
           <PostDisplay
@@ -241,12 +247,21 @@ export default function AdminMonthPage({
         regularIndex++;
       }
 
-      // Render carousel if it has posts
-      if (carouselPosts[carouselNum].length > 0) {
+      if (event.type === "custom") {
         result.push(
           <PostCarousel
-            key={`carousel-${carouselNum}`}
-            posts={carouselPosts[carouselNum]}
+            key={`carousel-def-${event.def.id}`}
+            posts={carouselDefPosts[event.index]}
+            title={event.def.title}
+            showOrder={true}
+            getViewPostUrl={getViewPostUrl}
+          />
+        );
+      } else {
+        result.push(
+          <PostCarousel
+            key={`carousel-${event.num}`}
+            posts={carouselPosts[event.num]}
             showOrder={true}
             getViewPostUrl={getViewPostUrl}
           />
@@ -254,7 +269,6 @@ export default function AdminMonthPage({
       }
     }
 
-    // Render remaining regular posts
     while (regularIndex < regularPosts.length) {
       result.push(
         <PostDisplay
@@ -267,7 +281,6 @@ export default function AdminMonthPage({
       regularIndex++;
     }
 
-    // Render bonus funnies carousel at the end
     if (bonusFunniesPosts.length > 0) {
       result.push(
         <PostCarousel

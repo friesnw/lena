@@ -1,4 +1,4 @@
-export type PostType = "text" | "audio" | "video" | "photo" | "stat";
+export type PostType = "text" | "audio" | "video" | "photo" | "stat" | "carousel";
 
 export interface FileMetadata {
   dateTaken?: string;

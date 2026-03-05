@@ -43,16 +43,6 @@ const MEDIA_TAG_OPTIONS = [
 const MEDIA_AND_HIDE_TAGS = [...MEDIA_TAG_OPTIONS, HIDE_TITLE_TAG];
 const TEXT_TAG_OPTIONS = [HIDE_TITLE_TAG];
 
-const getAllowedTags = (postType: PostType) => {
-  if (postType === "text") {
-    return TEXT_TAG_OPTIONS;
-  }
-  if (postType === "photo" || postType === "video") {
-    return MEDIA_AND_HIDE_TAGS;
-  }
-  return [];
-};
-
 export default function EditPost() {
   const params = useParams();
   const router = useRouter();
@@ -120,11 +110,7 @@ export default function EditPost() {
           setCaption(data.caption || "");
           setPublished(data.published);
           setOrder(data.order);
-          setTags(
-            (data.tags || [])
-              .map((tag: string) => tag.trim())
-              .filter((tag: string) => getAllowedTags(data.type).includes(tag))
-          );
+          setTags((data.tags || []).map((tag: string) => tag.trim()));
           // Load dateTaken if available, convert to date format
           if (data.metadata?.dateTaken) {
             // Extract just the date part (YYYY-MM-DD) from ISO string
@@ -431,11 +417,7 @@ export default function EditPost() {
         setCaption(data.caption || "");
         setPublished(data.published);
         setOrder(data.order);
-        setTags(
-          (data.tags || [])
-            .map((tag: string) => tag.trim())
-            .filter((tag: string) => getAllowedTags(data.type).includes(tag))
-        );
+        setTags((data.tags || []).map((tag: string) => tag.trim()));
         // Clean up preview URLs
         if (mediaFilePreviewUrl) {
           URL.revokeObjectURL(mediaFilePreviewUrl);
@@ -490,9 +472,35 @@ export default function EditPost() {
     }
   };
 
+  const [carouselTagOptions, setCarouselTagOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (type !== "photo" && type !== "video") {
+      setCarouselTagOptions([]);
+      return;
+    }
+    fetch(`/api/posts/admin?month=${month}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const titles = data
+            .filter((p: { type: string; published: boolean; id: string }) => p.type === "carousel" && p.published && p.id !== postId)
+            .map((p: { title: string }) => p.title);
+          setCarouselTagOptions(titles);
+        }
+      })
+      .catch(() => {});
+  }, [type, month, postId]);
+
   const isTextType = type === "text" || type === "stat";
   const isMediaType = type === "audio" || type === "video" || type === "photo";
-  const tagOptions = getAllowedTags(type);
+
+  const tagOptions =
+    type === "text"
+      ? TEXT_TAG_OPTIONS
+      : type === "photo" || type === "video"
+      ? [...MEDIA_AND_HIDE_TAGS, ...carouselTagOptions]
+      : [];
   const shouldShowTags = tagOptions.length > 0;
 
   if (loading) {
@@ -533,9 +541,13 @@ export default function EditPost() {
                 onChange={(e) => {
                   const nextType = e.target.value as PostType;
                   setType(nextType);
-                  setTags((prev) =>
-                    prev.filter((tag) => getAllowedTags(nextType).includes(tag))
-                  );
+                  const nextAllowed =
+                    nextType === "text"
+                      ? TEXT_TAG_OPTIONS
+                      : nextType === "photo" || nextType === "video"
+                      ? [...MEDIA_AND_HIDE_TAGS, ...carouselTagOptions]
+                      : [];
+                  setTags((prev) => prev.filter((tag) => nextAllowed.includes(tag)));
                 }}
               >
                 <MenuItem value="text">Text</MenuItem>
@@ -543,6 +555,7 @@ export default function EditPost() {
                 <MenuItem value="audio">Audio</MenuItem>
                 <MenuItem value="video">Video</MenuItem>
                 <MenuItem value="stat">Stat</MenuItem>
+                <MenuItem value="carousel">Carousel</MenuItem>
               </Select>
             </FormControl>
 

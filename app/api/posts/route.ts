@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!["text", "audio", "video", "photo", "stat"].includes(type as string)) {
+    if (!["text", "audio", "video", "photo", "stat", "carousel"].includes(type as string)) {
       return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
     if (month < 0 || month > 12) {

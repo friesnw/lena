@@ -43,16 +43,6 @@ const MEDIA_TAG_OPTIONS = [
 const MEDIA_AND_HIDE_TAGS = [...MEDIA_TAG_OPTIONS, HIDE_TITLE_TAG];
 const TEXT_TAG_OPTIONS = [HIDE_TITLE_TAG];
 
-const getAllowedTags = (postType: PostType | "") => {
-  if (postType === "text") {
-    return TEXT_TAG_OPTIONS;
-  }
-  if (postType === "photo" || postType === "video") {
-    return MEDIA_AND_HIDE_TAGS;
-  }
-  return [];
-};
-
 function UploadForm() {
   const searchParams = useSearchParams();
   const prefillMonth = searchParams.get("month");
@@ -80,9 +70,36 @@ function UploadForm() {
   const [loading, setLoading] = useState(false);
   const pageTitle = "Upload Post";
 
+  const [carouselTagOptions, setCarouselTagOptions] = useState<string[]>([]);
+
+  // Fetch carousel-type posts for the selected month to offer as tag options
+  useEffect(() => {
+    if ((type !== "photo" && type !== "video") || month === "") {
+      setCarouselTagOptions([]);
+      return;
+    }
+    fetch(`/api/posts/admin?month=${month}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          const titles = data
+            .filter((p: { type: string; published: boolean }) => p.type === "carousel" && p.published)
+            .map((p: { title: string }) => p.title);
+          setCarouselTagOptions(titles);
+        }
+      })
+      .catch(() => {});
+  }, [type, month]);
+
   const isTextType = type === "text" || type === "stat";
   const isMediaType = type === "audio" || type === "video" || type === "photo";
-  const tagOptions = getAllowedTags(type);
+
+  const tagOptions =
+    type === "text"
+      ? TEXT_TAG_OPTIONS
+      : type === "photo" || type === "video"
+      ? [...MEDIA_AND_HIDE_TAGS, ...carouselTagOptions]
+      : [];
   const shouldShowTags = tagOptions.length > 0;
 
   useEffect(() => {
@@ -545,9 +562,13 @@ function UploadForm() {
                   setFile(null);
                   setAlbumCoverFile(null);
                   setCaption("");
-                  setTags((prev) =>
-                    prev.filter((tag) => getAllowedTags(nextType).includes(tag))
-                  );
+                  const nextAllowed =
+                    nextType === "text"
+                      ? TEXT_TAG_OPTIONS
+                      : nextType === "photo" || nextType === "video"
+                      ? [...MEDIA_AND_HIDE_TAGS, ...carouselTagOptions]
+                      : [];
+                  setTags((prev) => prev.filter((tag) => nextAllowed.includes(tag)));
                   const fileInput = document.getElementById(
                     "file-input"
                   ) as HTMLInputElement;
@@ -559,6 +580,7 @@ function UploadForm() {
                 <MenuItem value="audio">Audio</MenuItem>
                 <MenuItem value="video">Video</MenuItem>
                 <MenuItem value="stat">Stat</MenuItem>
+                <MenuItem value="carousel">Carousel</MenuItem>
               </Select>
             </FormControl>
 
