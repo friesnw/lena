@@ -78,17 +78,7 @@ export default function Home() {
     let isMounted = true;
 
     const fetchPostsForMonth = async (month: number) => {
-      // Add cache-busting timestamp to ensure fresh data
-      const timestamp = Date.now();
-      const response = await fetch(
-        `/api/posts?month=${month}&_t=${timestamp}`,
-        {
-          cache: "no-store",
-          headers: {
-            "Cache-Control": "no-cache",
-          },
-        }
-      );
+      const response = await fetch(`/api/posts?month=${month}`);
       if (!response.ok) {
         throw new Error(`Failed to load posts for month ${month}`);
       }
@@ -447,6 +437,7 @@ function MediaCollage({ activePosts, loading, error }: MediaCollageProps) {
             post={activePosts[index]}
             loading={loading}
             sx={slotStyles[index]}
+            priority={index === 0}
           />
         ))}
       </Box>
@@ -467,9 +458,10 @@ interface CollageSlotProps {
   post: Post | null;
   loading: boolean;
   sx?: React.ComponentProps<typeof Box>["sx"];
+  priority?: boolean;
 }
 
-function CollageSlot({ post, loading, sx }: CollageSlotProps) {
+function CollageSlot({ post, loading, sx, priority = false }: CollageSlotProps) {
   const dayNumber =
     post && getDaysSinceOct15_2025(post.metadata?.dateTaken || post.createdAt);
 
@@ -501,7 +493,7 @@ function CollageSlot({ post, loading, sx }: CollageSlotProps) {
                 objectFit: "cover",
                 transition: "transform 0.5s ease",
               }}
-              unoptimized
+              priority={priority}
             />
           ) : (
             <Box
