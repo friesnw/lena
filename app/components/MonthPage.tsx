@@ -128,17 +128,7 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        // Add cache-busting timestamp to ensure fresh data
-        const timestamp = Date.now();
-        const response = await fetch(
-          `/api/posts?month=${month}&_t=${timestamp}`,
-          {
-            cache: "no-store",
-            headers: {
-              "Cache-Control": "no-cache",
-            },
-          }
-        );
+        const response = await fetch(`/api/posts?month=${month}`);
         const data = await response.json();
 
         if (response.ok) {
@@ -229,7 +219,7 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
   }, [posts]);
 
   // Render posts with carousels at appropriate intervals
-  const renderPostsWithCarousels = () => {
+  const renderedPosts = useMemo(() => {
     const carouselThresholds = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110];
     const result: React.ReactElement[] = [];
     let regularIndex = 0;
@@ -289,7 +279,7 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
     }
 
     return result;
-  };
+  }, [regularPosts, carouselPosts, bonusFunniesPosts, carouselDefs, carouselDefPosts]);
 
   // Render skeleton placeholders that match the expected layout
   const renderSkeletons = () => {
@@ -357,7 +347,7 @@ export default function MonthPage({ month, monthName }: MonthPageProps) {
           </Typography>
         )}
 
-        {!loading && !error && posts.length > 0 && renderPostsWithCarousels()}
+        {!loading && !error && posts.length > 0 && renderedPosts}
 
         {/* Month Navigation */}
         <Box

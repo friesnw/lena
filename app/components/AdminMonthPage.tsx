@@ -214,7 +214,7 @@ export default function AdminMonthPage({
   const getViewPostUrl = (postId: string) => `/admin/posts/${postId}`;
 
   // Render posts with carousels at appropriate intervals
-  const renderPostsWithCarousels = () => {
+  const renderedPosts = useMemo(() => {
     const carouselThresholds = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110];
     const result: React.ReactElement[] = [];
     let regularIndex = 0;
@@ -301,7 +301,7 @@ export default function AdminMonthPage({
     }
 
     return result;
-  };
+  }, [regularPosts, carouselPosts, bonusFunniesPosts, carouselDefs, carouselDefPosts]);
 
   return (
     <Box
@@ -375,7 +375,7 @@ export default function AdminMonthPage({
 
         {!error && posts.length > 0 && (
           <>
-            {renderPostsWithCarousels()}
+            {renderedPosts}
             {unpublishedPosts.length > 0 && (
               <Box sx={{ mt: 6 }}>
                 <Typography

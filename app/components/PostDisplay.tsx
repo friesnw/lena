@@ -53,7 +53,7 @@ export default function PostDisplay({
       observer.disconnect();
       videoElement.pause();
     };
-  }, [post]);
+  }, [post.id, post.type]);
 
   const renderPostContent = () => {
     switch (post.type) {
