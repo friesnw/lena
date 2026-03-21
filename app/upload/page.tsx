@@ -514,7 +514,6 @@ function UploadForm() {
         setCaption("");
         setMonth(persistedMonth);
         setOrder(persistedOrder);
-        setPublished(false);
         setTags(persistedTags);
         setAlbumCoverFile(null);
         setDateTaken("");
