@@ -1,4 +1,3 @@
-import { Home as HomeIcon, Explore } from "@mui/icons-material";
 
 export interface MonthNavigationItem {
   month: number;
@@ -9,6 +8,13 @@ export interface MonthNavigationItem {
 }
 
 export const monthNavigation: readonly MonthNavigationItem[] = [
+  {
+    month: 4,
+    title: "Month 4",
+    description: "Our daughter",
+    icon: "child_care",
+    iconBgColor: "#f7c5d570",
+  },
   {
     month: 3,
     title: "Month 3",
@@ -27,7 +33,7 @@ export const monthNavigation: readonly MonthNavigationItem[] = [
     month: 1,
     title: "Month 1",
     description: "Coming home",
-    icon: HomeIcon,
+    icon: "home",
     iconBgColor: "#b2d8b266",
   },
   {

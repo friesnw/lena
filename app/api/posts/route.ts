@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!title || typeof title !== "string" || !title.trim()) {
+    if (type !== "text" && (!title || typeof title !== "string" || !title.trim())) {
       return NextResponse.json(
         { error: "Missing or empty 'title' field" },
         { status: 400 }

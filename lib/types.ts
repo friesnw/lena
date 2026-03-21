@@ -10,6 +10,7 @@ export interface FileMetadata {
   dimensions?: { width: number; height: number };
   albumCoverUrl?: string;
   albumCoverDimensions?: { width: number; height: number };
+  fadeOutAt?: number; // Seconds into the song at which to begin fading out
 }
 
 export interface Post {

@@ -4,9 +4,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 const audioRegistry = new Set<HTMLAudioElement>();
 
-export function useAudioPlayer() {
+const FADE_DURATION_MS = 2000;
+
+export function useAudioPlayer(fadeOutAt?: number) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const fadeIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Register / unregister the element
   useEffect(() => {
@@ -51,9 +54,58 @@ export function useAudioPlayer() {
     };
   }, []);
 
+  // Fade-out logic
+  useEffect(() => {
+    const element = audioRef.current;
+    if (!element || fadeOutAt == null) return;
+
+    const handleTimeUpdate = () => {
+      if (
+        element.currentTime >= fadeOutAt &&
+        !element.paused &&
+        fadeIntervalRef.current == null
+      ) {
+        const startVolume = element.volume;
+        const steps = 20;
+        const stepInterval = FADE_DURATION_MS / steps;
+        const volumeStep = startVolume / steps;
+
+        fadeIntervalRef.current = setInterval(() => {
+          if (element.volume > volumeStep) {
+            element.volume = Math.max(0, element.volume - volumeStep);
+          } else {
+            element.volume = 0;
+            element.pause();
+            element.volume = startVolume;
+            if (fadeIntervalRef.current != null) {
+              clearInterval(fadeIntervalRef.current);
+              fadeIntervalRef.current = null;
+            }
+          }
+        }, stepInterval);
+      }
+    };
+
+    element.addEventListener("timeupdate", handleTimeUpdate);
+
+    return () => {
+      element.removeEventListener("timeupdate", handleTimeUpdate);
+      if (fadeIntervalRef.current != null) {
+        clearInterval(fadeIntervalRef.current);
+        fadeIntervalRef.current = null;
+      }
+    };
+  }, [fadeOutAt]);
+
   const togglePlay = useCallback(() => {
     const element = audioRef.current;
     if (!element) return;
+    // Cancel any in-progress fade if user manually resumes
+    if (fadeIntervalRef.current != null) {
+      clearInterval(fadeIntervalRef.current);
+      fadeIntervalRef.current = null;
+      element.volume = 1;
+    }
     if (element.paused) {
       void element.play();
     } else {

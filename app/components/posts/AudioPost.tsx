@@ -38,7 +38,7 @@ export default function AudioPost({
   viewPostUrl,
   showOrder = false,
 }: AudioPostProps) {
-  const { audioRef, isPlaying, togglePlay } = useAudioPlayer();
+  const { audioRef, isPlaying, togglePlay } = useAudioPlayer(post.metadata?.fadeOutAt);
   const daysSince = getDaysSinceOct15_2025(
     post.metadata?.dateTaken || post.createdAt
   );

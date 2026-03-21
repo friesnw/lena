@@ -72,6 +72,7 @@ export default function EditPost() {
     string | null
   >(null);
   const [dateTaken, setDateTaken] = useState<string>("");
+  const [fadeOutAt, setFadeOutAt] = useState<number | "">("");
   const pageTitle = "Edit Post";
   usePageTitle(pageTitle);
 
@@ -118,6 +119,9 @@ export default function EditPost() {
             const dateStr = data.metadata.dateTaken;
             const dateOnly = dateStr.slice(0, 10);
             setDateTaken(dateOnly);
+          }
+          if (data.metadata?.fadeOutAt != null) {
+            setFadeOutAt(data.metadata.fadeOutAt);
           }
         } else {
           setError(data.error || "Failed to load post");
@@ -372,6 +376,14 @@ export default function EditPost() {
         metadataToSave = {
           ...(metadataToSave || {}),
           albumCoverUrl: coverPath,
+        };
+      }
+
+      // Save fadeOutAt for audio posts
+      if (type === "audio") {
+        metadataToSave = {
+          ...(metadataToSave || {}),
+          fadeOutAt: fadeOutAt !== "" ? Number(fadeOutAt) : undefined,
         };
       }
 
@@ -888,6 +900,22 @@ export default function EditPost() {
                   </Box>
                 )}
               </Box>
+            )}
+
+            {type === "audio" && (
+              <TextField
+                fullWidth
+                type="number"
+                label="Fade out at (seconds)"
+                value={fadeOutAt}
+                onChange={(e) => {
+                  const val = e.target.value === "" ? "" : Number(e.target.value);
+                  setFadeOutAt(val);
+                }}
+                slotProps={{ htmlInput: { min: 0 } }}
+                sx={{ mb: 2 }}
+                helperText="Optional: song will fade out and stop at this time (in seconds)"
+              />
             )}
 
             {/* Month */}

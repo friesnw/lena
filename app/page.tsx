@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { monthNavigation } from "@/lib/monthNavigation";
 
-const collageSlots = monthNavigation.map((month) => ({
+const collageSlots = monthNavigation.slice(0, 3).map((month) => ({
   month: month.month,
   label: month.title,
 }));
@@ -50,6 +50,34 @@ export default function Home() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const monthListRef = useRef<HTMLDivElement>(null);
+  const [canScrollUp, setCanScrollUp] = useState(false);
+  const [canScrollDown, setCanScrollDown] = useState(true);
+
+  const updateScrollState = useCallback(() => {
+    const el = monthListRef.current;
+    if (!el) return;
+    setCanScrollUp(el.scrollTop > 8);
+    setCanScrollDown(el.scrollTop + el.clientHeight < el.scrollHeight - 8);
+  }, []);
+
+  useEffect(() => {
+    const el = monthListRef.current;
+    if (!el) return;
+    // Small delay to let layout settle before measuring
+    const t = setTimeout(updateScrollState, 50);
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    return () => {
+      clearTimeout(t);
+      el.removeEventListener("scroll", updateScrollState);
+    };
+  }, [updateScrollState]);
+
+  const scrollMonthList = (direction: "up" | "down") => {
+    const el = monthListRef.current;
+    if (!el) return;
+    el.scrollBy({ top: direction === "down" ? 100 : -100, behavior: "smooth" });
+  };
 
   // Ensure Material Symbols font loads
   useEffect(() => {
@@ -210,6 +238,7 @@ export default function Home() {
         bgcolor: "#465362",
         py: { xs: 3, md: 6 },
         pt: { xs: 10, md: 10 }, // Account for AppBar
+        pb: { md: "20px" },
       }}
     >
       <Container maxWidth={false} sx={{ maxWidth: "98%", px: { md: 4 } }}>
@@ -256,7 +285,55 @@ export default function Home() {
             </Box>
 
             {/* Month Navigation Cards */}
-            <Stack spacing={1.5} sx={{ mb: 4 }}>
+            <Box sx={{ position: "relative", mb: { xs: 4, md: 2 } }}>
+            {/* Scroll up indicator */}
+            {canScrollUp && (
+            <Box
+              onClick={() => scrollMonthList("up")}
+              sx={{
+                display: { xs: "none", md: "flex" },
+                alignItems: "center",
+                justifyContent: "center",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                zIndex: 2,
+                pt: 0.5,
+                pb: 1,
+                cursor: "pointer",
+              }}
+            >
+              <Box
+                component="span"
+                className="material-symbols-outlined"
+                sx={{
+                  fontSize: "1.25rem !important",
+                  fontFamily: '"Material Symbols Outlined" !important',
+                  fontWeight: 300,
+                  color: "rgba(240,245,244,0.6)",
+                  lineHeight: 1,
+                  transition: "color 0.2s",
+                  "&:hover": { color: "rgba(240,245,244,1)" },
+                }}
+              >
+                expand_less
+              </Box>
+            </Box>
+            )}
+            <Box
+              ref={monthListRef}
+              sx={{
+                overflowY: { md: "auto" },
+                maxHeight: { md: 338 },
+                scrollbarWidth: "none",
+                "&::-webkit-scrollbar": { display: "none" },
+              }}
+            >
+            <Stack
+              spacing={1.5}
+              sx={{ pb: { md: 1 } }}
+            >
               {monthNavigation.map((month) => (
                 <Card
                   key={month.month}
@@ -266,7 +343,8 @@ export default function Home() {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
-                    p: 2,
+                    p: 2.5,
+                    flexShrink: 0,
                     bgcolor: (theme) => theme.palette.background.surface,
                     borderRadius: 2,
                     boxShadow: 1,
@@ -353,6 +431,43 @@ export default function Home() {
                 </Card>
               ))}
             </Stack>
+            </Box>
+            {/* Scroll down indicator */}
+            {canScrollDown && (
+            <Box
+              onClick={() => scrollMonthList("down")}
+              sx={{
+                display: { xs: "none", md: "flex" },
+                alignItems: "flex-end",
+                justifyContent: "center",
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                zIndex: 2,
+                pt: 1,
+                pb: 0.5,
+                cursor: "pointer",
+              }}
+            >
+              <Box
+                component="span"
+                className="material-symbols-outlined"
+                sx={{
+                  fontSize: "1.25rem !important",
+                  fontFamily: '"Material Symbols Outlined" !important',
+                  fontWeight: 300,
+                  color: "rgba(240,245,244,0.6)",
+                  lineHeight: 1,
+                  transition: "color 0.2s",
+                  "&:hover": { color: "rgba(240,245,244,1)" },
+                }}
+              >
+                expand_more
+              </Box>
+            </Box>
+            )}
+            </Box>
 
             {/* Footer */}
             <Box sx={{ textAlign: "center", pt: 2 }}>

@@ -99,8 +99,8 @@ export async function PATCH(
       return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
 
-    // Validate title if provided
-    if (title !== undefined && !title.trim()) {
+    // Validate title if provided (text posts may have an empty title)
+    if (title !== undefined && type !== "text" && !title.trim()) {
       return NextResponse.json(
         { error: "Title cannot be empty" },
         { status: 400 }

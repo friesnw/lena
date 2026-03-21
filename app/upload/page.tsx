@@ -65,6 +65,7 @@ function UploadForm() {
   const [published, setPublished] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [dateTaken, setDateTaken] = useState<string>("");
+  const [fadeOutAt, setFadeOutAt] = useState<number | "">("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -436,6 +437,13 @@ function UploadForm() {
             albumCoverUrl: coverPath,
           };
         }
+
+        if (fadeOutAt !== "") {
+          fileMetadata = {
+            ...fileMetadata,
+            fadeOutAt: Number(fadeOutAt),
+          };
+        }
       }
 
       // Validate required fields
@@ -445,7 +453,7 @@ function UploadForm() {
         return;
       }
 
-      if (!title.trim()) {
+      if (type !== "text" && !title.trim()) {
         setError("Please enter a title");
         setLoading(false);
         return;
@@ -818,6 +826,22 @@ function UploadForm() {
               </Box>
             )}
 
+            {type === "audio" && (
+              <TextField
+                fullWidth
+                type="number"
+                label="Fade out at (seconds)"
+                value={fadeOutAt}
+                onChange={(e) => {
+                  const val = e.target.value === "" ? "" : Number(e.target.value);
+                  setFadeOutAt(val);
+                }}
+                slotProps={{ htmlInput: { min: 0 } }}
+                sx={{ mb: 2 }}
+                helperText="Optional: song will fade out and stop at this time (in seconds)"
+              />
+            )}
+
             {/* Month Selector */}
             <TextField
               fullWidth
@@ -908,7 +932,7 @@ function UploadForm() {
             {/* Submit Button */}
             <Button
               type="submit"
-              disabled={loading || !type || !title.trim()}
+              disabled={loading || !type || (type !== "text" && !title.trim())}
               variant="contained"
               fullWidth
               sx={{ mt: 2 }}
