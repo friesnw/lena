@@ -12,8 +12,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormControlLabel,
-  Checkbox,
   Box,
   CircularProgress,
   Chip,
@@ -60,7 +58,6 @@ export default function EditPost() {
   const [month, setMonth] = useState<number>(0);
   const [content, setContent] = useState("");
   const [caption, setCaption] = useState("");
-  const [published, setPublished] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [order, setOrder] = useState<number>(0);
   const [albumCoverFile, setAlbumCoverFile] = useState<File | null>(null);
@@ -109,7 +106,6 @@ export default function EditPost() {
           setMonth(data.month);
           setContent(data.content);
           setCaption(data.caption || "");
-          setPublished(data.published);
           setOrder(data.order);
           setTags((data.tags || []).map((tag: string) => tag.trim()));
           // Load dateTaken if available, convert to date format
@@ -409,7 +405,7 @@ export default function EditPost() {
           month,
           content: finalContent,
           caption: caption.trim() || undefined,
-          published,
+          published: true,
           order,
           tags: tags.map((tag) => tag.trim()),
           metadata: metadataToSave,
@@ -427,7 +423,6 @@ export default function EditPost() {
         setMonth(data.month);
         setContent(data.content);
         setCaption(data.caption || "");
-        setPublished(data.published);
         setOrder(data.order);
         setTags((data.tags || []).map((tag: string) => tag.trim()));
         // Clean up preview URLs
@@ -976,17 +971,6 @@ export default function EditPost() {
                 )}
               </Box>
             )}
-            {/* Published */}
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={published}
-                  onChange={(e) => setPublished(e.target.checked)}
-                />
-              }
-              label="Published"
-              sx={{ mb: 2 }}
-            />
 
             {/* Error/Success */}
             {error && (

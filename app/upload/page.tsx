@@ -12,8 +12,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormControlLabel,
-  Checkbox,
   Box,
   Typography as MuiTypography,
   Chip,
@@ -62,7 +60,6 @@ function UploadForm() {
   const [caption, setCaption] = useState("");
   const [month, setMonth] = useState<number | "">("");
   const [order, setOrder] = useState<number | "">(0);
-  const [published, setPublished] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [dateTaken, setDateTaken] = useState<string>("");
   const [fadeOutAt, setFadeOutAt] = useState<number | "">("");
@@ -494,7 +491,7 @@ function UploadForm() {
             (type === "photo" || type === "audio") && caption.trim()
               ? caption.trim()
               : undefined,
-          published,
+          published: true,
           order: order ? Number(order) : 0,
           metadata: fileMetadata, // Include file metadata if available
           tags: tags.length > 0 ? tags : undefined,
@@ -903,17 +900,6 @@ function UploadForm() {
               </Box>
             )}
 
-            {/* Publish Checkbox */}
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={published}
-                  onChange={(e) => setPublished(e.target.checked)}
-                />
-              }
-              label="Publish immediately"
-              sx={{ mb: 2 }}
-            />
 
             {/* Error Alert */}
             {error && (
