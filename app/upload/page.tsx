@@ -450,11 +450,6 @@ function UploadForm() {
         return;
       }
 
-      if (type !== "text" && !title.trim()) {
-        setError("Please enter a title");
-        setLoading(false);
-        return;
-      }
 
       if (isMediaType && !file) {
         setError("Please select a file");
@@ -917,7 +912,7 @@ function UploadForm() {
             {/* Submit Button */}
             <Button
               type="submit"
-              disabled={loading || !type || (type !== "text" && !title.trim())}
+              disabled={loading || !type}
               variant="contained"
               fullWidth
               sx={{ mt: 2 }}
