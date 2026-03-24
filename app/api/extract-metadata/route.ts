@@ -180,14 +180,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Fallback to file's lastModified date if no metadata date found
-    if (!metadata.dateTaken && !metadata.dateCreated) {
-      const fallbackDate = new Date(file.lastModified).toISOString();
-      metadata.dateTaken = fallbackDate;
-      metadata.dateCreated = fallbackDate;
-    }
-
-    // Also store file's lastModified as a fallback
+    // Store file's lastModified as dateModified only (not as a proxy for dateTaken)
     metadata.dateModified =
       metadata.dateModified || new Date(file.lastModified).toISOString();
 

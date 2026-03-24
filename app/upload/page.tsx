@@ -244,8 +244,6 @@ function UploadForm() {
 
           // Extract metadata from converted file (optional, can use basic file metadata)
           extractedMetadata = {
-            dateTaken: new Date(file.lastModified).toISOString(),
-            dateCreated: new Date(file.lastModified).toISOString(),
             dateModified: new Date(file.lastModified).toISOString(),
           };
         } else {
@@ -312,8 +310,6 @@ function UploadForm() {
             } else {
               // Fallback to basic file metadata if extraction fails
               extractedMetadata = {
-                dateTaken: new Date(file.lastModified).toISOString(),
-                dateCreated: new Date(file.lastModified).toISOString(),
                 dateModified: new Date(file.lastModified).toISOString(),
               };
             }
