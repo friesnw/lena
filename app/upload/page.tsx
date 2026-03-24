@@ -242,10 +242,23 @@ function UploadForm() {
 
           uploadedPath = convertData.path;
 
-          // Extract metadata from converted file (optional, can use basic file metadata)
-          extractedMetadata = {
-            dateModified: new Date(file.lastModified).toISOString(),
-          };
+          // Extract EXIF metadata from the original HEIC file before conversion strips it
+          const heicMetadataFormData = new FormData();
+          heicMetadataFormData.append("file", file);
+          heicMetadataFormData.append("type", "photo");
+          const heicMetadataResponse = await fetch("/api/extract-metadata", {
+            method: "POST",
+            body: heicMetadataFormData,
+          });
+          if (heicMetadataResponse.ok) {
+            const heicMetadataData = await heicMetadataResponse.json();
+            if (heicMetadataData.success && heicMetadataData.metadata) {
+              extractedMetadata = heicMetadataData.metadata;
+            }
+          }
+          if (!extractedMetadata.dateModified) {
+            extractedMetadata.dateModified = new Date(file.lastModified).toISOString();
+          }
         } else {
           // Direct S3 upload for non-HEIC files
           try {
