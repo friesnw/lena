@@ -593,7 +593,6 @@ function UploadForm() {
               label="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              required
               sx={{ mb: 2 }}
               placeholder="Enter a title for this post"
             />
