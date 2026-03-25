@@ -122,12 +122,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (type !== "text" && (!title || typeof title !== "string" || !title.trim())) {
-      return NextResponse.json(
-        { error: "Missing or empty 'title' field" },
-        { status: 400 }
-      );
-    }
 
     if (month === undefined || month === null || !Number.isFinite(month)) {
       return NextResponse.json(
@@ -154,7 +148,7 @@ export async function POST(request: NextRequest) {
     const newPost: Post = {
       id: uuidv4(),
       type,
-      title: title.trim(),
+      title: title?.trim() || "",
       month,
       content, // text OR /uploads/... path if media was uploaded separately
       caption: caption?.trim() || undefined, // optional caption for photos
