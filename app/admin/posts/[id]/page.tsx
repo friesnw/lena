@@ -573,10 +573,10 @@ export default function EditPost() {
             {/* Title Field */}
             <TextField
               fullWidth
-              label="Title"
+              label={type === "text" || type === "photo" ? "Title (optional)" : "Title"}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              required
+              required={type !== "text" && type !== "photo"}
               sx={{ mb: 2 }}
             />
 
