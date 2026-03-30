@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
+import exifr from "exifr";
 import { uploadToS3, isS3Configured } from "@/lib/s3";
 import { v4 as uuidv4 } from "uuid";
 
@@ -55,6 +56,29 @@ export async function POST(request: NextRequest) {
     // Read file into buffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+
+    // Extract EXIF metadata from original HEIC before conversion strips it
+    let metadata: Record<string, any> = { dateModified: new Date(file.lastModified).toISOString() };
+    try {
+      const exifData = await exifr.parse(buffer, {
+        pick: ["DateTimeOriginal", "CreateDate", "ModifyDate", "Make", "Model", "GPSLatitude", "GPSLongitude", "GPSLatitudeRef", "GPSLongitudeRef"],
+      });
+      if (exifData) {
+        if (exifData.DateTimeOriginal) metadata.dateTaken = new Date(exifData.DateTimeOriginal).toISOString();
+        else if (exifData.CreateDate) metadata.dateTaken = new Date(exifData.CreateDate).toISOString();
+        if (exifData.ModifyDate) metadata.dateModified = new Date(exifData.ModifyDate).toISOString();
+        if (exifData.Make || exifData.Model) metadata.camera = [exifData.Make, exifData.Model].filter(Boolean).join(" ");
+        if (exifData.GPSLatitude !== undefined && exifData.GPSLongitude !== undefined) {
+          let lat = exifData.GPSLatitude;
+          let lon = exifData.GPSLongitude;
+          if (exifData.GPSLatitudeRef === "S") lat = -lat;
+          if (exifData.GPSLongitudeRef === "W") lon = -lon;
+          metadata.location = { latitude: lat, longitude: lon };
+        }
+      }
+    } catch {
+      // Continue without EXIF data
+    }
 
     // Convert HEIC to JPEG using heic-convert
     let convert: any;
@@ -129,6 +153,7 @@ export async function POST(request: NextRequest) {
         originalName: file.name,
         size: finalBuffer.length,
         type: "image/jpeg",
+        metadata,
       },
       { status: 200 }
     );

@@ -242,22 +242,9 @@ function UploadForm() {
 
           uploadedPath = convertData.path;
 
-          // Extract EXIF metadata from the original HEIC file before conversion strips it
-          const heicMetadataFormData = new FormData();
-          heicMetadataFormData.append("file", file);
-          heicMetadataFormData.append("type", "photo");
-          const heicMetadataResponse = await fetch("/api/extract-metadata", {
-            method: "POST",
-            body: heicMetadataFormData,
-          });
-          if (heicMetadataResponse.ok) {
-            const heicMetadataData = await heicMetadataResponse.json();
-            if (heicMetadataData.success && heicMetadataData.metadata) {
-              extractedMetadata = heicMetadataData.metadata;
-            }
-          }
-          if (!extractedMetadata.dateModified) {
-            extractedMetadata.dateModified = new Date(file.lastModified).toISOString();
+          // Use metadata returned by convert-heic (extracted before conversion stripped it)
+          if (convertData.metadata) {
+            extractedMetadata = convertData.metadata;
           }
         } else {
           // Direct S3 upload for non-HEIC files
@@ -599,7 +586,7 @@ function UploadForm() {
             {/* Title Field */}
             <TextField
               fullWidth
-              label="Title"
+              label={type === "text" || type === "photo" ? "Title (optional)" : "Title"}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               sx={{ mb: 2 }}
