@@ -9,6 +9,13 @@ export interface MonthNavigationItem {
 
 export const monthNavigation: readonly MonthNavigationItem[] = [
   {
+    month: 5,
+    title: "Month 5",
+    description: "our pterodactyl",
+    icon: "raven",
+    iconBgColor: "#c8b4e370",
+  },
+  {
     month: 4,
     title: "Month 4",
     description: "Our daughter",

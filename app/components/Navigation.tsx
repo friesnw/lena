@@ -131,10 +131,8 @@ export default function Navigation({ variant = "default" }: NavigationProps) {
                       sx={{
                         fontSize: "1.5rem !important",
                         fontFamily: '"Material Symbols Outlined" !important',
-                        fontWeight: isActive ? 400 : 300,
-                        fontVariationSettings: isActive
-                          ? '"FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24'
-                          : '"FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24',
+                        fontWeight: 300,
+                        fontVariationSettings: '"FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24',
                         display: "inline-block",
                         lineHeight: 1,
                         color: isActive ? "#2a3441" : "#465362",
@@ -309,10 +307,8 @@ export default function Navigation({ variant = "default" }: NavigationProps) {
                             fontSize: "1.5rem !important",
                             fontFamily:
                               '"Material Symbols Outlined" !important',
-                            fontWeight: isActive ? 400 : 300,
-                            fontVariationSettings: isActive
-                              ? '"FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24'
-                              : '"FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24',
+                            fontWeight: 300,
+                            fontVariationSettings: '"FILL" 0, "wght" 300, "GRAD" 0, "opsz" 24',
                             display: "inline-block",
                             lineHeight: 1,
                             color: isActive ? "#2a3441" : "#465362",
