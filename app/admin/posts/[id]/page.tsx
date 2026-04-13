@@ -24,6 +24,7 @@ import Image from "next/image";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
 const HIDE_TITLE_TAG = "Hide Title";
+const SOUND_ON_TAG = "Sound On";
 const MEDIA_TAG_OPTIONS = [
   "Carousel 1",
   "Carousel 2",
@@ -505,7 +506,9 @@ export default function EditPost() {
   const tagOptions =
     type === "text"
       ? TEXT_TAG_OPTIONS
-      : type === "photo" || type === "video"
+      : type === "video"
+      ? [...MEDIA_AND_HIDE_TAGS, SOUND_ON_TAG, ...carouselTagOptions]
+      : type === "photo"
       ? [...MEDIA_AND_HIDE_TAGS, ...carouselTagOptions]
       : type === "carousel"
       ? ["wide"]
@@ -553,7 +556,9 @@ export default function EditPost() {
                   const nextAllowed =
                     nextType === "text"
                       ? TEXT_TAG_OPTIONS
-                      : nextType === "photo" || nextType === "video"
+                      : nextType === "video"
+                      ? [...MEDIA_AND_HIDE_TAGS, SOUND_ON_TAG, ...carouselTagOptions]
+                      : nextType === "photo"
                       ? [...MEDIA_AND_HIDE_TAGS, ...carouselTagOptions]
                       : nextType === "carousel"
                       ? ["wide"]

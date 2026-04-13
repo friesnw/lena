@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { Card, CardContent, Typography, Box, Chip, Link } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
+import { Card, CardContent, Typography, Box, Chip, Link, IconButton } from "@mui/material";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import type { Post } from "@/lib/types";
 import Image from "next/image";
 import { getDaysSinceOct15_2025 } from "@/lib/utils";
@@ -21,6 +23,8 @@ export default function PostDisplay({
 }: PostDisplayProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const hideTitle = post.tags?.includes("Hide Title") ?? false;
+  const soundOn = post.tags?.includes("Sound On") ?? false;
+  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     if (post.type !== "video") {
@@ -37,7 +41,6 @@ export default function PostDisplay({
         entries.forEach((entry) => {
           if (entry.target !== videoElement) return;
           if (entry.isIntersecting) {
-            videoElement.muted = true;
             videoElement.play().catch(() => {});
           } else {
             videoElement.pause();
@@ -54,6 +57,11 @@ export default function PostDisplay({
       videoElement.pause();
     };
   }, [post.id, post.type]);
+
+  useEffect(() => {
+    if (post.type !== "video" || !videoRef.current) return;
+    videoRef.current.muted = isMuted;
+  }, [isMuted, post.type]);
 
   const renderPostContent = () => {
     switch (post.type) {
@@ -96,22 +104,45 @@ export default function PostDisplay({
                   unoptimized
                 />
               ) : (
-                <Box
-                  component="video"
-                  ref={videoRef}
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  sx={{
-                    width: "100%",
-                    maxHeight: "600px",
-                    height: "auto",
-                    objectFit: "cover",
-                  }}
-                >
-                  <source src={post.content} />
-                  Your browser does not support the video element.
+                <Box sx={{ position: "relative" }}>
+                  <Box
+                    component="video"
+                    ref={videoRef}
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    sx={{
+                      width: "100%",
+                      maxHeight: "600px",
+                      height: "auto",
+                      objectFit: "cover",
+                      display: "block",
+                    }}
+                  >
+                    <source src={post.content} />
+                    Your browser does not support the video element.
+                  </Box>
+                  {soundOn && (
+                    <IconButton
+                      onClick={() => setIsMuted((prev) => !prev)}
+                      size="small"
+                      sx={{
+                        position: "absolute",
+                        bottom: 8,
+                        right: 8,
+                        bgcolor: "rgba(0, 0, 0, 0.5)",
+                        color: "white",
+                        "&:hover": { bgcolor: "rgba(0, 0, 0, 0.7)" },
+                      }}
+                    >
+                      {isMuted ? (
+                        <VolumeOffIcon fontSize="small" />
+                      ) : (
+                        <VolumeUpIcon fontSize="small" />
+                      )}
+                    </IconButton>
+                  )}
                 </Box>
               )}
             </Box>
