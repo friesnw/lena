@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     // compare to stored password from env
-    if (body.password === process.env.PASSWORD) {
+    if (body.password.toLowerCase() === process.env.PASSWORD?.toLowerCase()) {
       // if match, set cookie and return success
       const cookieStore = await cookies();
       cookieStore.set("authenticated", "true", {

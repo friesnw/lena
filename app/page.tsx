@@ -79,21 +79,6 @@ export default function Home() {
     el.scrollBy({ top: direction === "down" ? 100 : -100, behavior: "smooth" });
   };
 
-  // Ensure Material Symbols font loads
-  useEffect(() => {
-    if (typeof document !== "undefined") {
-      const linkId = "material-symbols-font";
-      if (!document.getElementById(linkId)) {
-        const link = document.createElement("link");
-        link.id = linkId;
-        link.rel = "stylesheet";
-        link.href =
-          "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap";
-        document.head.appendChild(link);
-      }
-    }
-  }, []);
-
   useEffect(() => {
     if (hasSeenIntro === false) {
       router.replace("/intro");

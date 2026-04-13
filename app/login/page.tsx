@@ -84,7 +84,7 @@ export default function Login() {
           gutterBottom
           sx={{ color: "#FFFFFF" }}
         >
-          This scrapbook is private. Please enter a password to continue.{" "}
+          This scrapbook is private. Please answer a question to continue.{" "}
         </Typography>
 
         <Card
@@ -98,7 +98,7 @@ export default function Login() {
             <form onSubmit={handleSubmit}>
               <TextField
                 type="password"
-                label="Enter Password"
+                label="What is Lena's last name?"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 fullWidth
