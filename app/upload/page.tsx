@@ -24,6 +24,7 @@ import { usePageTitle } from "@/hooks/usePageTitle";
 import Image from "next/image";
 
 const HIDE_TITLE_TAG = "Hide Title";
+const SOUND_ON_TAG = "Sound On";
 const MEDIA_TAG_OPTIONS = [
   "Carousel 1",
   "Carousel 2",
@@ -95,8 +96,10 @@ function UploadForm() {
   const tagOptions =
     type === "text"
       ? TEXT_TAG_OPTIONS
-      : type === "photo" || type === "video"
+      : type === "photo"
       ? [...MEDIA_AND_HIDE_TAGS, ...carouselTagOptions]
+      : type === "video"
+      ? [...MEDIA_AND_HIDE_TAGS, SOUND_ON_TAG, ...carouselTagOptions]
       : type === "carousel"
       ? ["wide"]
       : [];

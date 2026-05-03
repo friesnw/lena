@@ -10,6 +10,8 @@ import {
   Link,
 } from "@mui/material";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import type { Post } from "@/lib/types";
 import Image from "next/image";
 import { getDaysSinceOct15_2025 } from "@/lib/utils";
@@ -50,6 +52,7 @@ export default function PostCarousel({
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
+  const [mutedState, setMutedState] = useState<Record<string, boolean>>({});
 
   // Sort posts by order field in ascending order
   const sortedPosts = useMemo(() => {
@@ -66,7 +69,6 @@ export default function PostCarousel({
         entries.forEach((entry) => {
           const video = entry.target as HTMLVideoElement;
           if (entry.isIntersecting) {
-            video.muted = true;
             video.play().catch(() => {});
           } else {
             video.pause();
@@ -86,6 +88,12 @@ export default function PostCarousel({
       });
     };
   }, [sortedPosts]);
+
+  useEffect(() => {
+    videoRefs.current.forEach((video, postId) => {
+      video.muted = mutedState[postId] ?? true;
+    });
+  }, [mutedState]);
 
   // Track scroll position to show/hide arrows
   useEffect(() => {
@@ -245,6 +253,8 @@ export default function PostCarousel({
         >
           {sortedPosts.map((post, index) => {
             const hideTitle = post.tags?.includes("Hide Title") ?? false;
+            const soundOn = post.tags?.includes("Sound On") ?? false;
+            const isMuted = mutedState[post.id] ?? true;
             const daysSince = getDaysSinceOct15_2025(
               post.metadata?.dateTaken || post.createdAt
             );
@@ -294,24 +304,51 @@ export default function PostCarousel({
                           loading={index === 0 ? "eager" : "lazy"}
                         />
                       ) : (
-                        <Box
-                          component="video"
-                          ref={setVideoRef(post.id)}
-                          muted
-                          loop
-                          playsInline
-                          preload="metadata"
-                          sx={{
-                            position: "absolute",
-                            inset: 0,
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        >
-                          <source src={post.content} />
-                          Your browser does not support the video element.
-                        </Box>
+                        <>
+                          <Box
+                            component="video"
+                            ref={setVideoRef(post.id)}
+                            muted
+                            loop
+                            playsInline
+                            preload="metadata"
+                            sx={{
+                              position: "absolute",
+                              inset: 0,
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          >
+                            <source src={post.content} />
+                            Your browser does not support the video element.
+                          </Box>
+                          {soundOn && (
+                            <IconButton
+                              onClick={() =>
+                                setMutedState((prev) => ({
+                                  ...prev,
+                                  [post.id]: !(prev[post.id] ?? true),
+                                }))
+                              }
+                              size="small"
+                              sx={{
+                                position: "absolute",
+                                bottom: 8,
+                                right: 8,
+                                bgcolor: "rgba(0, 0, 0, 0.5)",
+                                color: "white",
+                                "&:hover": { bgcolor: "rgba(0, 0, 0, 0.7)" },
+                              }}
+                            >
+                              {isMuted ? (
+                                <VolumeOffIcon fontSize="small" />
+                              ) : (
+                                <VolumeUpIcon fontSize="small" />
+                              )}
+                            </IconButton>
+                          )}
+                        </>
                       )}
                     </Box>
                   )}
