@@ -24,7 +24,7 @@ export default function PostDisplay({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const hideTitle = post.tags?.includes("Hide Title") ?? false;
   const soundOn = post.tags?.includes("Sound On") ?? false;
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(!soundOn);
 
   useEffect(() => {
     if (post.type !== "video") {

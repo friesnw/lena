@@ -52,7 +52,13 @@ export default function PostCarousel({
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
-  const [mutedState, setMutedState] = useState<Record<string, boolean>>({});
+  const [mutedState, setMutedState] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    posts.forEach((p) => {
+      if (p.tags?.includes("Sound On")) initial[p.id] = false;
+    });
+    return initial;
+  });
 
   // Sort posts by order field in ascending order
   const sortedPosts = useMemo(() => {
