@@ -2,11 +2,11 @@
 
 ## Goal
 
-Add a `gallery` post type that groups 2–3 photos into a single post with one shared caption. Photos auto-advance with a crossfade every 2.2s. The visual treatment is the "Matte" aesthetic: washed-out tones, wide white border, film grain, vignette. The gallery renders inline in the month feed at its `order` position, just like a regular photo post.
+Add a `gallery` post type that groups 2–3 photos into a single post with one shared caption. Photos are displayed in a zigzag offset stack — portrait cards alternating left/right as they go down — with a vintage matte aesthetic. The author designates one photo as the "feature"; it gets the highest z-index and sits visually on top of any overlapping neighbors. The gallery renders inline in the month feed at its `order` position like any regular post.
 
 ## Architecture
 
-A gallery post is a single `Post` record with `type: "gallery"` and a new `images: string[]` field containing S3 URLs for 2–3 photos. The author uploads all photos in one form submission — no separate "carousel tag" authoring required. Display is handled by a new `PostGallery` component. Gallery posts flow through the same feed sorting as regular posts.
+A gallery post is a single `Post` record with `type: "gallery"` and a new `images: GalleryImage[]` field. Each `GalleryImage` carries a URL and an `isFeature` flag. Photos always display in authored order (no reordering on render). The feature photo's z-index is overridden to the highest value wherever it sits in the sequence. The author uploads all photos in one form submission. Display is handled by a new `PostGallery` component. Gallery posts flow through the same feed sorting as regular posts.
 
 ## Tech Stack
 
@@ -18,17 +18,23 @@ Next.js App Router · MUI · TypeScript · AWS S3 (presigned URLs) · posts.json
 
 ### `lib/types.ts`
 
-- Add `"gallery"` to `PostType` union.
-- Add `images?: string[]` to `Post` interface — an ordered array of S3 URLs for gallery photos (2–3 items). Only populated when `type === "gallery"`. The existing `content` field is unused for galleries.
+Add `"gallery"` to `PostType` union. Add `GalleryImage` interface and `images` field to `Post`.
 
 ```typescript
 export type PostType = "text" | "audio" | "video" | "photo" | "stat" | "carousel" | "gallery";
 
+export interface GalleryImage {
+  url: string;
+  isFeature: boolean;
+}
+
 export interface Post {
   // ... existing fields unchanged ...
-  images?: string[];  // gallery only: ordered S3 URLs
+  images?: GalleryImage[];  // gallery only: 2–3 ordered photos
 }
 ```
+
+Constraints: exactly one `isFeature: true` per gallery post. `content` is unused for gallery type. `title` is unused for gallery type (stored as `""`).
 
 ---
 
@@ -36,14 +42,13 @@ export interface Post {
 
 ### `app/api/posts/route.ts` — POST handler
 
-- Accept `"gallery"` as a valid `type`.
-- Accept `images?: string[]` in the request body.
+- Accept `"gallery"` as a valid `type` (add to the allowlist alongside existing types).
+- Accept `images?: GalleryImage[]` in the request body.
 - Include `images` in the saved `Post` object when present.
-- No change to validation logic for other types.
 
 ### `app/api/upload-url/route.ts`
 
-- Accept `"gallery"` as a valid `fileType` — treat it identically to `"photo"` (same MIME types, same 11MB size limit).
+- Accept `"gallery"` as a valid `fileType` — treat identically to `"photo"` (same MIME types, same 11MB size limit).
 
 ---
 
@@ -53,15 +58,15 @@ export interface Post {
 
 When `type === "gallery"`:
 
-- Replace the single file picker with a multi-image picker (`multiple` attribute, accepts same MIME types as photo).
-- Show a preview grid of selected images (thumbnails, removable, reorderable via up/down buttons).
-- Upload each image sequentially to S3 via the existing presigned URL flow on submit, collecting URLs into an `images` array.
-- Caption field: single text input, shared across all photos.
-- Order field: unchanged — one value for the whole post.
-- Title field: hidden for gallery type (not displayed in the component). Submitted as empty string `""`.
-- On submit: POST to `/api/posts` with `type: "gallery"`, `images`, `caption`, `month`, `order`.
-
-Tag options: none for gallery type (galleries are not carousel-tagged).
+- Hide the single file picker and the title field.
+- Show a multi-image section: a file input (`multiple`, same photo MIME types) that adds images to a list as they're selected.
+- Render each selected image as a row with: thumbnail preview, up/down reorder buttons, a "★ Feature" toggle (radio-style — only one can be active), and a remove button. Default: first image is feature.
+- Caption field: single shared caption for all photos.
+- Order and Month fields: unchanged.
+- On submit:
+  1. Upload each image sequentially to S3 via the presigned URL flow (`/api/upload-url` with `fileType: "gallery"`), collecting URLs.
+  2. Build `images: GalleryImage[]` preserving the displayed order, with `isFeature` from the toggle.
+  3. POST to `/api/posts` with `type: "gallery"`, `images`, `caption`, `month`, `order`, `title: ""`.
 
 ---
 
@@ -72,30 +77,44 @@ Tag options: none for gallery type (galleries are not carousel-tagged).
 Props:
 ```typescript
 interface PostGalleryProps {
-  post: Post; // post.images contains the URLs
+  post: Post;
 }
 ```
 
-Behavior:
-- Auto-advances through `post.images` every 2200ms via `setInterval`.
-- Crossfade transition (opacity, 900ms ease).
-- Tapping/clicking the image skips to the next photo and resets the timer.
-- Image index indicator: small dots below the image (inactive = `#e8e4de`, active = `#bbb`).
-- Caption: always visible below the frame in italic Georgia serif.
-- Day counter (`getDaysSinceOct15_2025`) shown alongside caption, same as other post types.
+**Layout — zigzag offset stack:**
 
-Visual treatment (Matte aesthetic):
-- Outer container: `background: #faf8f5`, `border: 1px solid #e0dbd3`, `padding: 20px 20px 14px`, subtle box shadow.
-- Images: `filter: saturate(0.3) contrast(0.75) brightness(1.15)` — very faded, washed-out.
-- Grain overlay: SVG `feTurbulence` filter at low opacity via an absolutely-positioned `<div>`.
-- Vignette: `radial-gradient(ellipse at center, transparent 60%, rgba(200,190,180,0.3) 100%)`.
-- Progress bar: 1px line below image, animated from 0→100% over 2200ms, resets on each advance.
-- Aspect ratio: `4/3`, full width of container.
-- Margin bottom: `mb: 3` (same as other post cards).
+Photos render in `post.images` order (index 0 = top of stack). Positions alternate left/right:
+- Index 0: `left: 0`, width ~58%
+- Index 1: `right: 0`, width ~56%, `top` offset ~150px from index 0
+- Index 2: `left: 0`, width ~62%, `top` offset ~150px from index 1
+
+Feature photo: `zIndex: 10`. Non-feature photos: `zIndex: i + 1` (1-indexed, so later cards naturally win ties, but feature always wins).
+
+The total height of the stage is computed from the number of images and the vertical step (150px per card).
+
+**Card shell — matte aesthetic:**
+- Outer padding: `7px 7px 24px` (white border all around, extra bottom for the white space)
+- Background: `#f9f6f2`
+- Border: `1px solid #e2ddd7`
+- Border-radius: `6px`
+- Box shadow: `0 8px 28px rgba(0,0,0,0.13), 0 2px 6px rgba(0,0,0,0.07)`
+
+**Photo inside each card:**
+- Aspect ratio: `3/4` (portrait)
+- `Image` component with `objectFit: "cover"`
+- Grain overlay: absolutely-positioned `<div>` with SVG `feTurbulence` noise, `opacity: 0.5`, `mix-blend-mode: multiply`
+- Vignette overlay: `radial-gradient(ellipse at center, transparent 50%, rgba(50,40,30,0.28) 100%)`
+- CSS filter: `saturate(0.28) contrast(0.73) brightness(1.17)` on the image itself
+
+**Caption area** (below the absolute-positioned stage):
+- Day counter (`getDaysSinceOct15_2025`) on the left in monospace, same pattern as other posts
+- Caption text below in italic Georgia serif, `color: #888`
+
+**No interaction** (no tap-to-advance, no animation). Static layout.
 
 ### `app/components/PostDisplay.tsx`
 
-Add a `case "gallery"` branch that renders `<PostGallery post={post} />`. Import `PostGallery` at the top.
+Add `import PostGallery from "./posts/PostGallery"` and a `case "gallery"` branch in `renderPostContent` that returns `<PostGallery post={post} />`. Gallery posts skip the Card/CardContent wrapper — `PostGallery` is self-contained.
 
 ---
 
@@ -103,19 +122,13 @@ Add a `case "gallery"` branch that renders `<PostGallery post={post} />`. Import
 
 ### `app/components/MonthPage.tsx`
 
-No changes needed. Gallery posts have no carousel tags, so they fall into `regularPosts` and render via `PostDisplay` in order. The existing `hasCarouselTag` check correctly ignores them.
-
----
-
-## Prototype / Clone Page
-
-A read-only clone page at `/month/[n]/gallery-preview` is out of scope for this spec — the feature ships as the real thing within the existing month feed. The author can create a gallery post in any month to preview it.
+No changes needed. Gallery posts have no carousel tags, so they fall into `regularPosts` and render via `PostDisplay` in authored order.
 
 ---
 
 ## Out of Scope
 
-- Reordering gallery images after post creation (can be added later via the admin edit flow).
-- Video support in galleries (photos only for now).
+- Editing gallery images after creation (delete + re-create for now).
+- Video support in galleries (photos only).
 - More than 3 images per gallery.
-- Admin edit UI for swapping individual gallery images (edit post deletes and re-creates for now).
+- Admin edit UI for individual image swaps.
