@@ -1,4 +1,9 @@
-export type PostType = "text" | "audio" | "video" | "photo" | "stat" | "carousel";
+export type PostType = "text" | "audio" | "video" | "photo" | "stat" | "carousel" | "gallery";
+
+export interface GalleryImage {
+  url: string;
+  isFeature: boolean;
+}
 
 export interface FileMetadata {
   dateTaken?: string;
@@ -10,7 +15,7 @@ export interface FileMetadata {
   dimensions?: { width: number; height: number };
   albumCoverUrl?: string;
   albumCoverDimensions?: { width: number; height: number };
-  fadeOutAt?: number; // Seconds into the song at which to begin fading out
+  fadeOutAt?: number;
 }
 
 export interface Post {
@@ -25,7 +30,8 @@ export interface Post {
   createdBy?: "admin" | "user" | undefined;
   published: boolean;
   order: number;
-  metadata?: FileMetadata; // Original file metadata (date taken, camera, location, etc.)
+  metadata?: FileMetadata;
   tags?: string[];
-  deleted?: boolean; // Soft delete flag - when true, post is hidden from UI
+  deleted?: boolean;
+  images?: GalleryImage[];
 }
