@@ -8,6 +8,7 @@ import type { Post } from "@/lib/types";
 import Image from "next/image";
 import { getDaysSinceOct15_2025 } from "@/lib/utils";
 import AudioPost from "./posts/AudioPost";
+import PostGallery from "./posts/PostGallery";
 import { postDimensions } from "./postDimensions";
 
 interface PostDisplayProps {
@@ -273,6 +274,10 @@ export default function PostDisplay({
     return (
       <AudioPost post={post} hideTitle={hideTitle} viewPostUrl={viewPostUrl} />
     );
+  }
+
+  if (post.type === "gallery") {
+    return <PostGallery post={post} />;
   }
 
   return (
