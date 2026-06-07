@@ -101,6 +101,7 @@ export async function POST(request: NextRequest) {
       order,
       metadata,
       tags,
+      images,
     } = body as {
       type: Post["type"];
       title: string;
@@ -112,6 +113,7 @@ export async function POST(request: NextRequest) {
       order?: number;
       metadata?: FileMetadata;
       tags?: string[];
+      images?: import("@/lib/types").GalleryImage[];
     };
 
     // basic validation
@@ -130,7 +132,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!["text", "audio", "video", "photo", "stat", "carousel"].includes(type as string)) {
+    if (!["text", "audio", "video", "photo", "stat", "carousel", "gallery"].includes(type as string)) {
       return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
     if (month < 0 || month > 12) {
@@ -159,6 +161,7 @@ export async function POST(request: NextRequest) {
       order: normalizedOrder,
       metadata: metadata || undefined, // optional file metadata (date taken, camera, location, etc.)
       tags: tags && tags.length > 0 ? tags : undefined,
+      images: images && images.length > 0 ? images : undefined,
     };
 
     const saved = await savePost(newPost);
