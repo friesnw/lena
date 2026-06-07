@@ -3,7 +3,7 @@ import { unstable_cache, revalidateTag, revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
 import { getPublishedPostsByMonthOrdered, savePost } from "@/lib/posts-unified";
 import { requireAuth } from "@/lib/auth";
-import type { Post, FileMetadata } from "@/lib/types";
+import type { Post, FileMetadata, GalleryImage } from "@/lib/types";
 
 // Cache configuration
 const CACHE_TAG = "posts";
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
       order?: number;
       metadata?: FileMetadata;
       tags?: string[];
-      images?: import("@/lib/types").GalleryImage[];
+      images?: GalleryImage[];
     };
 
     // basic validation
