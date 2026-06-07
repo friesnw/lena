@@ -735,15 +735,17 @@ function UploadForm() {
               </Select>
             </FormControl>
 
-            {/* Title Field */}
-            <TextField
-              fullWidth
-              label={type === "text" || type === "photo" ? "Title (optional)" : "Title"}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              sx={{ mb: 2 }}
-              placeholder="Enter a title for this post"
-            />
+            {/* Title Field — hidden for gallery (no title concept) */}
+            {type !== "gallery" && (
+              <TextField
+                fullWidth
+                label={type === "text" || type === "photo" ? "Title (optional)" : "Title"}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                sx={{ mb: 2 }}
+                placeholder="Enter a title for this post"
+              />
+            )}
 
             {/* Conditional Input */}
             {isTextType && (
