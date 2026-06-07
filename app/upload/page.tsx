@@ -18,7 +18,7 @@ import {
   Stack,
 } from "@mui/material";
 import { useEffect, useState, Suspense } from "react";
-import type { FileMetadata, PostType } from "@/lib/types";
+import type { FileMetadata, GalleryImage, PostType } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import Image from "next/image";
@@ -67,6 +67,14 @@ function UploadForm() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+
+  interface GalleryItem {
+    file: File;
+    previewUrl: string;
+    isFeature: boolean;
+  }
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+
   const pageTitle = "Upload Post";
 
   const [carouselTagOptions, setCarouselTagOptions] = useState<string[]>([]);
@@ -179,16 +187,62 @@ function UploadForm() {
     }
   };
 
+  const handleGalleryFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const MAX = 11 * 1024 * 1024;
+    const incoming: GalleryItem[] = [];
+    for (const f of Array.from(e.target.files)) {
+      if (f.size > MAX) {
+        setError(`${f.name} exceeds the 11MB limit`);
+        e.target.value = "";
+        return;
+      }
+      incoming.push({ file: f, previewUrl: URL.createObjectURL(f), isFeature: false });
+    }
+    setGalleryItems((prev) => {
+      const combined = [...prev, ...incoming].slice(0, 3);
+      if (!combined.some((i) => i.isFeature) && combined.length > 0) {
+        combined[0] = { ...combined[0], isFeature: true };
+      }
+      return combined;
+    });
+    e.target.value = "";
+  };
+
+  const moveGalleryItem = (index: number, dir: -1 | 1) => {
+    const next = index + dir;
+    if (next < 0 || next >= galleryItems.length) return;
+    setGalleryItems((prev) => {
+      const arr = [...prev];
+      [arr[index], arr[next]] = [arr[next], arr[index]];
+      return arr;
+    });
+  };
+
+  const setGalleryFeature = (index: number) => {
+    setGalleryItems((prev) =>
+      prev.map((item, i) => ({ ...item, isFeature: i === index }))
+    );
+  };
+
+  const removeGalleryItem = (index: number) => {
+    setGalleryItems((prev) => {
+      const arr = prev.filter((_, i) => i !== index);
+      if (arr.length > 0 && !arr.some((i) => i.isFeature)) {
+        arr[0] = { ...arr[0], isFeature: true };
+      }
+      return arr;
+    });
+  };
+
   // Clean up preview URLs when component unmounts or files change
   useEffect(() => {
     return () => {
-      if (filePreviewUrl) {
-        URL.revokeObjectURL(filePreviewUrl);
-      }
-      if (albumCoverPreviewUrl) {
-        URL.revokeObjectURL(albumCoverPreviewUrl);
-      }
+      if (filePreviewUrl) URL.revokeObjectURL(filePreviewUrl);
+      if (albumCoverPreviewUrl) URL.revokeObjectURL(albumCoverPreviewUrl);
+      galleryItems.forEach((item) => URL.revokeObjectURL(item.previewUrl));
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filePreviewUrl, albumCoverPreviewUrl]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -196,6 +250,92 @@ function UploadForm() {
     setError(""); // clear previous errors
     setSuccess(""); // clear previous success messages
     setLoading(true); // show loading state
+
+    // Gallery type: upload each photo then POST
+    if (type === "gallery") {
+      try {
+        if (galleryItems.length < 2) {
+          setError("Please add at least 2 photos");
+          setLoading(false);
+          return;
+        }
+        if (month === "" || month < 0) {
+          setError("Please enter a valid month (0-12)");
+          setLoading(false);
+          return;
+        }
+        const mediaBaseUrl =
+          process.env.NEXT_PUBLIC_MEDIA_BASE_URL ||
+          "https://letters-for-lena-media.s3.us-east-2.amazonaws.com";
+        const galleryImages: GalleryImage[] = [];
+
+        for (const item of galleryItems) {
+          const presignedResponse = await fetch("/api/upload-url", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              fileName: item.file.name,
+              fileType: "gallery",
+              contentType: item.file.type,
+              fileSize: item.file.size,
+            }),
+          });
+          const presignedData = await presignedResponse.json();
+          if (!presignedResponse.ok) {
+            setError(presignedData.error || "Failed to get upload URL");
+            setLoading(false);
+            return;
+          }
+          const uploadResponse = await fetch(presignedData.url, {
+            method: "PUT",
+            body: item.file,
+            headers: { "Content-Type": item.file.type },
+          });
+          if (!uploadResponse.ok) {
+            setError("Failed to upload photo to S3");
+            setLoading(false);
+            return;
+          }
+          galleryImages.push({
+            url: `${mediaBaseUrl}/${presignedData.key}`,
+            isFeature: item.isFeature,
+          });
+        }
+
+        const response = await fetch("/api/posts", {
+          method: "POST",
+          cache: "no-store",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "gallery",
+            title: "",
+            month: Number(month),
+            images: galleryImages,
+            caption: caption.trim() || undefined,
+            published: true,
+            order: order ? Number(order) : 0,
+          }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setSuccess("Gallery created successfully!");
+          const persistedMonth = month;
+          const persistedOrder = order;
+          galleryItems.forEach((item) => URL.revokeObjectURL(item.previewUrl));
+          setGalleryItems([]);
+          setCaption("");
+          setMonth(persistedMonth);
+          setOrder(persistedOrder);
+        } else {
+          setError(data.error || "Failed to create gallery");
+        }
+      } catch {
+        setError("Something went wrong. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
 
     try {
       let finalContent = content;
@@ -571,6 +711,10 @@ function UploadForm() {
                       ? ["wide"]
                       : [];
                   setTags((prev) => prev.filter((tag) => nextAllowed.includes(tag)));
+                  if (type === "gallery") {
+                    galleryItems.forEach((item) => URL.revokeObjectURL(item.previewUrl));
+                    setGalleryItems([]);
+                  }
                   const fileInput = document.getElementById(
                     "file-input"
                   ) as HTMLInputElement;
@@ -583,6 +727,7 @@ function UploadForm() {
                 <MenuItem value="video">Video</MenuItem>
                 <MenuItem value="stat">Stat</MenuItem>
                 <MenuItem value="carousel">Carousel</MenuItem>
+                <MenuItem value="gallery">Gallery</MenuItem>
               </Select>
             </FormControl>
 
@@ -714,8 +859,104 @@ function UploadForm() {
               </Box>
             )}
 
-            {/* Caption field for photos & audio */}
-            {(type === "photo" || type === "audio") && (
+            {/* Gallery multi-image picker */}
+            {type === "gallery" && (
+              <Box sx={{ mb: 2 }}>
+                <input
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  id="gallery-file-input"
+                  type="file"
+                  multiple
+                  onChange={handleGalleryFilesChange}
+                />
+                <label htmlFor="gallery-file-input">
+                  <Button
+                    variant="outlined"
+                    component="span"
+                    fullWidth
+                    disabled={galleryItems.length >= 3}
+                  >
+                    {galleryItems.length === 0
+                      ? "Add photos (2–3)"
+                      : galleryItems.length >= 3
+                      ? "Maximum 3 photos added"
+                      : `Add more photos (${galleryItems.length}/3)`}
+                  </Button>
+                </label>
+
+                {galleryItems.length > 0 && (
+                  <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 1 }}>
+                    {galleryItems.map((item, i) => (
+                      <Box
+                        key={item.previewUrl}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          p: 1,
+                          border: "1px solid",
+                          borderColor: item.isFeature ? "primary.main" : "divider",
+                          borderRadius: 1,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            position: "relative",
+                            width: 48,
+                            height: 64,
+                            flexShrink: 0,
+                            borderRadius: 0.5,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <Image
+                            src={item.previewUrl}
+                            alt={`Gallery photo ${i + 1}`}
+                            fill
+                            style={{ objectFit: "cover" }}
+                            unoptimized
+                          />
+                        </Box>
+
+                        <MuiTypography
+                          variant="body2"
+                          sx={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                        >
+                          {item.file.name}
+                        </MuiTypography>
+
+                        <Button
+                          size="small"
+                          variant={item.isFeature ? "contained" : "outlined"}
+                          onClick={() => setGalleryFeature(i)}
+                          sx={{ flexShrink: 0, minWidth: 64 }}
+                        >
+                          {item.isFeature ? "★ Feature" : "Feature"}
+                        </Button>
+
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 0.25 }}>
+                          <Button size="small" sx={{ minWidth: 28, p: 0.25 }} onClick={() => moveGalleryItem(i, -1)} disabled={i === 0}>↑</Button>
+                          <Button size="small" sx={{ minWidth: 28, p: 0.25 }} onClick={() => moveGalleryItem(i, 1)} disabled={i === galleryItems.length - 1}>↓</Button>
+                        </Box>
+
+                        <Button
+                          size="small"
+                          color="error"
+                          onClick={() => removeGalleryItem(i)}
+                          sx={{ flexShrink: 0 }}
+                        >
+                          ✕
+                        </Button>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              </Box>
+            )}
+
+            {/* Caption field for photos, audio, and gallery */}
+            {(type === "photo" || type === "audio" || type === "gallery") && (
               <TextField
                 fullWidth
                 label="Caption"
