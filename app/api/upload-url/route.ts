@@ -66,7 +66,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file size
-    const maxSize = MAX_FILE_SIZES[fileType as keyof typeof MAX_FILE_SIZES] ?? MAX_FILE_SIZES.photo;
+    const resolvedFileType = fileType === "gallery" ? "photo" : fileType;
+    const maxSize = MAX_FILE_SIZES[resolvedFileType as keyof typeof MAX_FILE_SIZES] ?? MAX_FILE_SIZES.photo;
     if (fileSize && fileSize > maxSize) {
       return NextResponse.json(
         {
@@ -76,9 +77,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!["photo", "audio", "video"].includes(fileType)) {
+    if (!["photo", "audio", "video", "gallery"].includes(fileType)) {
       return NextResponse.json(
-        { error: "Invalid file type. Must be 'photo', 'audio', or 'video'" },
+        { error: "Invalid file type. Must be 'photo', 'audio', 'video', or 'gallery'" },
         { status: 400 }
       );
     }
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
     // Validate MIME type if provided
     if (contentType) {
       const allowedMimeTypes =
-        ALLOWED_MIME_TYPES[fileType as keyof typeof ALLOWED_MIME_TYPES];
+        ALLOWED_MIME_TYPES[resolvedFileType as keyof typeof ALLOWED_MIME_TYPES];
       if (!allowedMimeTypes.includes(contentType)) {
         return NextResponse.json(
           {
