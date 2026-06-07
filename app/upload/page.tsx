@@ -240,10 +240,14 @@ function UploadForm() {
     return () => {
       if (filePreviewUrl) URL.revokeObjectURL(filePreviewUrl);
       if (albumCoverPreviewUrl) URL.revokeObjectURL(albumCoverPreviewUrl);
+    };
+  }, [filePreviewUrl, albumCoverPreviewUrl]);
+
+  useEffect(() => {
+    return () => {
       galleryItems.forEach((item) => URL.revokeObjectURL(item.previewUrl));
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filePreviewUrl, albumCoverPreviewUrl]);
+  }, [galleryItems]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent page reload
@@ -711,7 +715,7 @@ function UploadForm() {
                       ? ["wide"]
                       : [];
                   setTags((prev) => prev.filter((tag) => nextAllowed.includes(tag)));
-                  if (type === "gallery") {
+                  if (type === "gallery" && nextType !== "gallery") {
                     galleryItems.forEach((item) => URL.revokeObjectURL(item.previewUrl));
                     setGalleryItems([]);
                   }
