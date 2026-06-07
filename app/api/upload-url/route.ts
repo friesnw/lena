@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
       if (!allowedMimeTypes.includes(contentType)) {
         return NextResponse.json(
           {
-            error: `Invalid content type. Expected ${fileType} file (${allowedMimeTypes.join(
+            error: `Invalid content type. Expected ${resolvedFileType} file (${allowedMimeTypes.join(
               ", "
             )})`,
           },
