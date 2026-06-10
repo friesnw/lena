@@ -12,9 +12,9 @@ interface PostGalleryProps {
 }
 
 const POSITIONS = [
-  { alignSelf: "flex-start" as const, width: "58%" },
-  { alignSelf: "flex-end"   as const, width: "56%" },
-  { alignSelf: "flex-start" as const, width: "62%" },
+  { alignSelf: "flex-start" as const, width: "58%", rotate: "-1.5deg" },
+  { alignSelf: "flex-end"   as const, width: "56%", rotate: "1deg"   },
+  { alignSelf: "flex-start" as const, width: "62%", rotate: "-0.8deg" },
 ];
 
 const FEATURE_WIDTH_BOOST = 4;
@@ -47,6 +47,7 @@ export default function PostGallery({ post, showOrder, viewPostUrl }: PostGaller
                 mt: i === 0 ? 0 : `${OVERLAP_PX}px`,
                 position: "relative",
                 zIndex: img.isFeature ? 10 : i + 1,
+                transform: `rotate(${pos.rotate})`,
               }}
             >
               <Box
