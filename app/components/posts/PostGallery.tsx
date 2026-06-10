@@ -18,7 +18,7 @@ const POSITIONS = [
 ];
 
 const FEATURE_WIDTH_BOOST = 4;
-const OVERLAP_PX = -20;
+const OVERLAP_PX = -160;
 
 export default function PostGallery({ post, showOrder, viewPostUrl }: PostGalleryProps) {
   const images = post.images ?? [];
