@@ -71,6 +71,7 @@ export default function EditPost() {
   >(null);
   const [dateTaken, setDateTaken] = useState<string>("");
   const [fadeOutAt, setFadeOutAt] = useState<number | "">("");
+  const [galleryImages, setGalleryImages] = useState<NonNullable<Post["images"]>>([]);
   const pageTitle = "Edit Post";
   usePageTitle(pageTitle);
 
@@ -109,6 +110,7 @@ export default function EditPost() {
           setCaption(data.caption || "");
           setOrder(data.order);
           setTags((data.tags || []).map((tag: string) => tag.trim()));
+          if (data.images) setGalleryImages(data.images);
           // Load dateTaken if available, convert to date format
           if (data.metadata?.dateTaken) {
             // Extract just the date part (YYYY-MM-DD) from ISO string
@@ -410,7 +412,7 @@ export default function EditPost() {
           order,
           tags: tags.map((tag) => tag.trim()),
           metadata: metadataToSave,
-          images: post?.images,
+          images: type === "gallery" ? galleryImages : undefined,
         }),
       });
 
@@ -773,27 +775,23 @@ export default function EditPost() {
               </Box>
             )}
 
-            {/* Gallery images — read-only preview */}
-            {type === "gallery" && post.images && post.images.length > 0 && (
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                  Photos ({post.images.length}) — re-upload not supported, delete and recreate to change images
-                </Typography>
-                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                  {post.images.map((img, i) => (
-                    <Box
-                      key={img.url}
-                      sx={{
-                        position: "relative",
-                        width: 80,
-                        height: 108,
-                        borderRadius: 1,
-                        overflow: "hidden",
-                        border: "2px solid",
-                        borderColor: img.isFeature ? "primary.main" : "divider",
-                        flexShrink: 0,
-                      }}
-                    >
+            {/* Gallery images */}
+            {type === "gallery" && galleryImages.length > 0 && (
+              <Box sx={{ mb: 2, display: "flex", flexDirection: "column", gap: 1 }}>
+                {galleryImages.map((img, i) => (
+                  <Box
+                    key={img.url}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      p: 1,
+                      border: "1px solid",
+                      borderColor: img.isFeature ? "primary.main" : "divider",
+                      borderRadius: 1,
+                    }}
+                  >
+                    <Box sx={{ position: "relative", width: 48, height: 64, flexShrink: 0, borderRadius: 0.5, overflow: "hidden" }}>
                       <Image
                         src={img.url}
                         alt={`Gallery photo ${i + 1}`}
@@ -801,14 +799,20 @@ export default function EditPost() {
                         style={{ objectFit: "cover" }}
                         unoptimized
                       />
-                      {img.isFeature && (
-                        <Box sx={{ position: "absolute", bottom: 2, left: 0, right: 0, textAlign: "center", fontSize: "10px", color: "primary.main", fontWeight: 700 }}>
-                          ★
-                        </Box>
-                      )}
                     </Box>
-                  ))}
-                </Box>
+                    <Typography variant="body2" sx={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "text.secondary" }}>
+                      Photo {i + 1}
+                    </Typography>
+                    <Button
+                      size="small"
+                      variant={img.isFeature ? "contained" : "outlined"}
+                      onClick={() => setGalleryImages((prev) => prev.map((item, j) => ({ ...item, isFeature: j === i })))}
+                      sx={{ flexShrink: 0, minWidth: 64 }}
+                    >
+                      {img.isFeature ? "★ Feature" : "Feature"}
+                    </Button>
+                  </Box>
+                ))}
               </Box>
             )}
 
