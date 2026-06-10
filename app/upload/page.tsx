@@ -274,36 +274,59 @@ function UploadForm() {
         const galleryImages: GalleryImage[] = [];
 
         for (const item of galleryItems) {
-          const presignedResponse = await fetch("/api/upload-url", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              fileName: item.file.name,
-              fileType: "gallery",
-              contentType: item.file.type,
-              fileSize: item.file.size,
-            }),
-          });
-          const presignedData = await presignedResponse.json();
-          if (!presignedResponse.ok) {
-            setError(presignedData.error || "Failed to get upload URL");
-            setLoading(false);
-            return;
+          const isHeic =
+            item.file.type === "image/heic" ||
+            item.file.type === "image/heif" ||
+            item.file.name.toLowerCase().endsWith(".heic") ||
+            item.file.name.toLowerCase().endsWith(".heif");
+
+          let photoUrl: string;
+
+          if (isHeic) {
+            const convertFormData = new FormData();
+            convertFormData.append("file", item.file);
+            const convertResponse = await fetch("/api/convert-heic", {
+              method: "POST",
+              body: convertFormData,
+            });
+            const convertData = await convertResponse.json();
+            if (!convertResponse.ok) {
+              setError(convertData.error || "Failed to convert HEIC file");
+              setLoading(false);
+              return;
+            }
+            photoUrl = convertData.path;
+          } else {
+            const presignedResponse = await fetch("/api/upload-url", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                fileName: item.file.name,
+                fileType: "gallery",
+                contentType: item.file.type,
+                fileSize: item.file.size,
+              }),
+            });
+            const presignedData = await presignedResponse.json();
+            if (!presignedResponse.ok) {
+              setError(presignedData.error || "Failed to get upload URL");
+              setLoading(false);
+              return;
+            }
+            const uploadResponse = await fetch(presignedData.url, {
+              method: "PUT",
+              body: item.file,
+              headers: { "Content-Type": item.file.type },
+            });
+            if (!uploadResponse.ok) {
+              setError("Failed to upload photo to S3");
+              setLoading(false);
+              return;
+            }
+            photoUrl = `${mediaBaseUrl}/${presignedData.key}`;
           }
-          const uploadResponse = await fetch(presignedData.url, {
-            method: "PUT",
-            body: item.file,
-            headers: { "Content-Type": item.file.type },
-          });
-          if (!uploadResponse.ok) {
-            setError("Failed to upload photo to S3");
-            setLoading(false);
-            return;
-          }
-          galleryImages.push({
-            url: `${mediaBaseUrl}/${presignedData.key}`,
-            isFeature: item.isFeature,
-          });
+
+          galleryImages.push({ url: photoUrl, isFeature: item.isFeature });
         }
 
         const response = await fetch("/api/posts", {
