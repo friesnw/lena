@@ -410,6 +410,7 @@ export default function EditPost() {
           order,
           tags: tags.map((tag) => tag.trim()),
           metadata: metadataToSave,
+          images: post?.images,
         }),
       });
 
@@ -572,18 +573,21 @@ export default function EditPost() {
                 <MenuItem value="video">Video</MenuItem>
                 <MenuItem value="stat">Stat</MenuItem>
                 <MenuItem value="carousel">Carousel</MenuItem>
+                <MenuItem value="gallery">Gallery</MenuItem>
               </Select>
             </FormControl>
 
-            {/* Title Field */}
-            <TextField
-              fullWidth
-              label={type === "text" || type === "photo" ? "Title (optional)" : "Title"}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required={type !== "text" && type !== "photo"}
-              sx={{ mb: 2 }}
-            />
+            {/* Title Field — hidden for gallery */}
+            {type !== "gallery" && (
+              <TextField
+                fullWidth
+                label={type === "text" || type === "photo" ? "Title (optional)" : "Title"}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required={type !== "text" && type !== "photo"}
+                sx={{ mb: 2 }}
+              />
+            )}
 
             {/* Content Display/Edit */}
             {isTextType && (
@@ -769,8 +773,8 @@ export default function EditPost() {
               </Box>
             )}
 
-            {/* Caption for photos & audio */}
-            {(type === "photo" || type === "audio") && (
+            {/* Caption for photos, audio & gallery */}
+            {(type === "photo" || type === "audio" || type === "gallery") && (
               <TextField
                 fullWidth
                 label="Caption"

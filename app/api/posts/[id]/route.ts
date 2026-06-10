@@ -74,6 +74,7 @@ export async function PATCH(
       order,
       tags,
       metadata,
+      images,
     } = body as {
       type?: Post["type"];
       title?: string;
@@ -84,6 +85,7 @@ export async function PATCH(
       order?: number;
       tags?: string[];
       metadata?: Post["metadata"];
+      images?: Post["images"];
     };
 
     // Validate month if provided
@@ -95,7 +97,7 @@ export async function PATCH(
     }
 
     // Validate type if provided
-    if (type && !["text", "audio", "video", "photo", "stat", "carousel"].includes(type)) {
+    if (type && !["text", "audio", "video", "photo", "stat", "carousel", "gallery"].includes(type)) {
       return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
 
@@ -117,6 +119,7 @@ export async function PATCH(
     if (order !== undefined) updates.order = Number.isFinite(order) ? order : 0;
     if (tags !== undefined) updates.tags = tags;
     if (metadata !== undefined) updates.metadata = metadata;
+    if (images !== undefined) updates.images = images;
 
     const updatedPost = await updatePost(id, updates);
 
