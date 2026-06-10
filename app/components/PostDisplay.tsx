@@ -277,7 +277,7 @@ export default function PostDisplay({
   }
 
   if (post.type === "gallery") {
-    return <PostGallery post={post} />;
+    return <PostGallery post={post} showOrder={showOrder} viewPostUrl={viewPostUrl} />;
   }
 
   return (

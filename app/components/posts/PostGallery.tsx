@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { Box, Typography } from "@mui/material";
+import { Box, Link, Typography } from "@mui/material";
 import type { Post } from "@/lib/types";
 import { getDaysSinceOct15_2025 } from "@/lib/utils";
 
 interface PostGalleryProps {
   post: Post;
+  showOrder?: boolean;
+  viewPostUrl?: string;
 }
 
 const POSITIONS = [
@@ -18,7 +20,7 @@ const POSITIONS = [
 const FEATURE_WIDTH_BOOST = 4;
 const OVERLAP_PX = -80;
 
-export default function PostGallery({ post }: PostGalleryProps) {
+export default function PostGallery({ post, showOrder, viewPostUrl }: PostGalleryProps) {
   const images = post.images ?? [];
   const daysSince = getDaysSinceOct15_2025(
     post.metadata?.dateTaken || post.createdAt
@@ -137,6 +139,21 @@ export default function PostGallery({ post }: PostGalleryProps) {
           </Typography>
         )}
       </Box>
+
+      {(showOrder || viewPostUrl) && (
+        <Box sx={{ mt: 1, display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 2 }}>
+          {showOrder && (
+            <Typography variant="body1" color="text.secondary">
+              Order: {post.order}
+            </Typography>
+          )}
+          {viewPostUrl && (
+            <Link href={viewPostUrl} underline="hover">
+              View Post
+            </Link>
+          )}
+        </Box>
+      )}
     </Box>
   );
 }
