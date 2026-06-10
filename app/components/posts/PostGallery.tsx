@@ -15,8 +15,8 @@ const POSITIONS = [
   { alignSelf: "flex-start" as const, width: "62%" },
 ];
 
-const FEATURE_WIDTH_BOOST = 4; // percentage points added to feature card width
-const OVERLAP_PX = -120;
+const FEATURE_WIDTH_BOOST = 4;
+const OVERLAP_PX = -80;
 
 export default function PostGallery({ post }: PostGalleryProps) {
   const images = post.images ?? [];
@@ -62,7 +62,7 @@ export default function PostGallery({ post }: PostGalleryProps) {
                   sx={{
                     position: "relative",
                     width: "100%",
-                    aspectRatio: "3/4",
+                    aspectRatio: "4/5",
                     overflow: "hidden",
                     borderRadius: "4px",
                   }}
