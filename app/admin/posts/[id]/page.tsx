@@ -773,6 +773,45 @@ export default function EditPost() {
               </Box>
             )}
 
+            {/* Gallery images — read-only preview */}
+            {type === "gallery" && post.images && post.images.length > 0 && (
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  Photos ({post.images.length}) — re-upload not supported, delete and recreate to change images
+                </Typography>
+                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                  {post.images.map((img, i) => (
+                    <Box
+                      key={img.url}
+                      sx={{
+                        position: "relative",
+                        width: 80,
+                        height: 108,
+                        borderRadius: 1,
+                        overflow: "hidden",
+                        border: "2px solid",
+                        borderColor: img.isFeature ? "primary.main" : "divider",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <Image
+                        src={img.url}
+                        alt={`Gallery photo ${i + 1}`}
+                        fill
+                        style={{ objectFit: "cover" }}
+                        unoptimized
+                      />
+                      {img.isFeature && (
+                        <Box sx={{ position: "absolute", bottom: 2, left: 0, right: 0, textAlign: "center", fontSize: "10px", color: "primary.main", fontWeight: 700 }}>
+                          ★
+                        </Box>
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            )}
+
             {/* Caption for photos, audio & gallery */}
             {(type === "photo" || type === "audio" || type === "gallery") && (
               <TextField
