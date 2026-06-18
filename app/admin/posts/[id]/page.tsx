@@ -72,6 +72,7 @@ export default function EditPost() {
   const [dateTaken, setDateTaken] = useState<string>("");
   const [fadeOutAt, setFadeOutAt] = useState<number | "">("");
   const [galleryImages, setGalleryImages] = useState<NonNullable<Post["images"]>>([]);
+  const [galleryUploading, setGalleryUploading] = useState(false);
   const pageTitle = "Edit Post";
   usePageTitle(pageTitle);
 
@@ -776,43 +777,84 @@ export default function EditPost() {
             )}
 
             {/* Gallery images */}
-            {type === "gallery" && galleryImages.length > 0 && (
-              <Box sx={{ mb: 2, display: "flex", flexDirection: "column", gap: 1 }}>
-                {galleryImages.map((img, i) => (
-                  <Box
-                    key={img.url}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      p: 1,
-                      border: "1px solid",
-                      borderColor: img.isFeature ? "primary.main" : "divider",
-                      borderRadius: 1,
-                    }}
-                  >
-                    <Box sx={{ position: "relative", width: 48, height: 64, flexShrink: 0, borderRadius: 0.5, overflow: "hidden" }}>
-                      <Image
-                        src={img.url}
-                        alt={`Gallery photo ${i + 1}`}
-                        fill
-                        style={{ objectFit: "cover" }}
-                        unoptimized
-                      />
-                    </Box>
-                    <Typography variant="body2" sx={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "text.secondary" }}>
-                      Photo {i + 1}
-                    </Typography>
-                    <Button
-                      size="small"
-                      variant={img.isFeature ? "contained" : "outlined"}
-                      onClick={() => setGalleryImages((prev) => prev.map((item, j) => ({ ...item, isFeature: j === i })))}
-                      sx={{ flexShrink: 0, minWidth: 64 }}
-                    >
-                      {img.isFeature ? "★ Feature" : "Feature"}
-                    </Button>
+            {type === "gallery" && (
+              <Box sx={{ mb: 2 }}>
+                <input
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  id="gallery-add-input"
+                  type="file"
+                  multiple
+                  onChange={async (e) => {
+                    if (!e.target.files) return;
+                    const files = Array.from(e.target.files);
+                    const remaining = 3 - galleryImages.length;
+                    if (remaining <= 0) return;
+                    const toUpload = files.slice(0, remaining);
+                    setGalleryUploading(true);
+                    setError("");
+                    const mediaBaseUrl = process.env.NEXT_PUBLIC_MEDIA_BASE_URL || "https://letters-for-lena-media.s3.us-east-2.amazonaws.com";
+                    const newImages: NonNullable<Post["images"]> = [];
+                    for (const file of toUpload) {
+                      if (file.size > 11 * 1024 * 1024) { setError(`${file.name} exceeds 11MB`); setGalleryUploading(false); return; }
+                      const isHeic = file.type === "image/heic" || file.type === "image/heif" || file.name.toLowerCase().endsWith(".heic") || file.name.toLowerCase().endsWith(".heif");
+                      let url: string;
+                      if (isHeic) {
+                        const fd = new FormData(); fd.append("file", file);
+                        const res = await fetch("/api/convert-heic", { method: "POST", body: fd });
+                        const data = await res.json();
+                        if (!res.ok) { setError(data.error || "Failed to convert HEIC"); setGalleryUploading(false); return; }
+                        url = data.path;
+                      } else {
+                        const res = await fetch("/api/upload-url", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fileName: file.name, fileType: "gallery", contentType: file.type, fileSize: file.size }) });
+                        const data = await res.json();
+                        if (!res.ok) { setError(data.error || "Failed to get upload URL"); setGalleryUploading(false); return; }
+                        const upload = await fetch(data.url, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+                        if (!upload.ok) { setError("Failed to upload photo"); setGalleryUploading(false); return; }
+                        url = `${mediaBaseUrl}/${data.key}`;
+                      }
+                      newImages.push({ url, isFeature: false });
+                    }
+                    setGalleryImages((prev) => {
+                      const combined = [...prev, ...newImages];
+                      if (!combined.some((img) => img.isFeature) && combined.length > 0) combined[0] = { ...combined[0], isFeature: true };
+                      return combined;
+                    });
+                    setGalleryUploading(false);
+                    e.target.value = "";
+                  }}
+                />
+                <label htmlFor="gallery-add-input">
+                  <Button variant="outlined" component="span" fullWidth disabled={galleryImages.length >= 3 || galleryUploading} sx={{ mb: galleryImages.length > 0 ? 2 : 0 }}>
+                    {galleryUploading ? "Uploading..." : galleryImages.length >= 3 ? "Maximum 3 photos added" : galleryImages.length === 0 ? "Add photos (2–3)" : `Add more photos (${galleryImages.length}/3)`}
+                  </Button>
+                </label>
+
+                {galleryImages.length > 0 && (
+                  <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                    {galleryImages.map((img, i) => (
+                      <Box
+                        key={img.url}
+                        sx={{ display: "flex", alignItems: "center", gap: 1, p: 1, border: "1px solid", borderColor: img.isFeature ? "primary.main" : "divider", borderRadius: 1 }}
+                      >
+                        <Box sx={{ position: "relative", width: 48, height: 64, flexShrink: 0, borderRadius: 0.5, overflow: "hidden" }}>
+                          <Image src={img.url} alt={`Gallery photo ${i + 1}`} fill style={{ objectFit: "cover" }} unoptimized />
+                        </Box>
+                        <Typography variant="body2" sx={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "text.secondary" }}>
+                          Photo {i + 1}
+                        </Typography>
+                        <Button size="small" variant={img.isFeature ? "contained" : "outlined"} onClick={() => setGalleryImages((prev) => prev.map((item, j) => ({ ...item, isFeature: j === i })))} sx={{ flexShrink: 0, minWidth: 64 }}>
+                          {img.isFeature ? "★ Feature" : "Feature"}
+                        </Button>
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 0.25 }}>
+                          <Button size="small" sx={{ minWidth: 28, p: 0.25 }} disabled={i === 0} onClick={() => setGalleryImages((prev) => { const arr = [...prev]; [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]]; return arr; })}>↑</Button>
+                          <Button size="small" sx={{ minWidth: 28, p: 0.25 }} disabled={i === galleryImages.length - 1} onClick={() => setGalleryImages((prev) => { const arr = [...prev]; [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]]; return arr; })}>↓</Button>
+                        </Box>
+                        <Button size="small" color="error" sx={{ flexShrink: 0 }} onClick={() => setGalleryImages((prev) => { const arr = prev.filter((_, j) => j !== i); if (arr.length > 0 && !arr.some((img) => img.isFeature)) arr[0] = { ...arr[0], isFeature: true }; return arr; })}>✕</Button>
+                      </Box>
+                    ))}
                   </Box>
-                ))}
+                )}
               </Box>
             )}
 
