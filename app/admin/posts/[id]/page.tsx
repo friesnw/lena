@@ -388,7 +388,7 @@ export default function EditPost() {
       }
 
       // Override with manually entered dateTaken if provided
-      if (dateTaken && (type === "photo" || type === "video")) {
+      if (dateTaken && (type === "photo" || type === "video" || type === "gallery")) {
         // Treat date as date-only (no time), create UTC midnight to avoid timezone shifts
         // dateTaken is in YYYY-MM-DD format from the date input
         metadataToSave = {
@@ -869,8 +869,8 @@ export default function EditPost() {
               />
             )}
 
-            {/* Date Taken field for photos & videos */}
-            {(type === "photo" || type === "video") && (
+            {/* Date Taken field for photos, videos & galleries */}
+            {(type === "photo" || type === "video" || type === "gallery") && (
               <Box sx={{ mb: 2 }}>
                 <TextField
                   fullWidth

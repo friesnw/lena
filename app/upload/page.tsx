@@ -272,6 +272,7 @@ function UploadForm() {
           process.env.NEXT_PUBLIC_MEDIA_BASE_URL ||
           "https://letters-for-lena-media.s3.us-east-2.amazonaws.com";
         const galleryImages: GalleryImage[] = [];
+        let extractedDateTaken: string | undefined;
 
         for (const item of galleryItems) {
           const isHeic =
@@ -296,6 +297,9 @@ function UploadForm() {
               return;
             }
             photoUrl = convertData.path;
+            if (!extractedDateTaken && convertData.metadata?.dateTaken) {
+              extractedDateTaken = convertData.metadata.dateTaken;
+            }
           } else {
             const presignedResponse = await fetch("/api/upload-url", {
               method: "POST",
@@ -324,10 +328,31 @@ function UploadForm() {
               return;
             }
             photoUrl = `${mediaBaseUrl}/${presignedData.key}`;
+            if (!extractedDateTaken) {
+              const metaFormData = new FormData();
+              metaFormData.append("file", item.file);
+              metaFormData.append("type", "photo");
+              const metaResponse = await fetch("/api/extract-metadata", {
+                method: "POST",
+                body: metaFormData,
+              });
+              if (metaResponse.ok) {
+                const metaData = await metaResponse.json();
+                if (metaData.success && metaData.metadata?.dateTaken) {
+                  extractedDateTaken = metaData.metadata.dateTaken;
+                }
+              }
+            }
           }
 
           galleryImages.push({ url: photoUrl, isFeature: item.isFeature });
         }
+
+        const galleryMetadata = dateTaken
+          ? { dateTaken: `${dateTaken}T00:00:00.000Z` }
+          : extractedDateTaken
+          ? { dateTaken: extractedDateTaken }
+          : undefined;
 
         const response = await fetch("/api/posts", {
           method: "POST",
@@ -341,6 +366,7 @@ function UploadForm() {
             caption: caption.trim() || undefined,
             published: true,
             order: order ? Number(order) : 0,
+            metadata: galleryMetadata,
           }),
         });
         const data = await response.json();
@@ -351,6 +377,7 @@ function UploadForm() {
           galleryItems.forEach((item) => URL.revokeObjectURL(item.previewUrl));
           setGalleryItems([]);
           setCaption("");
+          setDateTaken("");
           setMonth(persistedMonth);
           setOrder(persistedOrder);
         } else {
@@ -497,8 +524,8 @@ function UploadForm() {
         // Capture metadata
         fileMetadata = extractedMetadata;
 
-        // Override with manually entered dateTaken if provided (videos only on upload)
-        if (dateTaken && type === "video") {
+        // Override with manually entered dateTaken if provided
+        if (dateTaken && (type === "video" || type === "gallery")) {
           // Treat date as date-only (no time), create UTC midnight to avoid timezone shifts
           // dateTaken is in YYYY-MM-DD format from the date input
           fileMetadata = {
@@ -996,8 +1023,8 @@ function UploadForm() {
               />
             )}
 
-            {/* Date Taken field for videos only */}
-            {type === "video" && (
+            {/* Date Taken field for videos and galleries */}
+            {(type === "video" || type === "gallery") && (
               <TextField
                 fullWidth
                 type="date"
@@ -1010,7 +1037,7 @@ function UploadForm() {
                     shrink: true,
                   },
                 }}
-                helperText="Optional: Manually set the capture date. Leave empty to use metadata from file."
+                helperText={type === "gallery" ? "Optional: Set the capture date for this gallery." : "Optional: Manually set the capture date. Leave empty to use metadata from file."}
               />
             )}
 
