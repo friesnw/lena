@@ -525,7 +525,7 @@ function UploadForm() {
         fileMetadata = extractedMetadata;
 
         // Override with manually entered dateTaken if provided
-        if (dateTaken && (type === "video" || type === "gallery")) {
+        if (dateTaken && type === "video") {
           // Treat date as date-only (no time), create UTC midnight to avoid timezone shifts
           // dateTaken is in YYYY-MM-DD format from the date input
           fileMetadata = {
