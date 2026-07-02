@@ -76,8 +76,6 @@ export default function PostGallery({ post, showOrder, viewPostUrl }: PostGaller
                     fill
                     style={{
                       objectFit: "cover",
-                      filter:
-                        "saturate(0.28) contrast(0.73) brightness(1.17)",
                     }}
                     unoptimized
                   />
